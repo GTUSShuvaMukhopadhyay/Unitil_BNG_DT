@@ -4,18 +4,18 @@ import csv
 from datetime import datetime
 
 # Define the file paths
-file_path = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\DFKKOP\DFKKOP\DFKKOP 01012024 to 02132025.XLSX"
-file_path1 = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\ZDM_PREMDETAILS.XLSX"
-file_path2 = r"C:\Users\US97684\Downloads\documents_20250317_New\Configuration.xlsx"
-file_path3 = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\ZMECON\ZMECON\ZMECON 01012021 to 02132025.xlsx"
+file_path = r"DFKKOP 01012024 to 02132025.XLSX"
+file_path1 = r"ZDM_PREMDETAILS.XLSX"
+file_path2 = r"Configuration.xlsx"
+file_path3 = r"ZMECON 01012021 to 02132025.xlsx"
 
-file_pathA = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\DFKKOP\DFKKOP\Dfkkop 01012023 to 12312023.XLSX"
-file_pathB = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\DFKKOP\DFKKOP\Dfkkop 01012022 to 12312022.XLSX"
-file_pathC = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\DFKKOP\DFKKOP\DFKKOP 01012021 to 12312021.XLSX"
-file_pathD = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\DFKKOP\DFKKOP\DFKKOP 01012020 to 12312020.XLSX"
-file_pathE = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\DFKKOP\DFKKOP\DFKKOP 01012019 to 12312019.XLSX"
+file_pathA = r"Dfkkop 01012023 to 12312023.XLSX"
+file_pathB = r"Dfkkop 01012022 to 12312022.XLSX"
+file_pathC = r"DFKKOP 01012021 to 12312021.XLSX"
+file_pathD = r"DFKKOP 01012020 to 12312020.XLSX"
+file_pathE = r"DFKKOP 01012019 to 12312019.XLSX"
 
-file_path4 = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\ZMECON\ZMECON\ZMECON 01012015 to 12312020.xlsx"
+file_path4 = r"ZMECON 01012015 to 12312020.xlsx"
 
 # Read Excel files
 df_Prem = pd.read_excel(file_path1, sheet_name='Sheet1', engine='openpyxl')
@@ -154,7 +154,7 @@ trailer_row = pd.DataFrame([['TRAILER'] + [''] * (len(df_new.columns) - 1)],
 df_new = pd.concat([df_new, trailer_row], ignore_index=True)
 
 # Save to CSV with custom quoting and escape character
-output_path = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\ZMECON\ZMECON\GTARBNat.csv"
+output_path = r"STAGE_AR_BALANCES.csv"
 
 numeric_columns = [
     'TAXYEAR', 'APPLICATION', 'BALANCEAMOUNT', 'RECEIVABLECODE'
