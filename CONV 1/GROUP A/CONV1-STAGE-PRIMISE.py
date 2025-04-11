@@ -3,9 +3,9 @@ import re
 import csv
 
 # Load the data
-file_path = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\ZDM_PREMDETAILS.XLSX"
-file_path2 = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\TE422.XLSX"
-file_path1 = r"C:\Users\US97684\Downloads\documents_20250317_New\Premise_clean_final.xlsx"
+file_path = r"ZDM_PREMDETAILS.XLSX"
+file_path2 = r"TE422.XLSX"
+file_path1 = r"Premise_clean_final.xlsx"
 df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
 df_Portion = pd.read_excel(file_path2, sheet_name='Sheet1', engine='openpyxl')
 df_Premise = pd.read_excel(file_path1, sheet_name='Clean_Data', engine='openpyxl')
@@ -232,7 +232,7 @@ trailer_row = pd.DataFrame([['TRAILER'] + [''] * (len(df_new.columns) - 1)], col
 df_new = pd.concat([df_new, trailer_row], ignore_index=True)
 
 # Output the final dataframe to CSV
-output_path = r"C:\Users\US97684\Downloads\documents_20250317\Outbound\STAGE_PREMISEUniq1.csv"
+output_path = r"STAGE_PREMISE.csv"
 
 numeric_columns = [
     'STREETNUMBER', 'OWNERMAILSEQ', 'PROPERTYCLASS', 'TAXDISTRICT', 'BILLINGCYCLE', 'READINGROUTE',
