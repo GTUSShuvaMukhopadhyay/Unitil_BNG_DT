@@ -31,16 +31,16 @@ print_checklist()
 
 
 file_paths = {
-    "FPD2": r"C:\Users\US97684\Downloads\Deposits\FPD2.XLSX",
-    "ZDM_PREMDETAILS": r"C:\Users\US97684\Downloads\Deposits\ZDM_PREMDETAILS.XLSX",
-    "ZMECON1": r"C:\Users\US97684\Downloads\Deposits\ZMECON 01012015 to 12312020.xlsx",
-    "ZMECON2": r"C:\Users\US97684\Downloads\Deposits\ZMECON 01012021 to 02132025.xlsx",
-    "DFKKOP1": r"C:\Users\US97684\Downloads\Deposits\DFKKOP 01012019 to 12312019.XLSX",
-    "DFKKOP2": r"C:\Users\US97684\Downloads\Deposits\DFKKOP 01012020 to 12312020.XLSX",
-    "DFKKOP3": r"C:\Users\US97684\Downloads\Deposits\DFKKOP 01012021 to 12312021.XLSX",
-    "DFKKOP4": r"C:\Users\US97684\Downloads\Deposits\Dfkkop 01012022 to 12312022.XLSX",
-    "DFKKOP5": r"C:\Users\US97684\Downloads\Deposits\Dfkkop 01012023 to 12312023.XLSX",
-    "DFKKOP6": r"C:\Users\US97684\Downloads\Deposits\DFKKOP 01012024 to 02132025.XLSX",
+    "FPD2": r"FPD2.XLSX",
+    "ZDM_PREMDETAILS": r"ZDM_PREMDETAILS.XLSX",
+    "ZMECON1": r"ZMECON 01012015 to 12312020.xlsx",
+    "ZMECON2": r"ZMECON 01012021 to 02132025.xlsx",
+    "DFKKOP1": r"DFKKOP 01012019 to 12312019.XLSX",
+    "DFKKOP2": r"DFKKOP 01012020 to 12312020.XLSX",
+    "DFKKOP3": r"DFKKOP 01012021 to 12312021.XLSX",
+    "DFKKOP4": r"Dfkkop 01012022 to 12312022.XLSX",
+    "DFKKOP5": r"Dfkkop 01012023 to 12312023.XLSX",
+    "DFKKOP6": r"DFKKOP 01012024 to 02132025.XLSX",
 }
 
 # Load the data from each spreadsheet
