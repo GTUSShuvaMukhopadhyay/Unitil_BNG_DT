@@ -2,9 +2,9 @@ import pandas as pd
 import csv
 
 # File paths
-file_path1 = r"C:\Users\US97684\Downloads\documents_20250317_New\Premise_clean_final.xlsx"
-config_path = r"C:\Users\US97684\Downloads\documents_20250317_New\Configuration.xlsx"
-output_path = r"C:\Users\US97684\Downloads\documents_20250317_New\Outbound\GT_STAGE_STREETSNewapr11.csv"
+file_path1 = r"Premise_clean_final.xlsx"
+config_path = r"Configuration.xlsx"
+output_path = r"STAGE_STREETS.csv"
 
 # Load data
 df_Premise = pd.read_excel(file_path1, sheet_name='Clean_Data', engine='openpyxl')
