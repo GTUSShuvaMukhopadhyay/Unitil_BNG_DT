@@ -3,7 +3,7 @@ import pandas as pd
 import csv
 
 # Define input file path
-file_path = r"C:\Users\US97684\Downloads\documents_20250219\ZDM_PREMDETAILS.xlsx"
+file_path = r"ZDM_PREMDETAILS.xlsx"
 
 # Load the main dataset
 df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
@@ -79,7 +79,7 @@ trailer_row = pd.DataFrame([['TRAILER'] + [''] * (len(df_stage_towns.columns) - 
 df_stage_towns = pd.concat([df_stage_towns, trailer_row], ignore_index=True)
 
 # Dynamically define output path to avoid permission issues
-output_dir = r"C:\Users\US97684\OneDrive - Grant Thornton LLP\Desktop\Python_file\unitil"  # Ensure this path is correct
+output_dir = r"path"  # Ensure this path is correct
 
 # Check if output directory exists, create it if it doesn't
 if not os.path.exists(output_dir):
