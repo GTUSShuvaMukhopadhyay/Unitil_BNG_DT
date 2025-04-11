@@ -41,7 +41,7 @@ df_ZMECON = pd.concat([df_ZMECON1, df_ZMECON2], ignore_index=True)
 # Initialize an empty list to store the rows that will be added to df_new
 rows_to_add = []
 
-# Define valid combinations for APPLICATION
+# Define valid combinations for APPLICATION - data from ARBalance sample AR to enQuesta Mapping for Apllication column
 valid_combinations = [
     ('0015', '0300'),
     ('0015', '0301'),
