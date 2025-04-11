@@ -29,7 +29,7 @@ print_checklist()
 
  
 # File path (Update accordingly)
-file_path = r"C:\Users\us85360\OneDrive - Grant Thornton LLP\0 - All Work\[c] 15 - Unitil\0_SM Work\Archive\documents_20250219 (2)\ZCAMPAIGN.XLSX"
+file_path = r"ZCAMPAIGN.XLSX"
  
 # Read the Excel file and load the specific sheet
 df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
