@@ -12,6 +12,7 @@
 # 04182025 redone and updates made to:
 #   SERVICESTATUS
 
+
 # STAGE_METERED_SVCS.py
  
 # we need to exclude the contractids in the list below from our data set ~ will code around it later
@@ -342,7 +343,6 @@ if data_sources.get("MM") is not None and "Meter #1" in data_sources["MM"].colum
     df_new["MULTIPLIER"] = df_new["METERNUMBER"].map(meter_to_multiplier)
 else:
     print("⚠️ Warning: 'MM' file missing 'Meter #1' or 'PressureFactor' columns.")
-
 
 # Create a new field SERVICESTATUS based on CUSTOMERID and METERNUMBER values
 if data_sources["ZDM_PREMDETAILS"] is not None:
