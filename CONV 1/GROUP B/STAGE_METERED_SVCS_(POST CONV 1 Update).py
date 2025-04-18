@@ -9,6 +9,8 @@
 #   LASTREADDATE,
 #   REMOVEDDATE
 
+# 04182025 redone and updates made to:
+#   SERVICESTATUS
 
 # STAGE_METERED_SVCS.py
  
@@ -340,14 +342,30 @@ if data_sources.get("MM") is not None and "Meter #1" in data_sources["MM"].colum
     df_new["MULTIPLIER"] = df_new["METERNUMBER"].map(meter_to_multiplier)
 else:
     print("⚠️ Warning: 'MM' file missing 'Meter #1' or 'PressureFactor' columns.")
- 
+
+
+# Create a new field SERVICESTATUS based on CUSTOMERID and METERNUMBER values
+if data_sources["ZDM_PREMDETAILS"] is not None:
+    # Get CUSTOMERID and METERNUMBER values
+    customer_ids = data_sources["ZDM_PREMDETAILS"].iloc[:, 7].fillna('')
+    meter_numbers = data_sources["ZDM_PREMDETAILS"].iloc[:, 18].fillna('')
+    
+    # Apply the logic
+    df_new["SERVICESTATUS"] = [
+        "0" if (customer_ids[i] != '' and meter_numbers[i] != '') else
+        "1" if (customer_ids[i] == '' and meter_numbers[i] != '') else
+        "2"  # Default case: no CUSTOMERID and no METERNUMBER
+        for i in range(len(df_new))
+    ]
+    
+    print(f"SERVICESTATUS assigned: '0': {sum(df_new['SERVICESTATUS'] == '0')}, '1': {sum(df_new['SERVICESTATUS'] == '1')}, '2': {sum(df_new['SERVICESTATUS'] == '2')}")
+
  
 # Assign hardcoded values
 df_new["APPLICATION"] = "5"
 df_new["SERVICENUMBER"] = "1"
 df_new["SERVICETYPE"] = "0"
 df_new["METERREGISTER"] = "1"
-df_new["SERVICESTATUS"] = "0"
 df_new["LATITUDE"] = ""
 df_new["READSEQUENCE"] = "0" # NEED UPDATED MAPPING
 df_new["LONGITUDE"] = ""
