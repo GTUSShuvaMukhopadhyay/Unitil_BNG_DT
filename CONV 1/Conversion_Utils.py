@@ -29,8 +29,14 @@ file_paths = {
 }
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler())
+logging.basicConfig(
+    format='%(levelname)s:%(message)s',
+    level=logging.DEBUG,
+    handlers=[
+        logging.FileHandler("conversion.log"),
+        logging.StreamHandler()
+    ]
+)
 
 start_time = time.time()
 last_time = time.time()

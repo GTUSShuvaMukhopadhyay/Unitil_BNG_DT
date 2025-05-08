@@ -125,7 +125,7 @@ def format_date(val):
     except:
         return None
 
-# Determine active code
+# Determine active code 
 def calculate_active_code(row):
     if hasattr(row["term_date"], 'year') and row["term_date"].year == 9999:
         return 0
@@ -170,6 +170,11 @@ df_new["PENALTYCODE"] = df_new["PENALTYCODE"].astype(int)
 df_new["TAXTYPE"] = df_new["TAXTYPE"].astype(int)
 
 conv_utils.log_debug("Add PENALTYCODE and TAXTYPE")
+
+# Remove invalid rows
+df_new = df_new[df_new['ACCOUNTNUMBER'] != ""]
+df_new = df_new[df_new['CUSTOMERID'] != ""]
+df_new = df_new[df_new['LOCATIONID'] != ""]
 
 # === Static values and blank columns ===
 defaults = {
