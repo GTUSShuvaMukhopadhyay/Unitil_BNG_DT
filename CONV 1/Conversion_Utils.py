@@ -37,6 +37,8 @@ logging.basicConfig(
     ]
 )
 
+logger = logging.getLogger(__name__)
+
 start_time = time.time()
 last_time = time.time()
 

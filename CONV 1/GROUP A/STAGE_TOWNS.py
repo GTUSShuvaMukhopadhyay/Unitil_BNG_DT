@@ -1,24 +1,35 @@
 import os
 import pandas as pd
 import csv
+import sys
+
+# Add the parent directory to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+import Conversion_Utils as cu
 
 # Define input file path
 file_path = r"ZDM_PREMDETAILS.xlsx"
 
 # Load the main dataset
-df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
+#df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
+df = cu.get_file("prem")
 
 # Define county mapping directly in the code
 data_county = {
-    "Town": ["Alton", "Argyle TWP", "Bangor", "Brewer", "Bucksport", "Chester", "Edinburg", "Frankfort", "Hampden", 
-              "Hermon", "Howland", "Lincoln", "Mattamascontis TWP", "Mattawamkeag", "Old Town", "Orono", "Orrington", 
-              "Prospect", "Searsport", "Veazie", "Winterport", "Woodville"],
-    "Zip Code": ["04468", "04468", "04401", "04412", "04416", "04457", "04448", "04438", "04444", "04401", 
-                  "04448", "04457", "04457", "04459", "04468", "04473", "04474", "04981", "04974", "04401", 
-                  "04496", "04457"],
-    "County": ["Penobscot", "Penobscot", "Penobscot", "Penobscot", "Hancock", "Penobscot", "Penobscot", "Waldo", "Penobscot", 
-                "Penobscot", "Penobscot", "Lincoln", "Penobscot", "Penobscot", "Penobscot", "Penobscot", "Penobscot", 
-                "Waldo", "Waldo", "Penobscot", "Waldo", "Penobscot"]
+    "Town": [   "Alton",                "Argyle TWP",   "Bangor",       "Bangor",       "Brewer",       "Bucksport",    
+                "Chester",              "Edinburg",     "Frankfort",    "Hampden",      "Hermon",       "Howland",      
+                "Lincoln",      "Mattamascontis TWP",   "Mattawamkeag", "Old Town",     "Orono",        "Orono" ,       
+                "Orrington",            "Prospect",     "Searsport",    "Veazie",       "Winterport",   "Woodville" ],
+    "Zip Code": ["04468",               "04468",        "04401",        "04402",        "04412",        "04416",        
+                 "04457",               "04448",        "04438",        "04444",        "04401",        "04448",        
+                 "04457",               "04457",        "04459",        "04468",        "04473",        "04469",        
+                 "04474",               "04981",        "04974",        "04401",        "04496",        "04457"  ], 
+    "County": [ "Penobscot",            "Penobscot",    "Penobscot",    "Penobscot",    "Penobscot",    "Hancock",      
+                "Penobscot",            "Penobscot",    "Waldo",        "Penobscot",    "Penobscot",    "Penobscot",    
+                "Penobscot",            "Lincoln",      "Penobscot",    "Penobscot",    "Penobscot",    "Penobscot",    
+                "Penobscot",            "Waldo",        "Waldo",        "Penobscot",    "Waldo",        "Penobscot" ]
 }
 
 df_county = pd.DataFrame(data_county)
@@ -95,5 +106,6 @@ print(f"Data has been saved to: {output_csv}")
 # Print diagnostics
 total_rows = len(df_stage_towns) - 1  # Excluding trailer row
 missing_county = df_stage_towns[df_stage_towns['COUNTY'] == ""]
+cu.log_info(f"Total rows in output: {total_rows}")
 print(f"Total rows in output: {total_rows}")
 print(f"Rows with missing COUNTY: {len(missing_county)}")
