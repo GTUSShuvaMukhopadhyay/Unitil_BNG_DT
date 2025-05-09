@@ -54,7 +54,7 @@ df_new['FULLNAME'] = (
     df_new['PROPERNAME'].fillna(" ") + " " + 
     df_new['ABBREVIATION'].fillna(" ") + " " + 
     df_new['POSTDIRECTION'].fillna(" ")
-).str.strip()
+).apply( cu.cleanse_string )
 
 # Drop rows missing required fields
 required_columns = ['FULLNAME', 'PROPERNAME']
