@@ -4,6 +4,14 @@
 
 import pandas as pd
 import csv
+import os
+import sys
+
+# Add the parent directory to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+import Conversion_Utils as cu
 
 # File paths
 file_path1 = r"Premise_clean_final.xlsx"
@@ -27,10 +35,10 @@ direction_map = {
 
 # Build columns
 df_new['FULLNAME'] = ""
-df_new['PREDIRECTION'] = df_Premise.iloc[:, 4]
-df_new['PROPERNAME'] = df_Premise.iloc[:, 5]
-df_new['ABBREVIATION'] = df_Premise.iloc[:, 6]
-df_new['POSTDIRECTION'] = df_Premise.iloc[:, 7]
+df_new['PREDIRECTION'] = df_Premise.iloc[:, 4].apply( cu.cleanse_string )
+df_new['PROPERNAME'] = df_Premise.iloc[:, 5].apply( cu.cleanse_string )
+df_new['ABBREVIATION'] = df_Premise.iloc[:, 6].apply( cu.cleanse_string )
+df_new['POSTDIRECTION'] = df_Premise.iloc[:, 7].apply( cu.cleanse_string )
 
 # Normalize directions
 df_new['PREDIRECTION'] = df_new['PREDIRECTION'].map(direction_map).fillna(df_new['PREDIRECTION'])

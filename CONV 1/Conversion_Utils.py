@@ -14,6 +14,7 @@
 import pandas as pd
 import logging
 import time
+import re
 
 # Constants
 source_directory = r"C:\DV\Unitil\\"
@@ -25,10 +26,8 @@ file_paths = {
     "writeoff": source_directory + r"Write off customer history.XLSX",
     "erdk": source_directory + r"ERDK.XLSX",
     "zmecon1": source_directory + r"ZMECON 01012021 to 02132025.xlsx",
-    "zmecon2": source_directory + r"ZMECON 01012015 to 12312020.xlsx"
-}
+    "zmecon2": source_directory + r"ZMECON 01012015 to 12312020.xlsx" }
 
-logger = logging.getLogger(__name__)
 logging.basicConfig(
     format='%(levelname)s:%(message)s',
     level=logging.DEBUG,
@@ -55,13 +54,14 @@ def get_file( file_name, columns=None ):
 
 def cleanse_string(value, max_length=None):
     """
-    Cleanses a string by stripping whitespace and truncating to max_length if provided.
+    Cleanses a string by stripping extra whitespace and truncating to max_length if provided.
     """
     if pd.isna(value):
         return ''
     if isinstance(value, (int, float)):
         value = str(int(value))
     value = str(value).strip()
+    value = re.sub( r"\s+", " ", value ) # Replace multiple spaces with a single space
     if max_length:
         value = value[:max_length]
     return value
