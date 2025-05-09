@@ -20,11 +20,12 @@ import re
 source_directory = r"C:\DV\Unitil\\"
 
 file_paths = {
-    "prem": source_directory + r"ZDM_PREMDETAILS.XLSX",
-    "ever": source_directory + r"EVER.XLSX",
     "active": source_directory + r"ZNC_ACTIVE_CUS.XLSX",
-    "writeoff": source_directory + r"Write off customer history.XLSX",
     "erdk": source_directory + r"ERDK.XLSX",
+    "ever": source_directory + r"EVER.XLSX",
+    "mail": source_directory + r"MAILING_ADDR1.XLSX",
+    "prem": source_directory + r"ZDM_PREMDETAILS.XLSX",
+    "writeoff": source_directory + r"Write off customer history.XLSX",
     "zmecon1": source_directory + r"ZMECON 01012021 to 02132025.xlsx",
     "zmecon2": source_directory + r"ZMECON 01012015 to 12312020.xlsx" }
 
@@ -64,6 +65,7 @@ def cleanse_string(value, max_length=None):
         value = str(int(value))
     value = str(value).strip()
     value = re.sub( r"\s+", " ", value ) # Replace multiple spaces with a single space
+    value = re.sub( r"\"", "\"\"", value ) # Replace double quotes with 2x double quotes 
     if max_length:
         value = value[:max_length]
     return value
@@ -86,3 +88,20 @@ def log_warning(message):
 
 def log_debug(message): 
     logger.debug( get_log_message(message))
+
+# CSV Staging File Checklist
+CHECKLIST = [
+    "✅ Filename must match the entry in Column D of the All Tables tab.",
+    "✅ Filename must be in uppercase except for '.csv' extension.",
+    "✅ The first record in the file must be the header row.",
+    "✅ Ensure no extraneous rows (including blank rows) are present in the file.",
+    "✅ All non-numeric fields must be enclosed in double quotes.",
+    "✅ The last row in the file must be 'TRAILER' followed by commas.",
+    "✅ Replace all CRLF (X'0d0a') in customer notes with ~^[",
+    "✅ Ensure all dates are in 'YYYY-MM-DD' format.",
+]
+ 
+def print_checklist():
+    print("CSV Staging File Validation Checklist:")
+    for item in CHECKLIST:
+        print(item)

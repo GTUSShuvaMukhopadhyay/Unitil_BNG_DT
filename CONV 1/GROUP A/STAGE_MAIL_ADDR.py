@@ -8,30 +8,21 @@ import os
 import re
 import csv  # Import the correct CSV module
  
-# CSV Staging File Checklist
-CHECKLIST = [
-    "✅ Filename must match the entry in Column D of the All Tables tab.",
-    "✅ Filename must be in uppercase except for '.csv' extension.",
-    "✅ The first record in the file must be the header row.",
-    "✅ Ensure no extraneous rows (including blank rows) are present in the file.",
-    "✅ All non-numeric fields must be enclosed in double quotes.",
-    "✅ The last row in the file must be 'TRAILER' followed by commas.",
-    "✅ Replace all CRLF (X'0d0a') in customer notes with ~^[",
-    "✅ Ensure all dates are in 'YYYY-MM-DD' format.",
-]
- 
-def print_checklist():
-    print("CSV Staging File Validation Checklist:")
-    for item in CHECKLIST:
-        print(item)
- 
-print_checklist()
+ # Add the parent directory to sys.path
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+import Conversion_Utils as cu 
+
+cu.print_checklist()
  
 # Define input file path
-file_path = r"C:\Users\us85360\Downloads\MA1_Extract.xlsx"
+#file_path = r"C:\Users\us85360\Downloads\MA1_Extract.xlsx"
  
 # Read the Excel file and load the specific sheet
-df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
+#df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
+df = cu.get_file("mail")
  
 # Initialize df_new using relevant columns
 df_new = pd.DataFrame().fillna('')
@@ -51,9 +42,9 @@ def generate_mailingname(row):
  
 # Apply transformation logic for MAILINGNAME
 df_new['MAILINGNAME'] = df.apply(generate_mailingname, axis=1)
-df_new['MAILINGNAME'] = df_new['MAILINGNAME'].str.slice(0, 50)
+df_new['MAILINGNAME'] = df_new['MAILINGNAME'].apply(cu.cleanse_string, 50)
 
-df_new['INCAREOF'] = df.iloc[:, 6].astype(str).str.slice(0, 35)
+df_new['INCAREOF'] = df.iloc[:, 6].apply( cu.cleanse_string, 35)
 
 # Function to generate ADDRESS1 from House No., Street, and PO Box
 def generate_address1(row):
@@ -135,7 +126,7 @@ trailer_row = pd.DataFrame([["TRAILER"] + [''] * (len(df_new.columns) - 1)], col
 df_new = pd.concat([df_new, trailer_row], ignore_index=True)
  
 # Define output path for the CSV file
-output_path = os.path.join(os.path.dirname(file_path), 'STAGE_MAIL_ADDR.csv')
+output_path = os.path.join(os.path.dirname("."), 'STAGE_MAIL_ADDR.csv')
  
 # Save to CSV with proper quoting and escape character
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')

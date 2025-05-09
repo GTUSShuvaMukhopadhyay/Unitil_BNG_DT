@@ -7,31 +7,22 @@ import pandas as pd
 import os
 import re
 import csv  # Import the correct CSV module
- 
-# CSV Staging File Checklist
-CHECKLIST = [
-    "✅ Filename must match the entry in Column D of the All Tables tab.",
-    "✅ Filename must be in uppercase except for '.csv' extension.",
-    "✅ The first record in the file must be the header row.",
-    "✅ Ensure no extraneous rows (including blank rows) are present in the file.",
-    "✅ All non-numeric fields must be enclosed in double quotes.",
-    "✅ The last row in the file must be 'TRAILER' followed by commas.",
-    "✅ Replace all CRLF (X'0d0a') in customer notes with ~^[",
-    "✅ Ensure all dates are in 'YYYY-MM-DD' format.",
-]
- 
-def print_checklist():
-    print("CSV Staging File Validation Checklist:")
-    for item in CHECKLIST:
-        print(item)
- 
-print_checklist()
+
+# Add the parent directory to sys.path
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+import Conversion_Utils as cu 
+
+cu.print_checklist()
  
 # Define input file path
-file_path = r"C:MA1_Extract.xlsx"
+file_path = r"MA1_Extract.xlsx"
  
 # Read the Excel file and load the specific sheet
-df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
+#df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
+df=cu.get_file("mail")
  
 # Initialize df_new using relevant columns
 df_new = pd.DataFrame().fillna('')
@@ -50,10 +41,11 @@ def generate_fullname(row):
  
 # Apply transformation logic for FULLNAME
 df_new['FULLNAME'] = df.apply(generate_fullname, axis=1)
-df_new['FULLNAME'] = df_new['FULLNAME'].str.slice(0, 50)
+df_new['FULLNAME'] = df_new['FULLNAME'].apply( cu.cleanse_string, 50 )
  
 # Column 3: Column E (index 4)
-df_new['FIRSTNAME'] = df.iloc[:, 4].astype(str).str.slice(0, 25)
+df_new['FIRSTNAME'] = df.iloc[:, 4]
+df_new['FIRSTNAME'] = df_new['FIRSTNAME'].apply( cu.cleanse_string, 25 )
  
 df_new['MIDDLENAME'] = " "
  
@@ -65,7 +57,7 @@ def generate_lastname(row):
  
 # Apply transformation logic for LASTNAME
 df_new['LASTNAME'] = df.apply(generate_lastname, axis=1)
-df_new['LASTNAME'] = df_new['LASTNAME'].str.slice(0, 50)
+df_new['LASTNAME'] = df_new['LASTNAME'].apply( cu.cleanse_string, 50 )
 df_new['NAMETITLE'] = " "
  
 # List of suffixes to check for
@@ -128,3 +120,4 @@ df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, esc
  
 # Confirmation message
 print(f"CSV file saved at {output_path}")
+cu.log_info("Wrote CSV file successfully at: " + output_path + " with " + str(len(df_new)) + " rows")
