@@ -55,13 +55,6 @@ import Conversion_Utils as conv_utils  # Assuming this is a local module
 
 conv_utils.log_info( "Starting script...")
 
-def print_elapsed_time( message ):
-    global last_time
-    elapsed_time = time.time() - start_time
-    interval_time = time.time() - last_time
-    last_time = time.time()
-    print( message + " Elapsed Time: ", time.strftime("%H:%M:%S", time.gmtime(elapsed_time)), " Interval Time: ", time.strftime("%H:%M:%S", time.gmtime(interval_time)))
-
 # === Load Data ===
 def normalize_acct(x):
     try:
