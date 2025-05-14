@@ -81,8 +81,8 @@ def fetch_streetname(location_id):
             if not abbr_match.empty:
                 parts[2] = abbr_match.iloc[0, 1]
             # else part is not needed if no change is required
-        return " ".join(part for part in parts if part)  # Added space as separator
-    return ""  # Added empty string as default return
+        return ' '.join(part for part in parts if part)  # Added space as separator
+    return ''  # Added empty string as default return
 
 df_new['STREETNAME'] = df_new['LOCATIONID'].apply(fetch_streetname)
 
@@ -208,7 +208,7 @@ numeric_columns = [
 def custom_quote(val, column):  # Added colon after function definition
     if column in numeric_columns:  # Added colon after if condition
         return val
-    return f"'{val}'" if val not in ["", None] else val  # Fixed empty string syntax
+    return f'"{val}"' if val not in ["", None] else val  # Fixed empty string syntax
 
 # Apply the function to the dataframe
 df_new = df_new.apply(lambda col: col.apply(lambda val: custom_quote(val, col.name)))  # Added colons in lambda functions
