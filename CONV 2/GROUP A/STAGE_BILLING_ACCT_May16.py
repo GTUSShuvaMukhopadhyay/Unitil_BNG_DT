@@ -1,10 +1,9 @@
-# STAGE_BILLING_ACC.py
+# STAGE_BILLING_ACCT_202505190211_V1.py
 # New logic added for inactive customers, Max due date, Changes for Penalty code and tax code based on ZMECON
 # Date:16May2025
 # Time:10:20 CST
 #2025-May-16 -conv2- remapped the iloc for Tax from 31 to 29
-#2025-May-18 -conv2- changed logic to sort df_Prem by rate_category before dropping duplicates
-
+#2025-May-19 - Conv2 - mapping of location ID for inactive customers from ZMECON to 25 from 26
 import pandas as pd
 import os
 import sys
@@ -12,14 +11,9 @@ import csv
 import time
 from datetime import datetime
 
- # Add the parent directory to sys.path
-import sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
-import Conversion_Utils as cu 
-
-cu.print_checklist()
+# Record start time for performance tracking
+start_time = time.time()
+last_time = start_time
 
 # === File paths ===
 # Define file paths directly in the script
@@ -33,6 +27,21 @@ file_paths = {
     "zmecon2": r"ZMECON 2021 to 03272025.xlsx"
 }
 
+# Simple logging for tracking progress
+def log_info(message):
+    print(f"INFO: {message}")
+
+def log_error(message):
+    print(f"ERROR: {message}")
+
+def print_elapsed_time(message):
+    global last_time
+    elapsed_time = time.time() - start_time
+    interval_time = time.time() - last_time
+    last_time = time.time()
+    print(message + " Elapsed Time: ", time.strftime("%H:%M:%S", time.gmtime(elapsed_time)),
+          " Interval Time: ", time.strftime("%H:%M:%S", time.gmtime(interval_time)))
+
 # === Load Data ===
 def normalize_acct(x):
     try:
@@ -40,46 +49,46 @@ def normalize_acct(x):
     except:
         return ''
 
-cu.log_info("Starting STAGE_BILLING_ACC.py script...")
+log_info("Starting STAGE_BILLING_ACC.py script...")
+print_elapsed_time("Script started")
 
 # Load files with error handling
 read_opts = {"engine": "openpyxl"}
 
 try:
-    # cu.log_info("Loading ZMECON data...")
+    log_info("Loading ZMECON data...")
     # Load ZMECON files with full columns for customer/location data
-    # df_zmecon1 = pd.read_excel(file_paths["zmecon1"], sheet_name='ZMECON', **read_opts)
-    # df_zmecon2 = pd.read_excel(file_paths["zmecon2"], sheet_name='ZMECON 2', **read_opts)
+    df_zmecon1 = pd.read_excel(file_paths["zmecon1"], sheet_name='ZMECON', **read_opts)
+    df_zmecon2 = pd.read_excel(file_paths["zmecon2"], sheet_name='ZMECON 2', **read_opts)
    
-    # print(f"ZMECON1 has {len(df_zmecon1)} rows, {len(df_zmecon1.columns)} columns")
+    print(f"ZMECON1 has {len(df_zmecon1)} rows, {len(df_zmecon1.columns)} columns")
    
     # Find account number, customer ID, and location ID columns in ZMECON1
-    # print("\nSample rows from ZMECON1:")
-    # print(df_zmecon1.iloc[:3, :10])
+    print("\nSample rows from ZMECON1:")
+    print(df_zmecon1.iloc[:3, :10])
    
     # Look for account 210796547 to debug
-    # if '210796547' in df_zmecon1.iloc[:, 2].astype(str).values:
-        # sample_idx = df_zmecon1.iloc[:, 2].astype(str).str.contains('210796547').idxmax()
-        # print(f"\nFound account 210796547 in ZMECON1 at row {sample_idx}")
-        # sample_row = df_zmecon1.iloc[sample_idx]
-        # print("Sample row data for selected columns:")
-        # for col_idx in [0, 2, 26]:  # Customer ID, Account Number, Location ID
-            # print(f"Column {col_idx}: {sample_row.iloc[col_idx]}")
+    if '210796547' in df_zmecon1.iloc[:, 2].astype(str).values:
+        sample_idx = df_zmecon1.iloc[:, 2].astype(str).str.contains('210796547').idxmax()
+        print(f"\nFound account 210796547 in ZMECON1 at row {sample_idx}")
+        sample_row = df_zmecon1.iloc[sample_idx]
+        print("Sample row data for selected columns:")
+        for col_idx in [0, 2, 25]:  # Customer ID, Account Number, Location ID
+            print(f"Column {col_idx}: {sample_row.iloc[col_idx]}")
    
     # Combine ZMECON files
-    # df_ZMECON_full = pd.concat([df_zmecon1, df_zmecon2], ignore_index=True)
-    df_ZMECON_full = cu.get_file("zmecon")
+    df_ZMECON_full = pd.concat([df_zmecon1, df_zmecon2], ignore_index=True)
    
     # Extract ACCOUNTNUMBER, CUSTOMERID, and LOCATIONID from ZMECON files
     df_ZMECON_full["ACCOUNTNUMBER"] = df_ZMECON_full.iloc[:, 2].apply(normalize_acct).str.slice(0, 15)
    
     # Use the correct column indices
     df_ZMECON_full["ZMECON_CUSTOMERID"] = df_ZMECON_full.iloc[:, 0].apply(lambda x: str(x) if pd.notna(x) else "")
-    df_ZMECON_full["ZMECON_LOCATIONID"] = df_ZMECON_full.iloc[:, 26].apply(lambda x: str(x) if pd.notna(x) else "")
+    df_ZMECON_full["ZMECON_LOCATIONID"] = df_ZMECON_full.iloc[:, 25].apply(lambda x: str(x) if pd.notna(x) else "")
    
     # For debugging - check if columns have data
-    cu.log_debug(f"\nZMECON_CUSTOMERID non-empty values: {(df_ZMECON_full['ZMECON_CUSTOMERID'] != '').sum()}")
-    cu.log_debug(f"ZMECON_LOCATIONID non-empty values: {(df_ZMECON_full['ZMECON_LOCATIONID'] != '').sum()}")
+    print(f"\nZMECON_CUSTOMERID non-empty values: {(df_ZMECON_full['ZMECON_CUSTOMERID'] != '').sum()}")
+    print(f"ZMECON_LOCATIONID non-empty values: {(df_ZMECON_full['ZMECON_LOCATIONID'] != '').sum()}")
    
     # Create a combined ZMECON dataset with all needed columns
     df_ZMECON = df_ZMECON_full[["ACCOUNTNUMBER", "ZMECON_CUSTOMERID", "ZMECON_LOCATIONID"]].copy()
@@ -90,46 +99,43 @@ try:
     # Remove duplicates
     df_ZMECON = df_ZMECON.drop_duplicates(subset="ACCOUNTNUMBER")
    
-    cu.log_debug("ZMECON data loaded and processed")
+    print_elapsed_time("ZMECON data loaded and processed")
 except Exception as e:
-    cu.log_error(f"Error processing ZMECON data: {e}")
+    log_error(f"Error processing ZMECON data: {e}")
     import traceback
     traceback.print_exc()
     sys.exit(1)
 
 try:
-    cu.log_info("Loading ERDK data...")
-    #df_ERDK = pd.read_excel(file_paths["erdk"], **read_opts)
-    df_ERDK = cu.get_file("erdk")
+    log_info("Loading ERDK data...")
+    df_ERDK = pd.read_excel(file_paths["erdk"], **read_opts)
     df_ERDK = df_ERDK.iloc[:, [0, 4]].copy()
     df_ERDK["acct_key"] = df_ERDK.iloc[:, 0].apply(normalize_acct)
     df_ERDK["due_date_raw"] = pd.to_datetime(df_ERDK.iloc[:, 1], errors='coerce')
     df_ERDK = df_ERDK.sort_values("due_date_raw", ascending=False).dropna(subset=["due_date_raw"])
     df_ERDK = df_ERDK.drop_duplicates(subset=["acct_key"])
-    cu.log_debug("ERDK data loaded and processed")
+    print_elapsed_time("ERDK data loaded and processed")
 except Exception as e:
-    cu.log_error(f"Error processing ERDK data: {e}")
+    log_error(f"Error processing ERDK data: {e}")
     sys.exit(1)
 
 try:
-    cu.log_info("Loading EVER data...")
-    #df_EVER = pd.read_excel(file_paths["ever"], **read_opts)
-    df_EVER = cu.get_file("ever")
-    df_EVER = df_EVER.iloc[:, [79, 83, 84]].copy() # Columns CB, CF, CG  (Cont. Account, M/I Date, M/O Date)
-    df_EVER["acct_key"] = df_EVER.iloc[:, 0].apply(normalize_acct) 
+    log_info("Loading EVER data...")
+    df_EVER = pd.read_excel(file_paths["ever"], **read_opts)
+    df_EVER = df_EVER.iloc[:, [79, 83, 84]].copy()
+    df_EVER["acct_key"] = df_EVER.iloc[:, 0].apply(normalize_acct)
     df_EVER["open_date"] = df_EVER.iloc[:, 1]
     df_EVER["term_date"] = df_EVER.iloc[:, 2]
-    df_EVER = df_EVER.sort_values(by=["acct_key", "term_date"], ascending=False).drop_duplicates("acct_key", keep='first')
-    cu.log_debug("EVER data loaded and processed")
+    df_EVER = df_EVER.drop_duplicates("acct_key")
+    print_elapsed_time("EVER data loaded and processed")
 except Exception as e:
-    cu.log_error(f"Error processing EVER data: {e}")
+    log_error(f"Error processing EVER data: {e}")
     sys.exit(1)
 
 try:
-    cu.log_info("Loading PREM data...")
-    #df_Prem = pd.read_excel(file_paths["prem"], **read_opts)
-    df_Prem = cu.get_file("prem")
-    
+    log_info("Loading PREM data...")
+    df_Prem = pd.read_excel(file_paths["prem"], **read_opts)
+   
     print(f"PREM data loaded with {len(df_Prem)} rows and {len(df_Prem.columns)} columns")
     print("First few rows sample:")
     print(df_Prem.iloc[:3, :10])
@@ -142,25 +148,23 @@ try:
     df_Prem["rate_category"] = df_Prem.iloc[:, 4].apply(lambda x: str(x) if pd.notna(x) else "")
     df_Prem["ca_adid"] = df_Prem.iloc[:, 11].apply(normalize_acct)
     df_Prem["tax_jurisdiction"] = df_Prem.iloc[:, 29].apply(lambda x: str(x) if pd.notna(x) else "")
-    df_Prem = df_Prem.sort_values(by=["acct_key", "rate_category"], ascending=False)
    
     # Drop duplicates to avoid 1:many join problems
-    df_Prem = df_Prem.drop_duplicates(subset=["acct_key"], keep='first')
+    df_Prem = df_Prem.drop_duplicates(subset=["acct_key"])
    
-    cu.log_debug("PREM data loaded and processed")
+    print_elapsed_time("PREM data loaded and processed")
 except Exception as e:
-    cu.log_error(f"Error processing PREM data: {e}")
+    log_error(f"Error processing PREM data: {e}")
     sys.exit(1)
 
 try:
-    cu.log_info("Loading WriteOff data...")
-    #df_WriteOff = pd.read_excel(file_paths["writeoff"], **read_opts)
-    df_WriteOff = cu.get_file("writeoff")
+    log_info("Loading WriteOff data...")
+    df_WriteOff = pd.read_excel(file_paths["writeoff"], **read_opts)
     df_WriteOff["acct_key"] = df_WriteOff.iloc[:, 1].apply(normalize_acct)
     writeoff_set = set(df_WriteOff["acct_key"])
-    cu.log_debug("WriteOff data loaded and processed")
+    print_elapsed_time("WriteOff data loaded and processed")
 except Exception as e:
-    cu.log_error(f"Error processing WriteOff data: {e}")
+    log_error(f"Error processing WriteOff data: {e}")
     sys.exit(1)
 
 # Function to format dates
@@ -202,7 +206,7 @@ def calculate_active_code(row, writeoff_set):
         return 2
 
 # === Start building the output dataset ===
-cu.log_info("Building output dataset...")
+log_info("Building output dataset...")
 
 # Create initial dataframe from ZMECON accounts without using any index
 df_new = df_ZMECON.copy()
@@ -324,7 +328,7 @@ df_new[["TAXCODE", "TAXTYPE"]] = df_new.apply(lambda row: pd.Series(get_tax_code
 df_new = df_new.drop(columns=["acct_key", "open_date", "term_date", "due_date_raw",
                              "raw_cust", "raw_loc", "ZMECON_CUSTOMERID", "ZMECON_LOCATIONID", "penalty_val"])
 
-cu.log_debug("All fields calculated")
+print_elapsed_time("All fields calculated")
 
 # === Static values and blank columns ===
 defaults = {
@@ -355,7 +359,7 @@ for col, val in defaults.items():
     if col not in df_new.columns:
         df_new[col] = val
 
-cu.log_debug("Default values added")
+print_elapsed_time("Default values added")
 
 # === Primary Key for deduplication ===
 print(f"Before deduplication: {len(df_new)} rows")
@@ -364,7 +368,7 @@ df_new = df_new.drop_duplicates(subset="PRIMARY_KEY")
 df_new = df_new.drop(columns=["PRIMARY_KEY"])
 print(f"After deduplication: {len(df_new)} rows")
 
-cu.log_debug("Deduplication completed")
+print_elapsed_time("Deduplication completed")
 
 # === Column Order ===
 # Column order enforcement
@@ -382,11 +386,11 @@ for col in desired_column_order:
         df_new[col] = ""
 
 df_new = df_new[desired_column_order]
-cu.log_debug("Column order enforced")
+print_elapsed_time("Column order enforced")
 
 # === Trailer Row ===
 df_new = pd.concat([df_new, pd.DataFrame([["TRAILER"] + [""] * (len(df_new.columns) - 1)], columns=df_new.columns)], ignore_index=True)
-cu.log_debug("Trailer row added")
+print_elapsed_time("Trailer row added")
 
 # Output CSV
 output_path = r"STAGE_BILLING_ACCT.csv"
@@ -399,17 +403,18 @@ for col in numeric_columns:
     if col in df_new.columns:
         df_new[col] = pd.to_numeric(df_new[col], errors='coerce').fillna(0).astype(int)
 
-cu.log_debug("Numeric columns formatted")
+print_elapsed_time("Numeric columns formatted")
 
 # Convert date columns to strings
 date_columns = ["OPENDATE", "TERMINATEDDATE", "DUEDATE", "UPDATEDATE"]
 for col in date_columns:
     df_new[col] = df_new[col].fillna("").astype(str)
 
-cu.log_debug("Date columns formatted")
+print_elapsed_time("Date columns formatted")
 
 # Use QUOTE_NONNUMERIC to ensure all non-numeric fields (including dates) get quotes
 df_new.to_csv(output_path, index=False, quoting=csv.QUOTE_NONNUMERIC)
+print_elapsed_time("CSV file saved")
 
-cu.log_info(f"CSV file saved successfully at: {output_path}")
-cu.log_info("Script completed")
+log_info(f"CSV file saved successfully at: {output_path}")
+print_elapsed_time("Script completed")
