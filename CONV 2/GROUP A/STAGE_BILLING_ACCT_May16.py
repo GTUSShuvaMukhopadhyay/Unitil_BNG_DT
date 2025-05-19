@@ -3,6 +3,7 @@
 # Date:16May2025
 # Time:10:20 CST
 #2025-May-16 -conv2- remapped the iloc for Tax from 31 to 29
+#2025-May-18 -conv2- changed logic to sort df_Prem by rate_category before dropping duplicates
 
 import pandas as pd
 import os
@@ -141,9 +142,10 @@ try:
     df_Prem["rate_category"] = df_Prem.iloc[:, 4].apply(lambda x: str(x) if pd.notna(x) else "")
     df_Prem["ca_adid"] = df_Prem.iloc[:, 11].apply(normalize_acct)
     df_Prem["tax_jurisdiction"] = df_Prem.iloc[:, 29].apply(lambda x: str(x) if pd.notna(x) else "")
+    df_Prem = df_Prem.sort_values(by=["acct_key", "rate_category"], ascending=False)
    
     # Drop duplicates to avoid 1:many join problems
-    df_Prem = df_Prem.drop_duplicates(subset=["acct_key"])
+    df_Prem = df_Prem.drop_duplicates(subset=["acct_key"], keep='first')
    
     cu.log_debug("PREM data loaded and processed")
 except Exception as e:
