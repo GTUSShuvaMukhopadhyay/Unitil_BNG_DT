@@ -25,23 +25,23 @@ print_checklist()
 # Define file paths - include all DFKKOP files
 file_paths = {
      #DFKKOP files by year
-    "DFKKOP_2015": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\DFKKOP 01012015 to 12312015.XLSX",
-    "DFKKOP_2016": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\DFKKOP 01012016 to 12312016.XLSX",
-    "DFKKOP_2017": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\DFKKOP 01012017 to 12312017.XLSX",
-    "DFKKOP_2018": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\DFKKOP 01012018 to 12312018.XLSX",
-    "DFKKOP_2019": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\DFKKOP 01012019 to 12312019.XLSX",
-    "DFKKOP_2020": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\DFKKOP 01012020 to 12312020.XLSX",
-    "DFKKOP_2021": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\DFKKOP 01012021 to 12312021.XLSX",
-    "DFKKOP_2022": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\Dfkkop 01012022 to 12312022.XLSX",
-    "DFKKOP_2023": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\Dfkkop 01012023 to 12312023.XLSX",
-    "DFKKOP_2024": r"C:\Users\US97684\Downloads\Conv2\CONV 2\DFKKOP\DFKKOP 01012024 TO 02132025.XLSX",
+    "DFKKOP_2015": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012015 to 12312015.XLSX",
+    "DFKKOP_2016": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012016 to 12312016.XLSX",
+    "DFKKOP_2017": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012017 to 12312017.XLSX",
+    "DFKKOP_2018": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012018 to 12312018.XLSX",
+    "DFKKOP_2019": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012019 to 12312019.XLSX",
+    "DFKKOP_2020": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012020 to 12312020.XLSX",
+    "DFKKOP_2021": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012021 to 12312021.XLSX",
+    "DFKKOP_2022": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012022 to 12312022.XLSX",
+    "DFKKOP_2023": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012023 to 12312023.XLSX",
+    "DFKKOP_2024": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012024 TO 03272025.XLSX",
    
     # Other sources
-    "EVER": r"C:\Users\US97684\Downloads\Conv2\CONV 2\EVER.XLSX",
-    "ZDM_PREMDETAILS": r"C:\Users\US97684\Downloads\Conv2\CONV 2\ZDM_PREMDETAILS.XLSX",
+    "EVER": r"C:\DV\Unitil\Conversion 2\EVER.XLSX",
+    "ZDM_PREMDETAILS": r"C:\DV\Unitil\Conversion 2\ZDM_PREMDETAILS.XLSX",
    
     # Adding DFKKZP source for TENDERTYPE mapping
-    "DFKKZP": r"C:\Users\US97684\Downloads\Conv2\CONV 2\dfkkzp 05092025.XLSX"
+    "DFKKZP": r"C:\DV\Unitil\Conversion 2\dfkkzp 05092025.XLSX"
 }
  
 # Initialize data_sources dictionary to hold our data
@@ -52,7 +52,7 @@ def read_excel_file(name, path):
     try:
         # Specify dtype to keep MTrans as string
         dtype_dict = {'MTrans': str, 'STrans': str}
-        df = pd.read_excel(path, sheet_name="Sheet1", engine="openpyxl", dtype=dtype_dict)
+        df = pd.read_excel(path, sheet_name="Sheet1", dtype=dtype_dict)
         print(f"Successfully loaded {name}: {df.shape[0]} rows, {df.shape[1]} columns")
         return df
     except Exception as e:
@@ -244,6 +244,7 @@ if data_sources.get("DFKKOP") is not None and data_sources.get("ZDM_PREMDETAILS"
                 continue
                
             ca = df_new.at[i, "Cont.Account"]
+            ca = ca.split('.')[0]  # Remove the decimal place if present
             if ca in ca_to_install:
                 install = ca_to_install[ca]
                 if install in install_to_premise:
