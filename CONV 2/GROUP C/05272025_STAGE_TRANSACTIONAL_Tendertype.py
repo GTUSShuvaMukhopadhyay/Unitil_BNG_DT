@@ -26,14 +26,14 @@ print_checklist()
 file_paths = {
      #DFKKOP files by year
     "DFKKOP_2015": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012015 to 12312015.XLSX",
-    "DFKKOP_2016": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012016 to 12312016.XLSX",
-    "DFKKOP_2017": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012017 to 12312017.XLSX",
-    "DFKKOP_2018": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012018 to 12312018.XLSX",
+    #"DFKKOP_2016": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012016 to 12312016.XLSX",
+    #"DFKKOP_2017": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012017 to 12312017.XLSX",
+    #"DFKKOP_2018": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012018 to 12312018.XLSX",
     "DFKKOP_2019": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012019 to 12312019.XLSX",
-    "DFKKOP_2020": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012020 to 12312020.XLSX",
-    "DFKKOP_2021": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012021 to 12312021.XLSX",
-    "DFKKOP_2022": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012022 to 12312022.XLSX",
-    "DFKKOP_2023": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012023 to 12312023.XLSX",
+    #"DFKKOP_2020": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012020 to 12312020.XLSX",
+    #"DFKKOP_2021": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012021 to 12312021.XLSX",
+    #"DFKKOP_2022": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012022 to 12312022.XLSX",
+    #"DFKKOP_2023": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012023 to 12312023.XLSX",
     "DFKKOP_2024": r"C:\DV\Unitil\Conversion 2\DFKKOP 01012024 TO 03272025.XLSX",
    
     # Other sources
@@ -648,7 +648,7 @@ for field in numeric_fields:
             # Special handling for TRANSACTIONAMOUNT to preserve negative signs
             if field == "TRANSACTIONAMOUNT":
                 df_new[field] = df_new[field].apply(
-                    lambda x: str(int(float(x))) if pd.notna(x) else "0"
+                    lambda x: str(float(x)) if pd.notna(x) else "0"
                 )
             else:
                 df_new[field] = df_new[field].apply(
