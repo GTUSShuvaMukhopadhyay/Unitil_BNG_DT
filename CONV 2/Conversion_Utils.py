@@ -15,9 +15,12 @@ import pandas as pd
 import logging
 import time
 import re
+import Source_Schemas
 
 # Constants
 source_directory = r"C:\DV\Unitil\Conversion 2\\"
+cache_directory = r"C:\DV\Unitil\Conversion 2\parquet\\"
+output_directory = r"C:\DV\Unitil\Conversion 2\output\\"
 
 file_paths = {
     "active": source_directory + r"ZNC_ACTIVE_CUS.XLSX",
@@ -28,8 +31,22 @@ file_paths = {
     #"writeoff": source_directory + r"Write off customer history.XLSX",
     "writeoff": source_directory + r"ZWRITEOFF_ME1.XLSX",
     #"zmecon1": source_directory + r"ZMECON 01012021 to 02132025.xlsx",
+    "zmecon": "Multiple Files",
     "zmecon1": source_directory + r"ZMECON 2021 to 03272025.xlsx",
-    "zmecon2": source_directory + r"ZMECON 2015 to 2020.xlsx" }
+    "zmecon2": source_directory + r"ZMECON 2015 to 2020.xlsx",
+    "dfkkop": "Multiple Files",
+    "dfkkop1": source_directory + r"DFKKOP 01012015 to 12312015.XLSX",
+    "dfkkop2": source_directory + r"DFKKOP 01012016 to 12312016.XLSX",
+    "dfkkop3": source_directory + r"DFKKOP 01012017 to 12312017.XLSX",
+    "dfkkop4": source_directory + r"DFKKOP 01012018 to 12312018.XLSX",
+    "dfkkop5": source_directory + r"DFKKOP 01012019 to 12312019.XLSX",
+    "dfkkop6": source_directory + r"DFKKOP 01012020 to 12312020.XLSX",
+    "dfkkop7": source_directory + r"DFKKOP 01012021 to 12312021.XLSX",
+    "dfkkop8": source_directory + r"DFKKOP 01012022 to 12312022.XLSX",
+    "dfkkop9": source_directory + r"DFKKOP 01012023 to 12312023.XLSX",
+    "dfkkop10": source_directory + r"DFKKOP 01012024 TO 03272025.XLSX",
+    "stage_transactional_history": output_directory + r"STAGE_TRANSACTIONAL_HIST.csv",
+    }
 
 logging.basicConfig(
     format='%(levelname)s:%(message)s',
@@ -45,17 +62,89 @@ logger = logging.getLogger(__name__)
 start_time = time.time()
 last_time = time.time()
 
-def get_file( file_name, columns=None ):
-    read_opts = {"engine": "openpyxl"}
+def read_file( file_name, columns=None, skip_cache=False ):
+    file_df = pd.DataFrame()
+
+    ### Set the schema to read the file
+    # Set all columns to string by default
+    file_schema = {col: str for col in columns} if columns else {}
+
+    # If a specific schema is defined in Source_Schemas, use it
+    if hasattr(Source_Schemas, file_name + "_schema"):
+        schema = getattr(Source_Schemas, file_name + "_schema")
+        for col in columns:
+            if col in schema:
+                file_schema[col] = schema[col]
 
     # Concatenate ZMECON files if necessary
     if file_name == "zmecon":
-        file_df = pd.concat([get_file("zmecon1"), get_file("zmecon2")], ignore_index=True)
+        file_df = pd.concat([get_file("zmecon1", columns, skip_cache), get_file("zmecon2", columns, skip_cache)], ignore_index=True)
+    elif file_name == "dfkkop":
+        # Concatenate DFKKOP files if necessary
+        file_df = pd.concat([get_file("dfkkop1", columns, skip_cache), get_file("dfkkop2", columns, skip_cache), get_file("dfkkop3", columns, skip_cache),
+                             get_file("dfkkop4", columns, skip_cache), get_file("dfkkop5", columns, skip_cache), get_file("dfkkop6", columns, skip_cache),
+                             get_file("dfkkop7", columns, skip_cache), get_file("dfkkop8", columns, skip_cache), get_file("dfkkop9", columns, skip_cache),
+                             get_file("dfkkop10", columns, skip_cache)], ignore_index=True)
+    elif file_paths[file_name].upper().endswith(".XLSX"):
+       file_df = pd.read_excel(file_paths[ file_name ], usecols=columns, dtype=file_schema )
+    elif file_paths[file_name].upper().endswith(".CSV"):
+       file_df = pd.read_csv(file_paths[ file_name ], usecols=columns, encoding='utf-8', dtype=file_schema)
+       log_info(f"Loaded {file_name} file. Records: " + str(len(file_df)))
     else:
-        # Read the specified file
-        file_df = pd.read_excel(file_paths[ file_name ])
-        log_info(f"Loaded {file_name} file. Records: " + str(len(file_df)))
+        log_error(f"Unsupported file format for {file_name}. Supported formats are .xlsx and .csv.")
+
+    # Set the column schema if available
+    if hasattr(Source_Schemas, file_name + "_schema"):
+        schema = getattr(Source_Schemas, file_name + "_schema")
+        for col, dtype in schema.items():
+            if col in file_df.columns:
+                file_df[col] = file_df[col].astype(dtype)
+
     return file_df
+
+def get_file( file_name, columns=None, skip_cache=False ):
+    """
+    Retrieves a DataFrame for a specified file, optionally selecting specific columns.
+    Checks if there is a parquet version of the file first, and if not, reads from the Excel file.
+    Creates a parquest file if it does not exist.
+    
+    :param file_name: Name of the file to retrieve (e.g., 'active', 'erdk', etc.)
+    :param columns: List of columns to select from the DataFrame (optional)
+    :param skip_cache: If True, skips the cache and reads directly from the source file (default is False)
+    :return: DataFrame containing the data from the specified file
+    """
+    # Check if the file exists in the file cache directory
+    cache_file = cache_directory + file_name + ".parquet"
+    if file_name in file_paths and pd.io.common.file_exists(cache_file) and not skip_cache:
+        df = pd.read_parquet(cache_file)    
+        log_info(f"Loaded {file_name} from cache. Records: " + str(len(df)))
+        if columns:
+            if set(columns).issubset(df.columns):
+                df = df[columns]
+                return df
+            else:
+                log_info(f"Columns {columns} not found in {file_name} cache.")
+        else:
+            return df
+    
+    # If not in cache, read from the source file
+    log_info(f"Loading {file_name} from source file.")
+    
+    if file_name not in file_paths:
+        raise ValueError(f"File '{file_name}' not found in file paths.")
+    
+    df = read_file(file_name, columns, skip_cache)
+
+    log_info(f"Loaded {file_name} file. Records: " + str(len(df)))
+    # Save to cache directory as a parquet file
+    df.to_parquet(cache_file, index=False)
+    log_info(f"Saved {file_name} to cache as parquet. Records: " + str(len(df)))
+
+    # If specific columns are requested, filter the DataFrame
+    if columns:
+        df = df[columns]
+    
+    return df
 
 def cleanse_string(value, max_length=None):
     """
