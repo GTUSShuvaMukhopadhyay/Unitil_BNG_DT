@@ -7,14 +7,11 @@
 # Updated: 06062025 0623A
 # new data sources
 # updated field references , fixed meter number reference
-
 import pandas as pd
 import os
 import csv
-import re
-from datetime import datetime
 
-# CSV Staging File Checklist
+# ✅ Checklist
 CHECKLIST = [
     "✅ Filename must match the entry in Column D of the All Tables tab.",
     "✅ Filename must be in uppercase except for '.csv' extension.",
@@ -33,8 +30,8 @@ def print_checklist():
 
 print_checklist()
 
-# Define file paths - update these paths as needed
-file_path = r"C:\Users\us85360\Desktop\CONV 2 - STAGE_UNBILLED_READINGS\Bill Parallel - Input_Output Files.xlsx"
+# ✅ File path
+file_path = r"C:\Users\US82783\OneDrive - Grant Thornton LLP\Desktop\python\conv 2\Unbilled\Bill Parallel - Input_Output Files.xlsx"
 
 print(f"\n🔄 Loading file: {file_path}")
 df_Prem = pd.read_excel(file_path, sheet_name='ZDM_PREMDETAILS', engine='openpyxl')
@@ -52,17 +49,17 @@ output_rows = []
 print(f"\n🔁 Processing {len(df_EABL_After)} rows from EABL - After Conv...")
 for i in range(len(df_EABL_After)):
     INSTALLATION = df_EABL_After.iloc[i, 3]
-    METERNUMBER = df_EABL_After.iloc[i, 6]  # Add this line here
+    METERNUMBER = df_EABL_After.iloc[i, 6]
     CURRREADDATE = df_EABL_After.iloc[i, 4]
-    CURRREADING = df_EABL_After.iloc[i, 8]
+    CURRREADING = round(float(df_EABL_After.iloc[i, 8]),3)
     match_index = df_Prem[df_Prem.iloc[:, 3] == INSTALLATION].index
     conv_match_index = df_EABL_Conv[df_EABL_Conv.iloc[:, 3] == INSTALLATION].index
 
     if not match_index.empty:
         matched_row = match_index[0]
-        CUSTOMERID = df_Prem.iloc[matched_row, 7]
+        CUSTOMERID = int(df_Prem.iloc[matched_row, 7])
         LOCATIONID = df_Prem.iloc[matched_row, 2]
-        METERMULTIPLIER = df_Prem.iloc[matched_row, 22]
+        METERMULTIPLIER = round(float(df_Prem.iloc[matched_row, 22]),6)
         APPLICATION = "5"
         METERREGISTER = "1"
         READINGCODE = "2"
@@ -73,8 +70,8 @@ for i in range(len(df_EABL_After)):
 
     if not conv_match_index.empty:
         PREVREADDATE = df_EABL_Conv.iloc[conv_match_index[0], 4]
-        PREVREADING = df_EABL_Conv.iloc[conv_match_index[0], 8]
-        RAWUSAGE = float(CURRREADING) - float(PREVREADING)
+        PREVREADING = round(float(df_EABL_Conv.iloc[conv_match_index[0], 8]),3)
+        RAWUSAGE = round(float(CURRREADING),3) - round(float(PREVREADING),3)
         BILLINGUSAGE = float(RAWUSAGE) * float(METERMULTIPLIER)
         output_rows.append([
             CUSTOMERID, LOCATIONID, APPLICATION, METERNUMBER, METERREGISTER, READINGCODE, READINGTYPE,
@@ -113,16 +110,10 @@ def custom_quote(val, colname):
 
 df_output = df_output.apply(lambda col: col.apply(lambda val: custom_quote(val, col.name)))
 
-# Add a trailer row with default values
-trailer_row = pd.DataFrame([["TRAILER"] + [''] * (len(df_output.columns) - 1)], columns=df_output.columns)
-df_new = pd.concat([df_output, trailer_row], ignore_index=True)
+trailer_row = pd.DataFrame([['TRAILER'] + [''] * (len(df_output.columns) - 1)], columns=df_output.columns)
+df_output = pd.concat([df_output, trailer_row], ignore_index=True)
 
-# Define output path for the CSV file
-output_path = os.path.join(os.path.dirname(file_path), 'STAGE_UNBILLED_READINGS_0650AM_06062025.csv')
-
-# Save to CSV with proper quoting and escape character
-df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
-
-# Confirmation message
-print(f"CSV file saved at {output_path}")
-print(f"Total records exported: {len(df_output) - 1}")  # Subtract 1 to account for trailer row
+# Save to CSV
+output_path = os.path.splitext(file_path)[0] + "_output1.csv"
+df_output.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE)
+print(f"\n📁 Output saved to: {output_path}")
