@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import csv
 
 # ✅ Checklist
 CHECKLIST = [
@@ -36,24 +37,26 @@ for file_path in file_paths:
     for idx, row in df.iterrows():
         customer_id = str(row.iloc[0])[:15]
         location_id = str(row.iloc[25])[:15]
-
+        meternumber = str(row.iloc[20])[:20]
         rows.append({
             "CUSTOMERID": customer_id,
             "LOCATIONID": location_id,
             "CHARGECODE": "ServCharge",
             "CHARGEDESC": "",
-            "BILLAMOUNT": row.iloc[8],
-            "BILLCONSUMPTION": ""
+            "BILLAMOUNT": round(float(row.iloc[8]), 2),
+            "METERNUMBER": meternumber,
+            "BILLCONSUMPTION":""
         })
 
-        usecharges_amount = row.iloc[9:16].sum()
+        usecharges_amount = round(float(row.iloc[[9, 11, 13, 15]].sum()),2)
         rows.append({
             "CUSTOMERID": customer_id,
             "LOCATIONID": location_id,
             "CHARGECODE": "UseCharges",
             "CHARGEDESC": "",
             "BILLAMOUNT": usecharges_amount,
-            "BILLCONSUMPTION": ""
+            "METERNUMBER": meternumber,
+            "BILLCONSUMPTION": round(float(row.iloc[21]), 3)
         })
 
         rows.append({
@@ -61,7 +64,8 @@ for file_path in file_paths:
             "LOCATIONID": location_id,
             "CHARGECODE": "SaleTax",
             "CHARGEDESC": "",
-            "BILLAMOUNT": row.iloc[17],
+            "BILLAMOUNT": round(float(row.iloc[17]),2),
+            "METERNUMBER": meternumber,
             "BILLCONSUMPTION": ""
         })
 
@@ -84,24 +88,18 @@ df_new = pd.concat([df_new, trailer_row], ignore_index=True)
 # ✅ Output paths
 output_dir = r"C:\Users\US82783\OneDrive - Grant Thornton LLP\Desktop\python\conv 2\Bill"
 main_output_path = os.path.join(output_dir, "BillTrans2.csv")
-split_output_dir = os.path.join(output_dir, "SplitFiles2")
-os.makedirs(split_output_dir, exist_ok=True)
 
-# ✅ Save main full file
-df_new.to_csv(main_output_path, index=False)
+numeric_columns = [
+    'BILLAMOUNT', 'BILLCONSUMPTION'
+]
+
+def custom_quote(val, column):
+    # Check if the column is in the list of numeric columns
+    if column in numeric_columns:
+        return val  # No quotes for numeric fields
+    # Otherwise, add quotes for non-numeric fields
+    return f'"{val}"' if val not in ["", None] else val
+
+df_new = df_new.apply(lambda col: col.apply(lambda val: custom_quote(val, col.name)))
+df_new.to_csv(main_output_path, index=False, header=True, quoting=csv.QUOTE_NONE)
 print(f"\nFull CSV file saved at: {main_output_path}")
-
-# ✅ Split file logic
-max_rows = 1000000
-total_rows = len(df_new)
-num_parts = (total_rows + max_rows - 1) // max_rows  # Ceiling division
-
-print(f"Creating {num_parts} split file(s)...")
-
-for i in range(num_parts):
-    start = i * max_rows
-    end = min(start + max_rows, total_rows)
-    part_df = df_new.iloc[start:end]
-    part_file_path = os.path.join(split_output_dir, f"BillTrans1_part{i+1}.csv")
-    part_df.to_csv(part_file_path, index=False)
-    print(f"Saved part {i+1}: rows {start} to {end - 1} ➜ {part_file_path}")
