@@ -90,11 +90,15 @@ if data_sources["FPD2"] is not None and data_sources["ZDM_PREMDETAILS"] is not N
     # Optional: drop Contract Account if you don't need it after the merge
     df_new.drop(columns=["Contract Account"], inplace=True)
 
-
 # Create DEPOSITSTATUS based on 'Description of Security Deposit Status' (Column K in FPD2)
-if data_sources["FPD2"] is not None:
-    df_new["DEPOSITSTATUS"] = data_sources["FPD2"].iloc[:, 10].apply(lambda x: 2 if x == "Paid" else (90 if x == "Request" else 1))
+# if data_sources["FPD2"] is not None:
+#     df_new["DEPOSITSTATUS"] = data_sources["FPD2"].iloc[:, 10].apply(lambda x: 2 if x == "Paid" else (90 if x == "Request" else 1))
+    
+# DEPOSITSTATUS updated for Gary SPIRA Ticket Updated the mapping logic on Ushare CIS CEM/CONVERT/CONVERSION 2b/01 PREP
+# Deposit Tab -→ Row 6 (Deposit Status) -→ all deposits on report are Active (0)
 
+if data_sources["FPD2"] is not None:
+    df_new["DEPOSITSTATUS"] = 0
 # Extract DEPOSITDATE from FPD2
 if data_sources["FPD2"] is not None:
     df_new["DEPOSITDATE"] = pd.to_datetime(data_sources["FPD2"].iloc[:, 4], errors='coerce').dt.strftime('%Y-%m-%d')
