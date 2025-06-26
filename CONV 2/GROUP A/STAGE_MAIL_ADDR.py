@@ -18,7 +18,7 @@ import Conversion_Utils as cu
 cu.print_checklist()
  
 # Define input file path
-#file_path = r"MA1_Extract.xlsx"
+#file_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B\DATA SOURCES\MAILING_ADDR1.XLSX"
  
 # Read the Excel file and load the specific sheet
 #df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
@@ -90,7 +90,7 @@ df_new[['ADDRESS1', 'ADDRESS2']] = df_new['ADDRESS1'].apply(lambda x: pd.Series(
 
 df_new['CITY'] =  df.iloc[:, 10].astype(str).str.slice(0, 24)
 df_new['STATE'] = df.iloc[:, 11].astype(str).str.slice(0, 2)
-df_new['COUNTRY'] = "US"
+df_new['COUNTRY'] = df.iloc[:, 14].astype(str).str.slice(0, 2)
 # df_new['POSTALCODE'] = "SM WIP"
 df_new['POSTALCODE'] = df.iloc[:, 12].fillna(df.iloc[:, 13])
 
