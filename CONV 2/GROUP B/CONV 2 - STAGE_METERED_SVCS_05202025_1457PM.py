@@ -28,6 +28,8 @@
 #   added logic to handle empty values in BILLINGRATE2 and SALESCLASS2 after deduplication
 #   added direct meter-based mapping to fix rate category issues
 
+# 06302025 InitialServiceDate changes.
+# Looking at the Metered Service mapping, the service date is looking at M/I date on the ZNC_ACTIVE but if there is not a record in ZNC_ACTIVE, use EVER M/I date.  
 
 
 # STAGE_METERED_SVCS.py
@@ -245,11 +247,11 @@ def apply_meter_exceptions(df):
  
 # Define file paths
 file_paths = {
-    "ZDM_PREMDETAILS":  r"C:\Users\us85360\Desktop\CONV 2 - STAGE_METERED_SVCS\ZDM_PREMDETAILS.XLSX",
-    "ZNC_ACTIVE_CUS": r"C:\Users\us85360\Desktop\CONV 2 - STAGE_METERED_SVCS\ZNC_ACTIVE_CUS.XLSX",
-    "EABL1": r"C:\Users\us85360\Desktop\CONV 2 - STAGE_METERED_SVCS\EABL 01012020 to 03272025.XLSX",
-    "EABL2": r"C:\Users\us85360\Desktop\CONV 2 - STAGE_METERED_SVCS\EABL 01012015 to 12312019.XLSX",
- 
+    "ZDM_PREMDETAILS":  r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B\DATA SOURCES\ZDM_PREMDETAILS.XLSX",
+    "ZNC_ACTIVE_CUS": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B\DATA SOURCES\ZNC_ACTIVE_CUS.XLSX",
+    "EABL1": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B\DATA SOURCES\EABL\EABL 06012019 TO 12312022.XLSX",
+    "EABL2": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B\DATA SOURCES\EABL\EABL 01012023 TO 06142025.XLSX",
+    "EVER" : r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B\DATA SOURCES\EVER-0614.XLSX"
 }
  
 # Load the data from each spreadsheet
@@ -470,6 +472,20 @@ if data_sources["ZNC_ACTIVE_CUS"] is not None:
             df_new["INITIALSERVICEDATE"] = df_new["CUSTOMERID"].map(customer_to_date)
             df_new["BILLINGSTARTDATE"] = df_new["CUSTOMERID"].map(customer_to_date)
             
+            ever_mapping = dict(zip(
+                data_sources["EVER"].iloc[:, 78], 
+                data_sources["EVER"].iloc[:, 83]
+            ))
+
+            installation = data_sources["ZDM_PREMDETAILS"].iloc[:, 3].fillna('')
+
+            for idx, row in df_new.iterrows():
+                if pd.isna(row["INITIALSERVICEDATE"]):
+                    match_key = installation.iloc[idx]
+                    mapped_date = ever_mapping.get(match_key)
+                    if pd.notna(mapped_date):
+                        df_new.at[idx, "INITIALSERVICEDATE"] = mapped_date
+
             # Print statistics on populated fields
             initial_count = sum(~df_new["INITIALSERVICEDATE"].isna())
             billing_count = sum(~df_new["BILLINGSTARTDATE"].isna())
@@ -783,7 +799,7 @@ df_new = pd.concat([df_new, trailer_row], ignore_index=True)
  
  
 # Define output path for the CSV file
-output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '052025_CONV2_STAGE_METERED_SVCS.csv')
+output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_METERED_SVCS.csv')
  
 # Save to CSV with proper quoting and escape character
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
