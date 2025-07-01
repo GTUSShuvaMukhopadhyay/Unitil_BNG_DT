@@ -1,0 +1,1484 @@
+
+SQL*Loader: Release 19.0.0.0.0 - Production on Thu Mar 27 08:45:47 2025
+Version 19.17.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Control File:   C:\development\workspace-oxygen-git\net-new-conversion-UNI\DEPLOY\GroupA\CONTROL\STAGE_PREMISE.ctl
+Data File:      C:\development\workspace-oxygen-git\net-new-conversion-UNI\DEPLOY\GroupA\data\STAGE_PREMISE.csv
+  Bad File:     C:\development\workspace-oxygen-git\net-new-conversion-UNI\DEPLOY\GroupA\workfiles\STAGE_PREMISE-sqlldr-bad.csv
+  Discard File:  none specified
+ 
+ (Allow all discards)
+
+Number to load: ALL
+Number to skip: 1
+Errors allowed: 1000
+Continuation:    none specified
+Path used:      Direct
+
+Table "ENQCNV"."STAGE_PREMISE", loaded when 1:7 != 0X545241494c4552(character 'TRAILER')
+                  and 2:8 != 0X545241494c4552(character 'TRAILER')
+Insert option in effect for this table: APPEND
+TRAILING NULLCOLS option in effect
+
+   Column Name                  Position   Len  Term Encl Datatype
+------------------------------ ---------- ----- ---- ---- ---------------------
+LOCATIONID                          FIRST     *   ,  O(") CHARACTER            
+STREETNUMBER                         NEXT     *   ,  O(") CHARACTER            
+STREETNUMBERSUFFIX                   NEXT     *   ,  O(") CHARACTER            
+STREETNAME                           NEXT     *   ,  O(") CHARACTER            
+DESIGNATION                          NEXT     *   ,  O(") CHARACTER            
+ADDITIONALDESC                       NEXT     *   ,  O(") CHARACTER            
+TOWN                                 NEXT     *   ,  O(") CHARACTER            
+STATE                                NEXT     *   ,  O(") CHARACTER            
+ZIPCODE                              NEXT     *   ,  O(") CHARACTER            
+ZIPPLUSFOUR                          NEXT     *   ,  O(") CHARACTER            
+OWNERCUSTOMERID                      NEXT     *   ,  O(") CHARACTER            
+OWNERMAILSEQ                         NEXT     *   ,  O(") CHARACTER            
+PROPERTYCLASS                        NEXT     *   ,  O(") CHARACTER            
+TAXDISTRICT                          NEXT     *   ,  O(") CHARACTER            
+BILLINGCYCLE                         NEXT     *   ,  O(") CHARACTER            
+READINGROUTE                         NEXT     *   ,  O(") CHARACTER            
+SERVICEAREA                          NEXT     *   ,  O(") CHARACTER            
+SERVICEFACILITY                      NEXT     *   ,  O(") CHARACTER            
+PRESSUREDISTRICT                     NEXT     *   ,  O(") CHARACTER            
+LATITUDE                             NEXT     *   ,  O(") CHARACTER            
+LONGITUDE                            NEXT     *   ,  O(") CHARACTER            
+MAPNUMBER                            NEXT     *   ,  O(") CHARACTER            
+PARCELID                             NEXT     *   ,  O(") CHARACTER            
+PARCELAREATYPE                       NEXT     *   ,  O(") CHARACTER            
+PARCELAREA                           NEXT     *   ,  O(") CHARACTER            
+IMPERVIOUSSQUAREFEET                 NEXT     *   ,  O(") CHARACTER            
+SUBDIVISION                          NEXT     *   ,  O(") CHARACTER            
+GISID                                NEXT     *   ,  O(") CHARACTER            
+FOLIOSEGMENT1                        NEXT     *   ,  O(") CHARACTER            
+FOLIOSEGMENT2                        NEXT     *   ,  O(") CHARACTER            
+FOLIOSEGMENT3                        NEXT     *   ,  O(") CHARACTER            
+FOLIOSEGMENT4                        NEXT     *   ,  O(") CHARACTER            
+FOLIOSEGMENT5                        NEXT     *   ,  O(") CHARACTER            
+PROPERTYUSECLASSIFICATION1           NEXT     *   ,  O(") CHARACTER            
+PROPERTYUSECLASSIFICATION2           NEXT     *   ,  O(") CHARACTER            
+PROPERTYUSECLASSIFICATION3           NEXT     *   ,  O(") CHARACTER            
+PROPERTYUSECLASSIFICATION4           NEXT     *   ,  O(") CHARACTER            
+PROPERTYUSECLASSIFICATION5           NEXT     *   ,  O(") CHARACTER            
+UPDATEDATE                           NEXT     *   ,  O(") DATE YYYY-MM-DD      
+RECNO                                                     RECNUM
+
+Record 464: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 630: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 631: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 632: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 633: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 1137: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 1138: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 1139: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 1140: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 1142: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 1143: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 1144: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 1376: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 1393: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 1600: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 1647: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 2017: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 2381: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 2382: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4546: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 4703: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4714: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4734: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4735: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4739: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4754: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4755: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4760: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 4761: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBERSUFFIX.
+ORA-12899: value too large for column STREETNUMBERSUFFIX (actual: 15, maximum: 8)
+
+Record 9390: Discarded - failed all WHEN clauses.
+Record 5175: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5241: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5242: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5243: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5244: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5245: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5246: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5247: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5248: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5249: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5250: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5251: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5252: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5253: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5254: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5255: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5256: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5257: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5258: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5259: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5260: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5261: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5262: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5263: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5264: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5265: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5266: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5267: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5268: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5269: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5270: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5271: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5272: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5273: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5274: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5275: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5276: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5277: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5278: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5279: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5280: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5281: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5282: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5283: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5284: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5285: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5286: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5287: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5288: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5289: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5290: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5291: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5292: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5293: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5294: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5295: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5296: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5297: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5298: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5299: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5300: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5301: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5302: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5303: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5304: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5305: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5306: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5307: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5308: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5309: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5310: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5311: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5312: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5313: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5314: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5315: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5316: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5317: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5318: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5319: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5320: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5321: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5322: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5323: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5324: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5325: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5326: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5327: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5328: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5329: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5330: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5331: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5332: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5333: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5334: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5335: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5336: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5337: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5338: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5339: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5340: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5341: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5342: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5343: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5344: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5345: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5346: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5347: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5348: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5349: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5350: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5351: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5352: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5353: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5354: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5355: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5356: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5357: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5358: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5359: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5360: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5361: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5362: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5363: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5364: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5365: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5366: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5367: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5368: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5369: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5370: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5371: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5372: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5373: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5374: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5375: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5376: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5377: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5378: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5379: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5380: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5381: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5382: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5383: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5384: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5385: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5386: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5387: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5388: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5389: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5390: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5391: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5392: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5393: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5394: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5395: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5396: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5397: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5398: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5399: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5400: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5401: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5402: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5403: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5404: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5405: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5406: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5407: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5408: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5409: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5410: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5411: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5412: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5413: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5414: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5415: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5416: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5417: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5418: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5419: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5420: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5421: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5422: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5423: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5424: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5425: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5426: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5427: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5428: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5429: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5430: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5431: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5432: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5433: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5434: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5435: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5436: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5437: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5438: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5439: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5440: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5441: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5442: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5443: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5444: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5445: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5446: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5447: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5448: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5449: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5450: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5451: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5452: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5453: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5454: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5455: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5456: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5457: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5458: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5459: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5460: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5461: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5462: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5463: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5464: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5465: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5466: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5467: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5468: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5469: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5470: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5471: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5472: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5473: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5474: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5475: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5476: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5477: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5478: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5479: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5480: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5481: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5482: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5483: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5484: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5485: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5486: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5487: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5488: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5489: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5490: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5491: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5492: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5493: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5494: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5495: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5496: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5497: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5498: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column ZIPPLUSFOUR.
+ORA-12899: value too large for column ZIPPLUSFOUR (actual: 5, maximum: 4)
+
+Record 5499: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5500: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5501: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5502: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5503: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5504: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5505: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5506: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5507: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5508: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5509: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5510: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5511: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5512: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5513: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5514: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 5515: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5516: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5517: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5518: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5519: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5520: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5521: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5522: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5523: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5524: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5525: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5526: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5527: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5528: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5529: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5530: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5531: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5532: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5533: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5534: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5535: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5536: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5537: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5538: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5539: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5540: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5541: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5542: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5543: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5544: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5545: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5546: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5547: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5548: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5549: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5550: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5551: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5552: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5553: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5554: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5555: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5556: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5557: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5558: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5559: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5560: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5561: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5562: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5563: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5564: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5565: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5566: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5567: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5568: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5569: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5570: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5571: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5572: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5573: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5574: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5575: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5576: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5577: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5578: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5579: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5580: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5581: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5582: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5583: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5584: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5585: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5586: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5587: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5588: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5589: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5590: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5591: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5592: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5593: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5594: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5595: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5596: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5597: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5598: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5599: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5600: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5601: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5602: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5603: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5604: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5605: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5606: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5607: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5608: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5609: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5610: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5611: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5612: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5613: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5614: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5615: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5616: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5617: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5618: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5619: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5620: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5621: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5622: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5623: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5624: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5625: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5626: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5627: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5628: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5629: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5630: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5631: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5632: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5633: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5634: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5635: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5636: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5637: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5638: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5639: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5640: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5641: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5642: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5643: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5644: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5645: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5646: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5647: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5648: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5649: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5650: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5651: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5652: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5653: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5654: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5655: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5656: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5657: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5658: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5659: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5660: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5661: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5662: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5663: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5664: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5665: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5666: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5667: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5668: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5669: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5670: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5671: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5672: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5673: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5674: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5675: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5676: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5677: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5678: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5679: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5680: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5681: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5682: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5683: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5684: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5685: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5686: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 5687: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6923: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6924: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6925: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6926: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6927: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6928: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6929: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6930: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6931: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6932: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6933: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6934: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6935: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6936: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6937: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6938: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6939: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6940: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6941: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6942: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6943: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6944: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6945: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6946: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6947: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6948: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6949: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6950: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6951: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6952: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6953: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6954: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6955: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6956: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6957: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6958: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6959: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6960: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6961: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6962: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6963: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6964: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6965: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6966: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6967: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6968: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6969: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6970: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6971: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6972: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6973: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6974: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6975: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6976: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6977: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6978: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6979: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6980: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6981: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6982: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6983: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6984: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6985: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6986: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6987: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6988: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6989: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6990: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6991: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6992: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6993: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6994: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6995: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6996: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6997: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6998: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 6999: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7000: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7001: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7002: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7003: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7004: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7005: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7006: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7007: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7008: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7009: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7010: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7011: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7012: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7013: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7014: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7015: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7016: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7017: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7018: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7019: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7020: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7021: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7022: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7023: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7024: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7025: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7026: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7027: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7028: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7029: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7030: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7031: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7032: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7033: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7034: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7035: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7036: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7037: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7038: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7039: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7040: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7041: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7042: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7043: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7044: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7045: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7046: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7047: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7048: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7049: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7050: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7051: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7052: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7053: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7054: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7055: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7056: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7057: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7058: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7059: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7060: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7061: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7062: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7063: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7064: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7065: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7066: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7067: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7068: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7069: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7070: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7071: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7072: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7073: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7074: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7075: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7076: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7077: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7078: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7079: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column BILLINGCYCLE.
+ORA-01400: cannot insert NULL into (BILLINGCYCLE)
+Record 7380: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7449: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7453: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7455: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7457: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7458: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7460: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7486: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7516: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7518: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7520: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7522: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7524: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 7530: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8167: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8930: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8931: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8932: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8933: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8934: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8935: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8936: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8937: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 8954: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+Record 9215: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column ZIPCODE.
+ORA-12899: value too large for column ZIPCODE (actual: 10, maximum: 5)
+
+Record 9378: Rejected - Error on table "ENQCNV"."STAGE_PREMISE", column STREETNUMBER.
+ORA-01722: invalid number
+
+The following index(es) on table "ENQCNV"."STAGE_PREMISE" were processed:
+index ENQCNV.STAGE_PREMISE_AK1 loaded successfully with 8729 keys
+index ENQCNV.STAGE_PREMISE_AK2 loaded successfully with 8729 keys
+index ENQCNV.STAGE_PREMISE_UK loaded successfully with 8729 keys
+
+Table "ENQCNV"."STAGE_PREMISE":
+  8729 Rows successfully loaded.
+  660 Rows not loaded due to data errors.
+  1 Row not loaded because all WHEN clauses were failed.
+  0 Rows not loaded because all fields were null.
+
+Bind array size not used in direct path.
+Column array  rows :    5000
+Stream buffer bytes:  256000
+Read   buffer bytes: 1048576
+
+Total logical records skipped:          1
+Total logical records read:          9390
+Total logical records rejected:       660
+Total logical records discarded:        1
+Total stream buffers loaded by SQL*Loader main thread:        2
+Total stream buffers loaded by SQL*Loader load thread:        2
+
+Run began on Thu Mar 27 08:45:47 2025
+Run ended on Thu Mar 27 08:45:51 2025
+
+Elapsed time was:     00:00:04.54
+CPU time was:         00:00:00.25
