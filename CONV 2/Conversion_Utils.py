@@ -18,9 +18,9 @@ import re
 import Source_Schemas
 
 # Constants
-source_directory = r"C:\DV\Unitil\Conversion 2\\"
-cache_directory = r"C:\DV\Unitil\Conversion 2\parquet\\"
-output_directory = r"C:\DV\Unitil\Conversion 2\output\\"
+source_directory = r"C:\DV\Unitil\Conversion 2b\\"
+cache_directory = r"C:\DV\Unitil\Conversion 2b\parquet\\"
+output_directory = r"C:\DV\Unitil\Conversion 2b\output\\"
 
 file_paths = {
     "active": source_directory + r"ZNC_ACTIVE_CUS.XLSX",
@@ -32,8 +32,8 @@ file_paths = {
     "writeoff": source_directory + r"ZWRITEOFF_ME1.XLSX",
     #"zmecon1": source_directory + r"ZMECON 01012021 to 02132025.xlsx",
     "zmecon": "Multiple Files",
-    "zmecon1": source_directory + r"ZMECON 2021 to 03272025.xlsx",
-    "zmecon2": source_directory + r"ZMECON 2015 to 2020.xlsx",
+    "zmecon1": source_directory + r"ZMECON 010121 to 061425.xlsx",
+    "zmecon2": source_directory + r"ZMECON 010115 to 12312020.xlsx",
     "dfkkop": "Multiple Files",
     "dfkkop1": source_directory + r"DFKKOP 01012015 to 12312015.XLSX",
     "dfkkop2": source_directory + r"DFKKOP 01012016 to 12312016.XLSX",
@@ -72,7 +72,7 @@ def read_file( file_name, columns=None, skip_cache=False ):
     # If a specific schema is defined in Source_Schemas, use it
     if hasattr(Source_Schemas, file_name + "_schema"):
         schema = getattr(Source_Schemas, file_name + "_schema")
-        for col in columns:
+        for col in columns if columns else []:
             if col in schema:
                 file_schema[col] = schema[col]
 
@@ -98,7 +98,16 @@ def read_file( file_name, columns=None, skip_cache=False ):
         schema = getattr(Source_Schemas, file_name + "_schema")
         for col, dtype in schema.items():
             if col in file_df.columns:
-                file_df[col] = file_df[col].astype(dtype)
+                if dtype == pd.Timestamp:
+                    # Convert to datetime if the schema specifies Timestamp
+                    file_df[col] = pd.to_datetime(file_df[col], errors='coerce')
+                #elif pd.api.types.is_string_dtype(dtype):
+                    #file_df[col] = file_df[col].astype(str)
+                # elif pd.api.types.is_numeric_dtype(dtype):
+                    # file_df[col] = pd.to_numeric(file_df[col], errors='coerce')
+                else:
+                    # For other types, just convert directly
+                    file_df[col] = file_df[col].astype(dtype)
 
     return file_df
 
@@ -137,6 +146,7 @@ def get_file( file_name, columns=None, skip_cache=False ):
 
     log_info(f"Loaded {file_name} file. Records: " + str(len(df)))
     # Save to cache directory as a parquet file
+    df = prepare_dataframe_to_parquet(df) 
     df.to_parquet(cache_file, index=False)
     log_info(f"Saved {file_name} to cache as parquet. Records: " + str(len(df)))
 
@@ -145,6 +155,26 @@ def get_file( file_name, columns=None, skip_cache=False ):
         df = df[columns]
     
     return df
+
+def prepare_dataframe_to_parquet(df):
+    """
+    Prepares a DataFrame for saving to parquet by converting all columns to string type.
+    This is useful for ensuring compatibility with various data types.
+    
+    :param df: DataFrame to prepare
+    :return: DataFrame with all columns converted to string type
+    """
+    # Check if the DataFrame is empty
+    if df.empty:    
+        log_warning("DataFrame is empty. Returning an empty DataFrame.")
+        return df
+
+    # Convert all non-nuimeric columns to string type
+    for col in df.select_dtypes(exclude=['number']).columns:
+        df[col] = df[col].astype(str)
+    
+    return df
+
 
 def cleanse_string(value, max_length=None):
     """

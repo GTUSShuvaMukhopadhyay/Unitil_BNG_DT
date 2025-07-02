@@ -2,11 +2,12 @@
 # Define the source schemas for the conversion process.
 import pandas as pd
 import numpy as np
+import datetime as dt
 
 # DFKKOP schema
 dfkkop_schema = {
     "Cont.Account": str,
-    "BPartner": str,
+    "BPartner": int,
     "Contract": str,
     "G/L acct": str,
     "MTrans": str,
@@ -135,7 +136,7 @@ prem_schema = {
     "Rate Category": str,
     "Device Location": str,
     "Location": str,
-    "Business Partener": str,
+    "Business Partener": int,
     "Customer Name": str,
     "Contract Account": str,
     "Leg.Contract Account": str,
