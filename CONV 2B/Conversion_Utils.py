@@ -4,6 +4,7 @@
 # Author: Doug Smith
 # Created Date: May 5, 2025
 # Last Modified: 
+#   May 5, 2025:  Added CSV writing function
 # Version: 1.0
 # -----------------------------------------------------------------------------
 # Notes:
@@ -16,6 +17,7 @@ import logging
 import time
 import re
 import Source_Schemas
+import csv
 
 # Constants
 source_directory = r"C:\DV\Unitil\Conversion 2b\\"
@@ -225,3 +227,52 @@ def print_checklist():
     print("CSV Staging File Validation Checklist:")
     for item in CHECKLIST:
         print(item)
+
+def write_csv(df, file_name):
+    """
+    Writes a DataFrame to a CSV file with specific formatting rules.
+    Cleanses string values, replaces NaN values, adds a trailer row, and applies custom quoting logic.
+    Adds trailer row with 'TRAILER' in the first column.
+    
+    :param df: DataFrame to write to CSV
+    :param file_name: Name of the output CSV file
+    """
+    # Ensure the DataFrame is not empty
+    if df.empty:
+        log_warning(f"DataFrame is empty. No data to write to {file_name}.")
+        return
+    
+    # Prepare the DataFrame for CSV output
+    df = df.applymap(lambda x: cleanse_string(x) if isinstance(x, str) else x)
+
+    # Replace NaN and "nan" strings that are blank with None to avoid creating quotes in the CSV
+    df = df.replace(['nan', 'NaN', 'None', ' ', ''], None)
+
+    # Add a trailer row
+    trailer_row = pd.DataFrame([['TRAILER'] + [''] * (len(df.columns) - 1)], columns=df.columns)
+    df = pd.concat([df, trailer_row], ignore_index=True)
+
+    # Write to CSV
+    output_path = output_directory + file_name
+    with open(output_path, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f, quoting=csv.QUOTE_STRINGS, escapechar='\\')
+        # Write header
+        writer.writerow(df.columns)
+
+        # Write rows
+        for row in df.itertuples(index=False):
+            processed_row = []
+            for val in row:
+                # Only qutoe strings
+                if isinstance(val, str):
+                    # Apply quoting only to non-empty strings
+                    if val.strip() == '':
+                        processed_row.append('')
+                    # Quote Strings will add quotes to all string values which are not empty
+                    else:
+                        processed_row.append(val)  # Add quotes to all string values, no escape character
+                else:
+                    processed_row.append(val)
+            writer.writerow(processed_row)
+
+    log_info(f"CSV file saved at {output_path} with {len(df)} rows.")
