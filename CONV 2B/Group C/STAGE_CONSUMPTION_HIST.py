@@ -105,7 +105,9 @@ if data_sources.get("ZMECON") is not None:
 # --------------------------
 if data_sources.get("ZMECON") is not None:
     df_new["CURRREADDATE"] = pd.to_datetime(data_sources["ZMECON"].iloc[:, 23], errors='coerce').dt.strftime('%Y-%m-%d')
-    df_new["PREVREADDATE"] = pd.to_datetime(data_sources["ZMECON"].iloc[:, 22], errors='coerce').dt.strftime('%Y-%m-%d')
+    df_new["PREVREADDATE"] = (
+        pd.to_datetime(data_sources["ZMECON"].iloc[:, 22], errors='coerce') - pd.Timedelta(days=1)
+        ).dt.strftime('%Y-%m-%d')
     print(f"Extracted CURRREADDATE and PREVREADDATE values")
 
 # --------------------------
