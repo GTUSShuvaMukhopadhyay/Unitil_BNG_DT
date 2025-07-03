@@ -29,6 +29,7 @@ file_paths = {
     "erdk": source_directory + r"ERDK.XLSX",
     "ever": source_directory + r"EVER.XLSX",
     "mail": source_directory + r"MAILING_ADDR1.XLSX",
+    "notes": source_directory + r"Interaction Records.XLSX",
     "prem": source_directory + r"ZDM_PREMDETAILS.XLSX",
     #"writeoff": source_directory + r"Write off customer history.XLSX",
     "writeoff": source_directory + r"ZWRITEOFF_ME1.XLSX",
@@ -64,7 +65,7 @@ logger = logging.getLogger(__name__)
 start_time = time.time()
 last_time = time.time()
 
-def read_file( file_name, columns=None, skip_cache=False ):
+def read_file( file_name, sheet_name="Sheet 1", columns=None, skip_cache=False ):
     file_df = pd.DataFrame()
 
     ### Set the schema to read the file
@@ -90,7 +91,7 @@ def read_file( file_name, columns=None, skip_cache=False ):
     elif file_paths[file_name].upper().endswith(".XLSX"):
        file_df = pd.read_excel(file_paths[ file_name ], usecols=columns, dtype=file_schema )
     elif file_paths[file_name].upper().endswith(".CSV"):
-       file_df = pd.read_csv(file_paths[ file_name ], usecols=columns, encoding='utf-8', dtype=file_schema)
+       file_df = pd.read_csv(file_paths[ file_name ], sheet_name=sheet_name, usecols=columns, encoding='utf-8', dtype=file_schema)
        log_info(f"Loaded {file_name} file. Records: " + str(len(file_df)))
     else:
         log_error(f"Unsupported file format for {file_name}. Supported formats are .xlsx and .csv.")
@@ -112,7 +113,7 @@ def read_file( file_name, columns=None, skip_cache=False ):
 
     return file_df
 
-def get_file( file_name, columns=None, skip_cache=False ):
+def get_file( file_name, sheet_name=None, columns=None, skip_cache=False ):
     """
     Retrieves a DataFrame for a specified file, optionally selecting specific columns.
     Checks if there is a parquet version of the file first, and if not, reads from the Excel file.
@@ -143,7 +144,7 @@ def get_file( file_name, columns=None, skip_cache=False ):
     if file_name not in file_paths:
         raise ValueError(f"File '{file_name}' not found in file paths.")
     
-    df = read_file(file_name, columns, skip_cache)
+    df = read_file(file_name, sheet_name, columns, skip_cache)
 
     log_info(f"Loaded {file_name} file. Records: " + str(len(df)))
     # Save to cache directory as a parquet file
@@ -244,6 +245,9 @@ def write_csv(df, file_name):
     
     # Prepare the DataFrame for CSV output
     df = df.applymap(lambda x: cleanse_string(x) if isinstance(x, str) else x)
+
+    # Replace NA with empty string
+    df = df.fillna('')
 
     # Replace NaN and "nan" strings that are blank with None to avoid creating quotes in the CSV
     df = df.replace(['nan', 'NaN', 'None', ' ', ''], None)
