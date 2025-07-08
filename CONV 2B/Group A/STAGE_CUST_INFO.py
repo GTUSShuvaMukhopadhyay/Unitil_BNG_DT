@@ -1,6 +1,6 @@
-# CONV1 - STAGE_CUST_INFO.py
+# CONV1 - STAGE_CUST_INFO.py - need to remove this line it is irrelevant
 # STAGE_CUST_INFO.py
- 
+ #
 # NOTES: Update formatting
  
 import pandas as pd
@@ -29,7 +29,8 @@ df_new = pd.DataFrame().fillna('')
  
 # Extract the relevant columns
 df_new['CUSTOMERID'] = df.iloc[:, 1].fillna('').apply(lambda x: str(int(x)) if isinstance(x, (int, float)) else str(x)).str.slice(0, 15)
- 
+
+""" Remove this once we have verified the updated Function is correct
 # Function to generate FULLNAME
 def generate_fullname(row):
     name_1 = str(row.iloc[2]).strip() if not pd.isna(row.iloc[2]) else ""
@@ -38,7 +39,23 @@ def generate_fullname(row):
     if name_1:
         return name_1
     return f"{first_name} {last_name}".strip()
- 
+ """
+# Function to generate FULLNAME
+def generate_fullname(row):
+    # Helper function to safely get string value
+    def safe_str(value):
+        if pd.isna(value) or str(value).strip().lower() == 'nan' or str(value).strip() == '':
+            return ""
+        return str(value).strip()
+    
+    name_1 = safe_str(row.iloc[2])
+    first_name = safe_str(row.iloc[4])
+    last_name = safe_str(row.iloc[5])
+    
+    if name_1:
+        return name_1
+    return f"{first_name} {last_name}".strip()
+
 # Apply transformation logic for FULLNAME
 df_new['FULLNAME'] = df.apply(generate_fullname, axis=1)
 df_new['FULLNAME'] = df_new['FULLNAME'].apply( cu.cleanse_string, 50 )
