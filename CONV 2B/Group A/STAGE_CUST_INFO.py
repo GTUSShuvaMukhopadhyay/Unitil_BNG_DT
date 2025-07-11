@@ -1,6 +1,6 @@
-# CONV1 - STAGE_CUST_INFO.py - need to remove this line it is irrelevant
+# CONV1 - STAGE_CUST_INFO.py
 # STAGE_CUST_INFO.py
- #
+ 
 # NOTES: Update formatting
  
 import pandas as pd
@@ -29,17 +29,7 @@ df_new = pd.DataFrame().fillna('')
  
 # Extract the relevant columns
 df_new['CUSTOMERID'] = df.iloc[:, 1].fillna('').apply(lambda x: str(int(x)) if isinstance(x, (int, float)) else str(x)).str.slice(0, 15)
-
-""" Remove this once we have verified the updated Function is correct
-# Function to generate FULLNAME
-def generate_fullname(row):
-    name_1 = str(row.iloc[2]).strip() if not pd.isna(row.iloc[2]) else ""
-    first_name = str(row.iloc[4]).strip() if not pd.isna(row.iloc[4]) else ""
-    last_name = str(row.iloc[5]).strip() if not pd.isna(row.iloc[5]) else ""
-    if name_1:
-        return name_1
-    return f"{first_name} {last_name}".strip()
- """
+ 
 # Function to generate FULLNAME
 def generate_fullname(row):
     # Helper function to safely get string value
@@ -55,7 +45,7 @@ def generate_fullname(row):
     if name_1:
         return name_1
     return f"{first_name} {last_name}".strip()
-
+ 
 # Apply transformation logic for FULLNAME
 df_new['FULLNAME'] = df.apply(generate_fullname, axis=1)
 df_new['FULLNAME'] = df_new['FULLNAME'].apply( cu.cleanse_string, 50 )
@@ -87,7 +77,7 @@ df_new['DBA'] = " "
 df_new['CUSTTYPE'] = df.iloc[:, 17].map({1: 0, 2: 1}).fillna(0).astype(int)
  
 # Column 7: "TBD"
-df_new['ACTIVECODE'] = 0
+df_new['ACTIVECODE'] = "0"
  
 # Additional Columns
 df_new['MOTHERMAIDENNAME'] = " "
@@ -102,9 +92,40 @@ df_new['OTHERIDTYPE3'] = " "
 df_new['OTHERIDVALUE3'] = " "
 df_new['UPDATEDATE'] = " "
  
+# Function to wrap values in double quotes, but leave blanks and NaN as they are
+def custom_quote(val):
+    """Wraps all values in quotes except for blank or NaN ones."""
+    # If the value is NaN, None, or blank, leave it empty
+    if pd.isna(val) or val == "" or val == " ":
+        return ''  # Return an empty string for NaN or blank fields
+    return f'"{val}"'  # Wrap other values in double quotes
+ 
+# Apply custom_quote function to all columns
+df_new = df_new.fillna('')
+ 
+def selective_custom_quote(val, column_name):
+    if column_name in ['CUSTTYPE', 'ACTIVECODE']:
+        return val  # Keep numeric values unquoted
+    return '' if val in [None, 'nan', 'NaN', 'NAN'] else custom_quote(val)
+ 
+df_new = df_new.apply(lambda col: col.map(lambda x: selective_custom_quote(x, col.name)))
+ 
 # Drop duplicate records based on CUSTOMERID
 df_new = df_new.drop_duplicates(subset='CUSTOMERID', keep='first')
  
-# Write the DataFrame to a CSV file
-cu.write_csv(df_new, "STAGE_CUST_INFO.csv" )
-
+# Add a trailer row with default values
+trailer_row = pd.DataFrame([["TRAILER"] + [''] * (len(df_new.columns) - 1)], columns=df_new.columns)
+ 
+# Append the trailer row to the DataFrame
+df_new = pd.concat([df_new, trailer_row], ignore_index=True)
+ 
+# Define output path for the CSV file
+output_dir = os.path.dirname(os.path.abspath(file_path))
+output_path = os.path.join(output_dir, 'STAGE_CUST_INFO.csv')
+ 
+# Save to CSV with proper quoting and escape character
+df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
+ 
+# Confirmation message
+print(f"CSV file saved at {output_path}")
+cu.log_info("Wrote CSV file successfully at: " + output_path + " with " + str(len(df_new)) + " rows")
