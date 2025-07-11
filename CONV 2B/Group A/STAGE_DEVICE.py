@@ -41,7 +41,7 @@ def fuzzy_match(value, match_list, threshold=80):
 # File paths
 #file_path1 = r"C:\Users\US82783\Downloads\ZINS.XLSX"
 file_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZDM_PREMDETAILS.XLSX"
-file_path1 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\BNG Gas Meter Attributes Cleanup Conv_2 05_20_25.xlsx"
+file_path1 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\BNG Gas Meter Attributes Cleanup Conv_2B 06_17_25.xlsx"
 config_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\Configuration 13.xlsx"
 file_path2 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZINS.XLSX"
 print(f"Loading the files")
@@ -66,14 +66,14 @@ df_new['APPLICATION'] = "5"
 
 # DEVICECODE and METERNUMBER columns with truncation
 df_new['DEVICECODE'] = df.apply(
-    lambda row: str(0).zfill(1) if pd.notna(row.iloc[19]) and row.iloc[19] != ''
-    else ('' if pd.notna(row.iloc[25]) and row.iloc[25] != '' else ''),
+    lambda row: str(0).zfill(1) if pd.notna(row.iloc[18]) and row.iloc[18] != ''
+    else ('' if pd.notna(row.iloc[24]) and row.iloc[24] != '' else ''),
     axis=1
 )
 
 df_new['METERNUMBER'] = df.apply(
-    lambda row: str(row.iloc[19]).strip()[:12] if pd.notna(row.iloc[19]) and row.iloc[19] != ''
-    else (str(row.iloc[25]).strip()[:12] if pd.notna(row.iloc[25]) and row.iloc[25] != '' else ''),
+    lambda row: str(row.iloc[18]).strip()[:12] if pd.notna(row.iloc[18]) and row.iloc[19] != ''
+    else (str(row.iloc[24]).strip()[:12] if pd.notna(row.iloc[24]) and row.iloc[25] != '' else ''),
     axis=1
 )
 
@@ -81,14 +81,14 @@ df_new['REGISTERNUM'] = "1"
 
 # Truncating BUILTCONFIG and INSTALLCONFIG
 df_new['BUILTCONFIG'] = df.apply(
-    lambda row: str(501) if pd.notna(row.iloc[19]) and row.iloc[19] != ''
-    else (str(591) if pd.notna(row.iloc[25]) and row.iloc[25] != '' else '592'),
+    lambda row: str(501) if pd.notna(row.iloc[18]) and row.iloc[18] != ''
+    else (str(591) if pd.notna(row.iloc[24]) and row.iloc[24] != '' else '592'),
     axis=1
 )
 
 df_new['INSTALLCONFIG'] = df.apply(
-    lambda row: str(501) if pd.notna(row.iloc[19]) and row.iloc[19] != ''
-    else (str(591) if pd.notna(row.iloc[25]) and row.iloc[25] != '' else '592'),
+    lambda row: str(501) if pd.notna(row.iloc[18]) and row.iloc[18] != ''
+    else (str(591) if pd.notna(row.iloc[24]) and row.iloc[24] != '' else '592'),
     axis=1
 )
 
@@ -99,7 +99,8 @@ df_new['REGISTERCONFIG'] = "1"
 def fetch_zins_value(meter_number):
     meter_number = meter_number.strip() if isinstance(meter_number, str) else meter_number
     # Find the row in bng_gas_meter_df that matches METERNUMBER (iloc[0] column)
-    bng_gas_meter_clean = bng_gas_meter_df.iloc[:, 0].str.strip()
+    bng_gas_meter_col = bng_gas_meter_df.iloc[:, 0].astype(str)
+    bng_gas_meter_clean = bng_gas_meter_col.str.strip()
     matched_row = bng_gas_meter_df[bng_gas_meter_clean == meter_number]
     
     if not matched_row.empty:
@@ -119,7 +120,8 @@ df_new['OTHERDEVICEMARRY2'] = ""
 # Fetch METERMAKE with fuzzy matching and normalization
 def fetch_meter_make(meter_number):
     meter_number = meter_number.strip() if isinstance(meter_number, str) else meter_number
-    bng_gas_meter_clean = bng_gas_meter_df.iloc[:, 0].str.strip()
+    bng_gas_meter_col = bng_gas_meter_df.iloc[:, 0].astype(str)
+    bng_gas_meter_clean = bng_gas_meter_col.str.strip()
     matched_row = bng_gas_meter_df[bng_gas_meter_clean == meter_number]
 
     if not matched_row.empty:
@@ -147,7 +149,8 @@ df_new['METERMAKE'] = df_new['METERNUMBER'].apply(fetch_meter_make)
 # Fetch MAKESIZE with fuzzy matching
 def fetch_makesize(meter_number):
     meter_number = meter_number.strip() if isinstance(meter_number, str) else meter_number
-    bng_gas_meter_clean = bng_gas_meter_df.iloc[:, 0].str.strip()
+    bng_gas_meter_col = bng_gas_meter_df.iloc[:, 0].astype(str)
+    bng_gas_meter_clean = bng_gas_meter_col.str.strip()
     matched_row = bng_gas_meter_df[bng_gas_meter_clean == meter_number]
 
     if not matched_row.empty:
@@ -175,7 +178,8 @@ df_new['METERSIZE'] = df_new['METERNUMBER'].apply(fetch_makesize)
 
 def fetch_meterkind(meter_number):
     meter_number = meter_number.strip() if isinstance(meter_number, str) else meter_number
-    bng_gas_meter_clean = bng_gas_meter_df.iloc[:, 0].str.strip()
+    bng_gas_meter_col = bng_gas_meter_df.iloc[:, 0].astype(str)
+    bng_gas_meter_clean = bng_gas_meter_col.str.strip()
     matched_row = bng_gas_meter_df[bng_gas_meter_clean == meter_number]
 
     if not matched_row.empty:
@@ -204,7 +208,8 @@ df_new['METERKIND'] = df_new['METERNUMBER'].apply(fetch_meterkind)
 # Fetch METERMODEL with fuzzy matching
 def fetch_metermodel(meter_number):
     meter_number = meter_number.strip() if isinstance(meter_number, str) else meter_number
-    bng_gas_meter_clean = bng_gas_meter_df.iloc[:, 0].str.strip()
+    bng_gas_meter_col = bng_gas_meter_df.iloc[:, 0].astype(str)
+    bng_gas_meter_clean = bng_gas_meter_col.str.strip()
     matched_row = bng_gas_meter_df[bng_gas_meter_clean == meter_number]
 
     if not matched_row.empty:
@@ -254,7 +259,8 @@ df_new['METERMODEL'] = df_new['METERNUMBER'].apply(fetch_metermodel)
 def fetch_dials(meter_number):
     meter_number = meter_number.strip() if isinstance(meter_number, str) else meter_number
     # Find the row in bng_gas_meter_df that matches METERNUMBER (iloc[0] column)
-    bng_gas_meter_clean = bng_gas_meter_df.iloc[:, 0].str.strip()
+    bng_gas_meter_col = bng_gas_meter_df.iloc[:, 0].astype(str)
+    bng_gas_meter_clean = bng_gas_meter_col.str.strip()
     matched_row = bng_gas_meter_df[bng_gas_meter_clean == meter_number]
     
     if not matched_row.empty:
@@ -310,7 +316,8 @@ df_new['PONUMBER'] = ""
 def fetch_poDate(meter_number):
     meter_number = meter_number.strip() if isinstance(meter_number, str) else meter_number
     # Find the row in bng_gas_meter_df that matches METERNUMBER (iloc[0] column)
-    bng_gas_meter_clean = bng_gas_meter_df.iloc[:, 0].str.strip()
+    bng_gas_meter_col = bng_gas_meter_df.iloc[:, 0].astype(str)
+    bng_gas_meter_clean = bng_gas_meter_col.str.strip()
     matched_row = bng_gas_meter_df[bng_gas_meter_clean == meter_number]
     
     if not matched_row.empty:
