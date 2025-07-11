@@ -1,4 +1,3 @@
-
 # STAGE_MAIL_ADDR.py
  
 # NOTES: Update formatting
@@ -25,7 +24,7 @@ df_new = pd.DataFrame().fillna('')
 
 # Extract the relevant columns
 df_new['CUSTOMERID'] = df.iloc[:, 1].fillna('').apply(lambda x: str(int(x)) if isinstance(x, (int, float)) else str(x)).str.slice(0, 15)
-df_new['ADDRESSSEQ'] = 1
+df_new['ADDRESSSEQ'] = "1"
 
 # Function to generate MAILINGNAME
 def generate_mailingname(row):
@@ -94,8 +93,38 @@ df_new['POSTALCODE'] = df.iloc[:, 12].fillna(df.iloc[:, 13])
 
 df_new['UPDATEDATE'] = ""
 
+# Function to wrap values in double quotes, but leave blanks and NaN as they are
+def custom_quote(val):
+    """Wraps all values in quotes except for blank or NaN ones."""
+    # If the value is NaN, None, or blank, leave it empty
+    if pd.isna(val) or val == "" or val == " ":
+        return ''  # Return an empty string for NaN or blank fields
+    return f'"{val}"'  # Wrap other values in double quotes
+ 
+# Apply custom_quote function to all columns
+df_new = df_new.fillna('')
+ 
+def selective_custom_quote(val, column_name):
+    if column_name in ['ADDRESSSEQ']:
+        return val  # Keep numeric values unquoted
+    return '' if val in [None, 'nan', 'NaN', 'NAN'] else custom_quote(val)
+ 
+df_new = df_new.apply(lambda col: col.map(lambda x: selective_custom_quote(x, col.name)))
+ 
 # REVIEW THIS Drop duplicate records based on CUSTOMERID
 df_new = df_new.drop_duplicates(subset='CUSTOMERID', keep='first')
-
-# Write the DataFrame to a CSV file
-cu.write_csv(df_new, "STAGE_MAIL_ADDR.csv" )
+ 
+# Add a trailer row with default values
+trailer_row = pd.DataFrame([["TRAILER"] + [''] * (len(df_new.columns) - 1)], columns=df_new.columns)
+ 
+# Append the trailer row to the DataFrame
+df_new = pd.concat([df_new, trailer_row], ignore_index=True)
+ 
+# Define output path for the CSV file
+output_path = os.path.join(os.path.dirname("."), 'STAGE_MAIL_ADDR.csv')
+ 
+# Save to CSV with proper quoting and escape character
+df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
+ 
+# Confirmation message
+print(f"CSV file saved at {output_path}")
