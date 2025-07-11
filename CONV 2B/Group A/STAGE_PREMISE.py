@@ -3,10 +3,9 @@ import re
 import csv
  
 file_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZDM_PREMDETAILS.XLSX"
-#file_path2 = r"C:\Users\us85360\Desktop\CONV 2 - STAGE_PREMISE\TE422.XLSX"
 file_path1 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\Premise_clean_final_2B.xlsx"
 df = pd.read_excel(file_path, sheet_name='Sheet1', engine='openpyxl')
-#df_Portion = pd.read_excel(file_path2, sheet_name='Sheet1', engine='openpyxl')
+df = df[~df.iloc[:, 4].astype(str).str.startswith("G_ME_")]
 df_Premise = pd.read_excel(file_path1, sheet_name='Clean_Data', engine='openpyxl')
  
 # Load configuration file for suffix lookup
@@ -106,7 +105,7 @@ df_new['TOWN'] = df_new['LOCATIONID'].apply(fetch_town).str.upper()
  
 # Fixed fields
 df_new['STATE'] = "ME"
-df_new['ZIPCODE'] = df.iloc[:, 28].astype(str).str.zfill(5)
+df_new['ZIPCODE'] = df.iloc[:, 27].astype(str).str.zfill(5)
  
 ZIPCODE = pd.to_numeric(df_new['ZIPCODE'], errors='coerce')
 df_new['ZIPPLUSFOUR'] = ZIPCODE.apply(lambda x: str(int(x) + 4) if pd.notna(x) and x != 0 else '00000')
@@ -207,7 +206,7 @@ def custom_quote(val, column):
 df_new = df_new.apply(lambda col: col.apply(lambda val: custom_quote(val, col.name)))
  
 # Output path
-output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Group A\STAGE_PREMISE.csv"
+output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Group A\STAGE_PREMISE_V1.csv"
 df_new.to_csv(output_path, index=False, quoting=csv.QUOTE_NONE, escapechar='\\')
  
 print(f"File successfully saved to: {output_path}")
