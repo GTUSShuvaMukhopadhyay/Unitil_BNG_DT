@@ -1,6 +1,3 @@
-# CONV1 - STAGE_EMAIL.py
-# STAGE_EMAIL.py
- 
 # NOTES: Update formatting
  
 import pandas as pd
