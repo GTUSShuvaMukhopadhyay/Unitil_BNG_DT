@@ -39,7 +39,6 @@ def fuzzy_match(value, match_list, threshold=80):
     return None  # Return None if no good match is found
 
 # File paths
-#file_path1 = r"C:\Users\US82783\Downloads\ZINS.XLSX"
 file_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZDM_PREMDETAILS.XLSX"
 file_path1 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\BNG Gas Meter Attributes Cleanup Conv_2B 06_17_25.xlsx"
 config_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\Configuration 13.xlsx"
