@@ -1,5 +1,7 @@
-# CONV2_STAGE_TRANSACTIONAL_HIST_05232025_1423PM.py
+# CONV 2 B - STAGE_TRANSACTIONAL_HIST.py
 
+
+# OUTPUT TOTHS PATH "C:\Users\us85360\Desktop\CONV 2 - STAGE_TRANSACTIONAL_HIST\STAGE_TRANSACTIONAL_HIST_05282025_1634PM.csv"
 import pandas as pd
 import os
 import csv
@@ -28,20 +30,20 @@ print_checklist()
 # Define file paths - include all DFKKOP files
 file_paths = {
     # DFKKOP files by year
-    "DFKKOP1": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012015 to 12312015.XLSX",
-    "DFKKOP2": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012016 to 12312016.XLSX",
-    "DFKKOP3": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012017 to 12312017.XLSX",
-    "DFKKOP4": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012018 to 12312018.XLSX",
-    "DFKKOP5": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012019 to 12312019.XLSX",
-    "DFKKOP6": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012020 to 12312020.XLSX",
-    "DFKKOP7": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012021 to 12312021.XLSX",
-    "DFKKOP8": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012022 to 12312022.XLSX",
-    "DFKKOP9": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012023 to 12312023.XLSX",
-    "DFKKOP10": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012024 to 12312024.XLSX",
-    "DFKKOP11": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012025 to 06172025.XLSX",   
+    "DFKKOP1": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012015 to 12312015.XLSX",
+    "DFKKOP2": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012016 to 12312016 v1.XLSX",
+    "DFKKOP3": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012017 to 12312017.XLSX",
+    "DFKKOP4": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012018 to 12312018.XLSX",
+    "DFKKOP5": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012019 to 12312019.XLSX",
+    "DFKKOP6": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012020 to 12312020.XLSX",
+    "DFKKOP7": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012021 to 12312021.XLSX",
+    "DFKKOP8": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012022 to 12312022.XLSX",
+    "DFKKOP9": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012023 to 12312023 (3).XLSX",
+    "DFKKOP10": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012024 to 12312024.XLSX",
+    "DFKKOP11": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012025 to 07152025 v1.XLSX",
     # Other sources
-    "EVER": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\EVER.XLSX",
-    "ZDM_PREMDETAILS": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZDM_PREMDETAILS.XLSX",
+    "EVER": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\EVER-0614.XLSX",
+    "ZDM_PREMDETAILS": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\ZDM_PREMDETAILS.XLSX",
 }
  
 # Initialize data_sources dictionary to hold our data
@@ -478,7 +480,7 @@ mtrans_strans_mapping = {
     ("0080", "0010"): {"TRANSACTIONTYPE": "4", "TRANSACTIONDESCRIPTION": "Mthly Installment Rec", "BILLTYPE": "0"},
    
     # MTrans 0100 combinations
-    ("0100", "0002"): {"TRANSACTIONTYPE": "99", "TRANSACTIONDESCRIPTION": "Consumption Billing", "BILLTYPE": "0"},
+    ("0100", "0002"): {"TRANSACTIONTYPE": "2", "TRANSACTIONDESCRIPTION": "Consumption Billing", "BILLTYPE": "0"},
    
     # MTrans 0200 combinations
     ("0200", "0002"): {"TRANSACTIONTYPE": "99", "TRANSACTIONDESCRIPTION": "Final Billing", "BILLTYPE": "1"},
@@ -498,7 +500,7 @@ mtrans_only_mapping = {
     "0025": {"TRANSACTIONTYPE": "14", "TRANSACTIONDESCRIPTION": "Interest for Cash Sec.Deposit", "BILLTYPE": "0"},
     "0060": {"TRANSACTIONTYPE": "1", "TRANSACTIONDESCRIPTION": "On Account", "BILLTYPE": "0"},
     "0070": {"TRANSACTIONTYPE": "4", "TRANSACTIONDESCRIPTION": "Returns", "BILLTYPE": "0"},
-    "0100": {"TRANSACTIONTYPE": "99", "TRANSACTIONDESCRIPTION": "Consumption Billing", "BILLTYPE": "0"},
+    "0100": {"TRANSACTIONTYPE": "2", "TRANSACTIONDESCRIPTION": "Consumption Billing", "BILLTYPE": "0"},
     "0150": {"TRANSACTIONTYPE": "4", "TRANSACTIONDESCRIPTION": "Bal.For.Amount", "BILLTYPE": "0"},
     "0200": {"TRANSACTIONTYPE": "99", "TRANSACTIONDESCRIPTION": "Final Billing", "BILLTYPE": "1"},
     "0250": {"TRANSACTIONTYPE": "4", "TRANSACTIONDESCRIPTION": "Transfer Posting for Invoicing", "BILLTYPE": "0"},
@@ -621,7 +623,7 @@ print(f"Zero amount count: {(df_new['TRANSACTIONAMOUNT'] == 0).sum()}")
 # --------------------------
 # Default to "5" (Gas) for all records as per the requirements
 df_new["APPLICATION"] = "5"
-
+"""
 # Check ZDM_PREMDETAILS for MRU=METRNP01 to set APPLICATION=2
 if data_sources.get("ZDM_PREMDETAILS") is not None:
     print("\nSetting APPLICATION values based on MRU codes...")
@@ -653,7 +655,7 @@ if data_sources.get("ZDM_PREMDETAILS") is not None:
         print(f"Updated {updated_count} records to APPLICATION=2")
     
 print(f"APPLICATION values - Gas(5): {(df_new['APPLICATION'] == '5').sum()}, Electric(2): {(df_new['APPLICATION'] == '2').sum()}")
-
+"""
 # --------------------------
 # Set TENDERTYPE to empty (not processing this field)
 # --------------------------
@@ -750,7 +752,9 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # --------------------------
 # Save to CSV
 # --------------------------
-output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_TRANSACTIONAL_HIST.csv')
+# WHAT FILE WE USED THAT GARY SAID WORKED output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_TRANSACTIONAL_HIST_05282025_1634PM.csv')
+output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '071725_STAGE_TRANSACTIONAL_HIST.csv')
+
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
 
