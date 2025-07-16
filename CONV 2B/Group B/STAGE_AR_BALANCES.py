@@ -8,8 +8,8 @@ print("Defining file paths...")
 
 file_path1 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZDM_PREMDETAILS.XLSX"
 file_path2 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\Configuration 13.xlsx"
-file_path3 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZMECON 010115 to 12312020.xlsx"
-file_path4 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZMECON 010121 to 061425.xlsx"
+file_path3 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZMECON 010115 TO 12312021.xlsx"
+file_path4 = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZMECON 01012022 TO 07142025.xlsx"
 file_pathA = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012015 to 12312015.XLSX"
 file_pathB = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012016 TO 12312016.XLSX"
 file_pathC = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012017 TO 12312017.XLSX"
@@ -19,7 +19,7 @@ file_pathF = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\p
 file_pathG = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012021 TO 12312021.XLSX"
 file_pathH = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012022 TO 12312022.XLSX"
 file_pathI = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012023 TO 12312023.XLSX"
-file_path  = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012025 to 06172025.XLSX"
+file_path  = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\DFKKOP\DFKKOP 01012025 to 07152025.XLSX"
 
 # Load Excel files
 print("Reading ZDM_PREMDETAILS...")
@@ -31,11 +31,11 @@ df_Config = pd.read_excel(file_path2, sheet_name='RateCode', engine='openpyxl')
 print(f"✅ Loaded Configuration RateCode with {len(df_Config)} rows")
 
 print("Reading ZMECON 2015 to 2020...")
-df_ZMECON1 = pd.read_excel(file_path3, sheet_name='ZMECON', engine='openpyxl')
+df_ZMECON1 = pd.read_excel(file_path3, sheet_name='Sheet1', engine='openpyxl')
 print(f"✅ Loaded ZMECON 2015-2020 with {len(df_ZMECON1)} rows")
 
-print("Reading ZMECON 2021 to 03272025...")
-df_ZMECON2 = pd.read_excel(file_path4, sheet_name='ZMECON', engine='openpyxl')
+print("Reading ZMECON 2022 to 07152025...")
+df_ZMECON2 = pd.read_excel(file_path4, sheet_name='Sheet1', engine='openpyxl')
 print(f"✅ Loaded ZMECON 2021-2025 with {len(df_ZMECON2)} rows")
 
 # Load all DFKKOP files
