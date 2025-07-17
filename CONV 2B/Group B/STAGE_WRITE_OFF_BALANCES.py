@@ -123,6 +123,9 @@ for cust_id in df_new['CUSTOMERID']:
 df_new['LOCATIONID'] = pd.Series(location_ids).apply(lambda x: str(int(float(x))) if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x)
 df_new['RECEIVABLECODE'] = codes
 
+# ❌ Remove rows where CUSTOMERID or LOCATIONID is blank or NaN
+df_new = df_new[~(df_new['CUSTOMERID'].isna() | df_new['CUSTOMERID'].eq('') | df_new['LOCATIONID'].isna() | df_new['LOCATIONID'].eq(''))]
+
 # ✅ Reorder columns before export
 df_new = df_new[['CUSTOMERID','LOCATIONID','APPLICATION','CHARGEDATE','WRITEOFFDATE','WRITEOFFAMOUNT','AMOUNTREMAINING','RECEIVABLECODE','UPDATEDATE']]
 
@@ -134,6 +137,6 @@ df_new = pd.concat(
 cu.log_debug("✅ Trailer row added")
 
 # 📤 Export to CSV
-output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Extracts\STAGE_WRITEOFF.csv"
+output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Extracts\STAGE_WRITE_OFF_BALANCES.csv"
 df_new.to_csv(output_path, index=False, quoting=csv.QUOTE_NONNUMERIC)
 cu.log_info(f"✅ CSV file saved successfully at: {output_path}")
