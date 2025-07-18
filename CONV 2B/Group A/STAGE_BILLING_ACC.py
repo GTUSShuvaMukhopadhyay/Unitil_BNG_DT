@@ -74,6 +74,9 @@ try:
     cu.log_debug(f"\nZMECON_CUSTOMERID non-empty values: {(df_ZMECON_full['ZMECON_CUSTOMERID'] != '').sum()}")
     cu.log_debug(f"ZMECON_LOCATIONID non-empty values: {(df_ZMECON_full['ZMECON_LOCATIONID'] != '').sum()}")
    
+    # Sort by date to ensure the latest data is used
+    df_ZMECON_full = df_ZMECON_full.sort_values(by=["Partner", "Date from "], ascending=False)
+
     # Create a combined ZMECON dataset with all needed columns
     df_ZMECON = df_ZMECON_full[["ACCOUNTNUMBER", "ZMECON_CUSTOMERID", "ZMECON_LOCATIONID"]].copy()
    
@@ -81,7 +84,7 @@ try:
     df_ZMECON["penalty_val"] = df_ZMECON_full.iloc[:, 24].apply(lambda x: str(x).strip().upper() if pd.notna(x) else "")
    
     # Remove duplicates
-    df_ZMECON = df_ZMECON.drop_duplicates(subset="ACCOUNTNUMBER")
+    df_ZMECON = df_ZMECON.drop_duplicates(subset="ACCOUNTNUMBER", keep='first')
    
     cu.log_debug("ZMECON data loaded and processed")
 except Exception as e:
