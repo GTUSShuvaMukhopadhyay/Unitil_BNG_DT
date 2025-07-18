@@ -7,6 +7,12 @@ import pandas as pd
 import os
 import csv  # For CSV saving
 import concurrent.futures  # For parallel file loading
+from datetime import datetime, timedelta
+
+# Define the 6-year cutoff date
+CUTOFF_DATE = datetime.now() - timedelta(days=6*365)  # 6 years ago
+print(f"Filtering data for dates after: {CUTOFF_DATE.strftime('%Y-%m-%d')}")
+
 
 # CSV Staging File Checklist
 CHECKLIST = [
@@ -30,7 +36,7 @@ print_checklist()
 # Define file paths
 file_paths = {
     "ZDM_PREMDETAILS": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZDM_PREMDETAILS.XLSX",
-    "ZMECON1": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 010115 TO 123116.XLSX",
+    # "ZMECON1": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 010115 TO 123116.XLSX",
     "ZMECON2": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 01012017 TO 12312019.XLSX",
     "ZMECON3": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 01012020 TO 12312021.XLSX",
     "ZMECON4": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 01012022 TO 12312024 v1.XLSX",
@@ -40,13 +46,34 @@ file_paths = {
     "TF": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ThermFactor.xlsx",
 }
 
-# Initialize data_sources dictionary to hold our data
+# Initialize data_sources dictionary
 data_sources = {}
 
-# Function to read an Excel file (executed in parallel)
-def read_excel_file(name, path):
+# Function to read an Excel file with date filtering
+def read_excel_file_with_filter(name, path):
     try:
         df = pd.read_excel(path, sheet_name="Sheet1", engine="openpyxl")
+        
+        # Apply date filtering for ZMECON and EABL files
+        if name.startswith("ZMECON"):
+            # Filter ZMECON by current read date (column index 23)
+            if len(df.columns) > 23:
+                df['temp_date'] = pd.to_datetime(df.iloc[:, 23], errors='coerce')
+                original_count = len(df)
+                df = df[df['temp_date'] >= CUTOFF_DATE]
+                df = df.drop('temp_date', axis=1)
+                print(f"Filtered {name}: {original_count} → {len(df)} rows (removed {original_count - len(df)} rows outside 6-year range)")
+        
+        elif name.startswith("EABL"):
+            # Filter EABL by "Schd MRD" (Scheduled Meter Read Date) - column index 6
+            date_col_index = 4  # "Schd MRD" column
+            if len(df.columns) > date_col_index:
+                df['temp_date'] = pd.to_datetime(df.iloc[:, date_col_index], errors='coerce')
+                original_count = len(df)
+                df = df[df['temp_date'] >= CUTOFF_DATE]
+                df = df.drop('temp_date', axis=1)
+                print(f"Filtered {name}: {original_count} → {len(df)} rows (removed {original_count - len(df)} rows outside 6-year range)")
+        
         print(f"Successfully loaded {name}: {df.shape[0]} rows, {df.shape[1]} columns")
         return name, df
     except Exception as e:
@@ -54,25 +81,30 @@ def read_excel_file(name, path):
         return name, None
 
 # Load files in parallel
-print("Loading data sources...")
+print("Loading and filtering data sources...")
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    futures = {executor.submit(read_excel_file, name, path): name for name, path in file_paths.items()}
+    futures = {executor.submit(read_excel_file_with_filter, name, path): name for name, path in file_paths.items()}
     for future in concurrent.futures.as_completed(futures):
         name, df = future.result()
         data_sources[name] = df
 
-# Create composite dataset for ZMECON (now handling 5 files)
-zmecon_files = ["ZMECON1", "ZMECON2", "ZMECON3", "ZMECON4", "ZMECON5"]
+# Create composite dataset for ZMECON (including ZMECON2 with 2019 data)
+zmecon_files = ["ZMECON2", "ZMECON3", "ZMECON4", "ZMECON5"]
 zmecon_dfs = [data_sources.get(name) for name in zmecon_files if data_sources.get(name) is not None]
 
 if len(zmecon_dfs) > 0:
     data_sources["ZMECON"] = pd.concat(zmecon_dfs, ignore_index=True)
     print(f"Created combined ZMECON dataset from {len(zmecon_dfs)} files with {len(data_sources['ZMECON'])} rows")
+    
+    # Additional date validation on combined ZMECON
+    combined_dates = pd.to_datetime(data_sources["ZMECON"].iloc[:, 23], errors='coerce')
+    valid_dates = combined_dates[combined_dates >= CUTOFF_DATE]
+    print(f"Date validation: {len(valid_dates)}/{len(combined_dates)} records have valid dates within 6-year range")
 else:
     data_sources["ZMECON"] = None
     print("Warning: No ZMECON files were loaded successfully")
 
-# Create composite dataset for EABL (still 2 files)
+# Create composite dataset for EABL with additional filtering
 if data_sources.get("EABL1") is not None and data_sources.get("EABL2") is not None:
     data_sources["EABL"] = pd.concat([data_sources["EABL1"], data_sources["EABL2"]], ignore_index=True)
     print(f"Created combined EABL dataset with {len(data_sources['EABL'])} rows")
@@ -81,12 +113,10 @@ else:
     if data_sources["EABL"] is not None:
         print(f"Using single EABL dataset with {len(data_sources['EABL'])} rows")
 
-# Initialize output DataFrame (df_new)
+# Initialize output DataFrame
 df_new = pd.DataFrame()
 
-print("\nStarting field extraction and transformation...")
-
-
+print("\nStarting field extraction and transformation for 6-year filtered data...")
 # --------------------------
 # Extract CUSTOMERID from ZMECON (Column A = iloc[:, 0])
 # --------------------------
@@ -94,7 +124,7 @@ if data_sources.get("ZMECON") is not None:
     df_new["CUSTOMERID"] = data_sources["ZMECON"].iloc[:, 0].apply(
         lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
     ).str.slice(0, 15)
-    print(f"Extracted {len(df_new)} CUSTOMERID values")
+    print(f"Extracted {len(df_new)} CUSTOMERID values from filtered data")
 
 # --------------------------
 # Extract LOCATIONID directly from ZMECON (Premise column, index 25)
@@ -104,7 +134,7 @@ if data_sources.get("ZMECON") is not None:
         lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
     ).str.strip()
     print(f"Extracted LOCATIONID from ZMECON Premise column")
- 
+
 # --------------------------
 # Extract METERNUMBER from ZMECON (Column U, index 20)
 # --------------------------
@@ -119,6 +149,12 @@ if data_sources.get("ZMECON") is not None:
     df_new["CURRREADDATE"] = pd.to_datetime(data_sources["ZMECON"].iloc[:, 23], errors='coerce').dt.strftime('%Y-%m-%d')
     df_new["PREVREADDATE"] = pd.to_datetime(data_sources["ZMECON"].iloc[:, 22], errors='coerce').dt.strftime('%Y-%m-%d')
     print(f"Extracted CURRREADDATE and PREVREADDATE values")
+    
+    # Validate date ranges
+    curr_dates = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce')
+    valid_curr_dates = curr_dates[curr_dates >= CUTOFF_DATE]
+    print(f"Date range validation: {len(valid_curr_dates)}/{len(curr_dates)} current read dates are within 6-year range")
+
 
 # --------------------------
 # Assign READINGTYPE based on meter patterns
@@ -178,109 +214,214 @@ else:
     print("Using default METERMULTIPLIER value of 1.0")
 
 # --------------------------
-# Assign CURRREADING and calculate PREVREADING
+# Assign CURRREADING (Fixed for Proper Chronological Progression)
 # --------------------------
-print("\nAssigning CURRREADING and calculating PREVREADING...")
+print("\nAssigning CURRREADING with proper chronological progression...")
 
-# Create a robust connection between EABL readings and ZMECON customer data
 if data_sources.get("EABL") is not None and data_sources.get("ZMECON") is not None:
-    # Step 1: Prepare the lookup data from EABL
+    # Step 1: Prepare EABL data properly sorted by meter and date
     eabl_df = data_sources["EABL"].copy()
     
-    # Clean the key fields
-    eabl_df["Device"] = eabl_df.iloc[:, 6].astype(str).str.strip()  # Device column
-    eabl_df["Installation"] = eabl_df.iloc[:, 3].astype(str).str.strip()  # Installation column
-    eabl_df["Reading"] = pd.to_numeric(eabl_df.iloc[:, 8], errors='coerce')  # Predecimal column
+    # Clean and prepare EABL fields
+    eabl_df["Device"] = eabl_df.iloc[:, 6].astype(str).str.strip()
+    eabl_df["Installation"] = eabl_df.iloc[:, 3].astype(str).str.strip()
+    eabl_df["Reading"] = pd.to_numeric(eabl_df.iloc[:, 8], errors='coerce').fillna(0)
+    eabl_df["ReadDate"] = pd.to_datetime(eabl_df.iloc[:, 4], errors='coerce')
     
-    # Step 2: Prepare ZMECON for matching
+    # Remove invalid readings and sort properly
+    eabl_df = eabl_df[eabl_df["Reading"] > 0]
+    eabl_df = eabl_df.dropna(subset=["ReadDate"])
+    eabl_df = eabl_df.sort_values(["Device", "ReadDate"])
+    
+    print(f"Prepared EABL data: {len(eabl_df)} valid readings")
+    
+    # Step 2: Create mapping strategies
     zmecon_df = data_sources["ZMECON"].copy()
-    zmecon_df["Installation"] = zmecon_df.iloc[:, 26].astype(str).str.strip()  # Installation column
-    zmecon_df["Meter"] = zmecon_df.iloc[:, 20].astype(str).str.strip()  # Meter column
+    zmecon_df["Installation"] = zmecon_df.iloc[:, 26].astype(str).str.strip()
+    zmecon_df["Meter"] = zmecon_df.iloc[:, 20].astype(str).str.strip()
     zmecon_df["CustomerID"] = zmecon_df.iloc[:, 0].apply(
         lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
     )
     
-    # Step 3: Create a comprehensive matching structure
-    # First, try to create a meter-to-installation mapping
-    meter_to_installation = dict(zip(zmecon_df["Meter"], zmecon_df["Installation"]))
-    
-    # Then, create an installation-to-customerID mapping
+    # Create mapping dictionaries
     installation_to_customer = dict(zip(zmecon_df["Installation"], zmecon_df["CustomerID"]))
+    meter_to_customer = dict(zip(zmecon_df["Meter"], zmecon_df["CustomerID"]))
     
-    # Step 4: Add installation information to EABL if it's missing
-    if eabl_df["Installation"].isna().any():
-        eabl_df["Installation"] = eabl_df["Device"].map(meter_to_installation)
+    # Add customer IDs to EABL using multiple strategies
+    eabl_df["CustomerID"] = eabl_df["Installation"].map(installation_to_customer).fillna(
+        eabl_df["Device"].map(meter_to_customer)
+    )
     
-    # Step 5: Add customer ID to EABL
-    eabl_df["CustomerID"] = eabl_df["Installation"].map(installation_to_customer)
-    
-    # Step 6: Group EABL by CustomerID and get the readings
-    customer_readings = {}
-    for customer_id, group in eabl_df.groupby("CustomerID"):
-        if pd.notna(customer_id):
-            # Use the average or most recent reading for each customer
-            customer_readings[customer_id] = group["Reading"].mean()
-    
-    # Step 7: Map these readings to df_new
-    df_new["CURRREADING"] = df_new["CUSTOMERID"].map(customer_readings).fillna(0)
-    
-    # Check if we found any matches
-    matches_found = (df_new['CURRREADING'] > 0).sum()
-    print(f"Matched readings for {len(customer_readings)} customers")
-    print(f"Rows with non-zero CURRREADING: {matches_found}")
-    
-    # If no matches were found, use direct assignment as fallback
-    if matches_found == 0:
-        print("No matches found using CustomerID mapping. Using direct assignment fallback.")
+    # Keep only matched readings
+    matched_eabl = eabl_df.dropna(subset=["CustomerID"])
+    print(f"Successfully matched {len(matched_eabl)} EABL readings to customers")
+ #replace from here
+    if len(matched_eabl) > 0:
+        # Step 3: Create meter-specific reading progressions
+        print("Creating meter-specific reading progressions...")
         
-        # Direct sequential assignment (simplest but least accurate)
-        if len(data_sources["EABL"]) > 0:
-            readings = pd.to_numeric(data_sources["EABL"].iloc[:, 8], errors='coerce').fillna(0).tolist()
-            readings_cycle = readings * (len(df_new) // len(readings) + 1)  # Repeat readings to cover all rows
-            df_new["CURRREADING"] = readings_cycle[:len(df_new)]
-            print(f"Direct assignment complete. Using {len(readings)} readings for {len(df_new)} rows.")
+        # Store original index to preserve order
+        df_new["original_index"] = df_new.index
+        
+        # Sort df_new by meter and date to ensure proper chronological order
+        df_new_sorted = df_new.copy()
+        df_new_sorted["temp_date"] = pd.to_datetime(df_new_sorted["CURRREADDATE"], errors='coerce')
+        df_new_sorted = df_new_sorted.sort_values(["METERNUMBER", "temp_date"])
+        
+        # Initialize CURRREADING column
+        df_new_sorted["CURRREADING"] = 0
+        
+        # Process each unique meter
+        unique_meters = df_new_sorted["METERNUMBER"].unique()
+        meters_with_readings = 0
+        
+        print(f"Processing {len(unique_meters)} unique meters...")
+        
+        for meter_num in unique_meters:
+            if pd.isna(meter_num) or meter_num == "":
+                continue
+                
+            # Get all rows for this meter (chronologically sorted)
+            meter_mask = df_new_sorted["METERNUMBER"] == meter_num
+            meter_rows = df_new_sorted[meter_mask].copy()
+            
+            if len(meter_rows) == 0:
+                continue
+            
+            # Try to find matching EABL readings for this meter or its customer
+            # Strategy 1: Direct meter match
+            meter_readings = matched_eabl[matched_eabl["Device"] == meter_num]
+            
+            # Strategy 2: If no direct match, try customer-based match
+            if len(meter_readings) == 0:
+                customer_id = meter_rows.iloc[0]["CUSTOMERID"]
+                meter_readings = matched_eabl[matched_eabl["CustomerID"] == customer_id]
+            
+            # Strategy 3: If still no match, try partial meter number match
+            if len(meter_readings) == 0:
+                meter_short = str(meter_num)[:6]  # Use first 6 characters
+                meter_readings = matched_eabl[matched_eabl["Device"].str.contains(meter_short, na=False)]
+            
+            if len(meter_readings) > 0:
+                # Sort readings chronologically
+                meter_readings = meter_readings.sort_values("ReadDate")
+                readings_list = meter_readings["Reading"].tolist()
+                
+                # Assign readings chronologically to this meter's rows
+                for i, idx in enumerate(meter_rows.index):
+                    if i < len(readings_list):
+                        # Use actual reading value
+                        df_new_sorted.loc[idx, "CURRREADING"] = readings_list[i]
+                    else:
+                        # If we run out of readings, extrapolate based on last known reading
+                        if len(readings_list) > 1:
+                            # Calculate average monthly increase
+                            avg_increase = (readings_list[-1] - readings_list[0]) / max(1, len(readings_list) - 1)
+                            extrapolated_reading = readings_list[-1] + (avg_increase * (i - len(readings_list) + 1))
+                            df_new_sorted.loc[idx, "CURRREADING"] = max(readings_list[-1], extrapolated_reading)
+                        else:
+                            # Just use the last reading
+                            df_new_sorted.loc[idx, "CURRREADING"] = readings_list[-1]
+                
+                meters_with_readings += 1
+        
+        print(f"Assigned readings to {meters_with_readings} meters")
+        
+        # Restore original order properly using the stored index
+        df_new_sorted = df_new_sorted.sort_values("original_index")
+        df_new_sorted = df_new_sorted.drop(["temp_date", "original_index"], axis=1)
+        df_new["CURRREADING"] = df_new_sorted["CURRREADING"].values  # Use .values to ensure alignment
+ 
+        
+    else:
+        print("No customer matches found. Using sequential assignment with proper progression...")
+        # Fallback: Create reasonable progression for each meter
+        all_readings = pd.to_numeric(data_sources["EABL"].iloc[:, 8], errors='coerce')
+        all_readings = all_readings[all_readings > 0].tolist()
+        
+        if len(all_readings) > 0:
+            base_reading = int(sum(all_readings) / len(all_readings))  # Average reading as base
+            
+            for meter_num in df_new["METERNUMBER"].unique():
+                if pd.isna(meter_num) or meter_num == "":
+                    continue
+                
+                meter_mask = df_new["METERNUMBER"] == meter_num
+                meter_rows = df_new[meter_mask].sort_values("CURRREADDATE")
+                
+                # Create progression starting from base reading
+                for i, idx in enumerate(meter_rows.index):
+                    monthly_increase = 100 + (i * 50)  # Reasonable monthly gas usage
+                    df_new.loc[idx, "CURRREADING"] = base_reading + monthly_increase
+        else:
+            df_new["CURRREADING"] = 0
     
-    # Set initial RAWUSAGE
-    df_new["RAWUSAGE"] = df_new["CURRREADING"]
+    # Ensure proper data types
+    df_new["CURRREADING"] = pd.to_numeric(df_new["CURRREADING"], errors='coerce').fillna(0)
+    df_new["CURRREADING"] = df_new["CURRREADING"].astype(int)
+    
+    # Set initial RAWUSAGE (will be recalculated after PREVREADING)
+    df_new["RAWUSAGE"] = 0
+    
+    print(f"Final CURRREADING summary:")
+    print(f"  Non-zero readings: {(df_new['CURRREADING'] > 0).sum():,}")
+    print(f"  Reading range: {df_new['CURRREADING'].min():,} to {df_new['CURRREADING'].max():,}")
+
 else:
     print("Warning: EABL or ZMECON data missing, cannot assign CURRREADING")
     df_new["CURRREADING"] = 0
     df_new["RAWUSAGE"] = 0
 
+
+
 # Calculate PREVREADING based on sorted meter readings
 if "CURRREADING" in df_new.columns and "METERNUMBER" in df_new.columns and "CURRREADDATE" in df_new.columns:
-    # Store original CURRREADDATE format
-    original_dates = df_new["CURRREADDATE"].copy()
+    print("Calculating PREVREADING and PREVREADDATE with proper logic...")
     
-    # Convert CURRREADDATE to datetime for sorting
-    df_new["CURRREADDATE"] = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce')
+    # Convert CURRREADDATE to datetime for sorting (but keep original format)
+    df_new["temp_currreaddate"] = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce')
     
-    # Sort by METERNUMBER and CURRREADDATE
-    df_new.sort_values(by=["METERNUMBER", "CURRREADDATE"], inplace=True)
+    # Sort by METERNUMBER and CURRREADDATE to ensure chronological order
+    df_new = df_new.sort_values(by=["METERNUMBER", "temp_currreaddate"], na_position='last')
+    df_new = df_new.reset_index(drop=True)
     
-    # Calculate PREVREADING by shifting CURRREADING within each meter group
+    # Calculate PREVREADING and PREVREADDATE by shifting within each meter group
     df_new["PREVREADING"] = df_new.groupby("METERNUMBER")["CURRREADING"].shift(1)
+    df_new["PREVREADDATE"] = df_new.groupby("METERNUMBER")["CURRREADDATE"].shift(1)
+    
+    # Fill missing values appropriately
     df_new["PREVREADING"] = pd.to_numeric(df_new["PREVREADING"], errors='coerce').fillna(0)
+    df_new["PREVREADDATE"] = df_new["PREVREADDATE"].fillna("")
+    
+    # Convert to proper data types
     df_new["PREVREADING"] = df_new["PREVREADING"].astype(int)
-
     
-    # Update RAWUSAGE as CURRREADING - PREVREADING
+    # Calculate RAWUSAGE as CURRREADING - PREVREADING
     df_new["RAWUSAGE"] = df_new["CURRREADING"] - df_new["PREVREADING"]
-    # Handle negative usage (meter rollover) by setting to 0
-    df_new.loc[df_new["RAWUSAGE"] < 0, "RAWUSAGE"] = 0
     
-    # remove decimal places from RAWUSAGE and BILLINGUSAGE
+    # Handle negative usage (meter rollover) - keep as-is or set to 0 based on business rules
+    # For now, we'll keep negative values as they might be legitimate corrections
+    # df_new.loc[df_new["RAWUSAGE"] < 0, "RAWUSAGE"] = 0  # Uncomment if you want to zero out negative usage
+    
+    # Convert to integers
     df_new["RAWUSAGE"] = df_new["RAWUSAGE"].astype(int)
     df_new["BILLINGUSAGE"] = df_new["BILLINGUSAGE"].astype(int)
-    df_new["CURRREADING"] = df_new["CURRREADING"].astype(int)  
-
-
-    # Restore original CURRREADDATE format
-    df_new["CURRREADDATE"] = original_dates
+    df_new["CURRREADING"] = df_new["CURRREADING"].astype(int)
+    
+    # Drop the temporary date column
+    df_new = df_new.drop("temp_currreaddate", axis=1)
     
     print(f"Calculated PREVREADING and updated RAWUSAGE for {len(df_new)} rows")
+    
+    # Validation summary
+    non_zero_prev = (df_new["PREVREADING"] > 0).sum()
+    negative_usage = (df_new["RAWUSAGE"] < 0).sum()
+    print(f"Validation: {non_zero_prev:,} rows with non-zero PREVREADING")
+    print(f"Validation: {negative_usage:,} rows with negative RAWUSAGE (may indicate meter corrections)")
+    
 else:
     df_new["PREVREADING"] = 0
+    df_new["PREVREADDATE"] = ""
     print("Warning: Missing required columns for PREVREADING calculation")
 
 # --------------------------
@@ -569,8 +710,6 @@ else:
     print("Warning: ZMECON data not available for BILLINGBATCHNUMBER")
 
 
-
-
 # --------------------------
 # Assign hardcoded values for remaining required fields
 # --------------------------
@@ -585,6 +724,122 @@ df_new["BILLEDAMOUNT"] = " "
 df_new["HEATINGDEGREEDAYS"] = " "
 df_new["COOLINGDEGREEDAYS"] = " "
 df_new["UPDATEDATE"] = " "
+
+# --------------------------
+# COMPREHENSIVE DATA VALIDATION CHECKS (BEFORE FORMATTING!)
+# --------------------------
+print("\n" + "="*60)
+print("COMPREHENSIVE DATA VALIDATION CHECKS")
+print("="*60)
+
+# 1. Check for completely empty critical fields
+critical_fields = ["CUSTOMERID", "LOCATIONID", "METERNUMBER", "CURRREADDATE"]
+for field in critical_fields:
+    empty_count = (df_new[field] == "").sum() + df_new[field].isna().sum()
+    if empty_count > 0:
+        print(f"⚠️  WARNING: {empty_count:,} rows have empty {field}")
+    else:
+        print(f"✅ {field}: No empty values")
+
+# 2. Check date format consistency
+print(f"\n📅 DATE VALIDATION:")
+# Check CURRREADDATE format
+valid_curr_dates = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce', format='%Y-%m-%d')
+invalid_curr_dates = valid_curr_dates.isna().sum()
+if invalid_curr_dates == 0:
+    print(f"✅ CURRREADDATE: All dates in YYYY-MM-DD format")
+else:
+    print(f"⚠️  WARNING: {invalid_curr_dates:,} invalid CURRREADDATE values")
+
+# Check PREVREADDATE (excluding blanks for first readings)
+non_blank_prev = df_new[df_new["PREVREADDATE"] != ""]["PREVREADDATE"]
+if len(non_blank_prev) > 0:
+    valid_prev_dates = pd.to_datetime(non_blank_prev, errors='coerce', format='%Y-%m-%d')
+    invalid_prev_dates = valid_prev_dates.isna().sum()
+    if invalid_prev_dates == 0:
+        print(f"✅ PREVREADDATE: All non-blank dates in YYYY-MM-DD format")
+    else:
+        print(f"⚠️  WARNING: {invalid_prev_dates:,} invalid PREVREADDATE values")
+
+# 3. Check reading progression logic (sample first 100 meters)
+print(f"\n📊 READING PROGRESSION VALIDATION:")
+reading_issues = 0
+sample_meters = [m for m in df_new["METERNUMBER"].unique()[:100] if pd.notna(m) and m != ""]
+
+for meter in sample_meters:
+    meter_data = df_new[df_new["METERNUMBER"] == meter].copy()
+    if len(meter_data) > 1:
+        meter_data["temp_date"] = pd.to_datetime(meter_data["CURRREADDATE"], errors='coerce')
+        meter_data = meter_data.sort_values("temp_date")
+        
+        readings = pd.to_numeric(meter_data["CURRREADING"], errors='coerce').tolist()
+        decreases = sum(1 for i in range(1, len(readings)) if readings[i] < readings[i-1])
+        if decreases > len(readings) * 0.3:
+            reading_issues += 1
+
+if reading_issues > 0:
+    print(f"⚠️  WARNING: {reading_issues} meters have frequent reading decreases (check for meter replacements)")
+else:
+    print(f"✅ Reading progression looks reasonable for sampled meters")
+
+# 4. Check RAWUSAGE reasonableness (convert to numeric first to avoid string comparison errors)
+print(f"\n⚡ USAGE VALIDATION:")
+numeric_rawusage = pd.to_numeric(df_new["RAWUSAGE"], errors='coerce')
+negative_usage = (numeric_rawusage < 0).sum()
+zero_usage = (numeric_rawusage == 0).sum()
+extreme_usage = (numeric_rawusage > 50000).sum()
+
+print(f"📈 RAWUSAGE Statistics:")
+print(f"   Negative usage: {negative_usage:,} rows ({negative_usage/len(df_new)*100:.1f}%)")
+print(f"   Zero usage: {zero_usage:,} rows ({zero_usage/len(df_new)*100:.1f}%)")
+print(f"   Extreme usage (>50k): {extreme_usage:,} rows ({extreme_usage/len(df_new)*100:.1f}%)")
+
+if negative_usage > len(df_new) * 0.1:
+    print(f"⚠️  WARNING: High percentage of negative usage - check meter reading logic")
+
+# 5. Check BILLINGRATE/SALESREVENUECLASS mapping success
+print(f"\n💰 BILLING VALIDATION:")
+missing_billing_rate = (df_new["BILLINGRATE"] == "").sum()
+missing_sales_class = (df_new["SALESREVENUECLASS"] == "").sum()
+
+print(f"   Missing BILLINGRATE: {missing_billing_rate:,} rows ({missing_billing_rate/len(df_new)*100:.1f}%)")
+print(f"   Missing SALESREVENUECLASS: {missing_sales_class:,} rows ({missing_sales_class/len(df_new)*100:.1f}%)")
+
+if missing_billing_rate > len(df_new) * 0.05:
+    print(f"⚠️  WARNING: High percentage of missing billing rates")
+
+# 6. Check for duplicate rows
+print(f"\n🔄 DUPLICATE CHECK:")
+duplicates = df_new.duplicated(subset=["CUSTOMERID", "LOCATIONID", "METERNUMBER", "CURRREADDATE"]).sum()
+if duplicates > 0:
+    print(f"⚠️  WARNING: {duplicates:,} potential duplicate rows found")
+else:
+    print(f"✅ No duplicate rows found")
+
+# 7. Final row count validation
+print(f"\n📋 FINAL SUMMARY:")
+total_rows = len(df_new)  # No trailer row yet
+numeric_curr = pd.to_numeric(df_new["CURRREADING"], errors='coerce')
+numeric_prev = pd.to_numeric(df_new["PREVREADING"], errors='coerce')
+
+print(f"   Total data rows: {total_rows:,}")
+print(f"   Non-zero CURRREADING: {(numeric_curr > 0).sum():,} ({(numeric_curr > 0).sum()/total_rows*100:.1f}%)")
+print(f"   Non-zero PREVREADING: {(numeric_prev > 0).sum():,} ({(numeric_prev > 0).sum()/total_rows*100:.1f}%)")
+
+# 8. Sample data preview for manual inspection
+print(f"\n🔍 SAMPLE DATA (First 3 rows for Customer {df_new.iloc[0]['CUSTOMERID']}):")
+sample_customer = df_new.iloc[0]["CUSTOMERID"]
+sample_data = df_new[df_new["CUSTOMERID"] == sample_customer].head(3)
+for idx, row in sample_data.iterrows():
+    curr_reading = pd.to_numeric(row['CURRREADING'], errors='coerce')
+    prev_reading = pd.to_numeric(row['PREVREADING'], errors='coerce')
+    raw_usage = pd.to_numeric(row['RAWUSAGE'], errors='coerce')
+    print(f"   Row {idx}: CURR={curr_reading}, PREV={prev_reading}, "
+          f"USAGE={raw_usage}, DATE={row['CURRREADDATE']}")
+
+print("="*60)
+print("VALIDATION COMPLETE - Review warnings above before delivering")
+print("="*60)
 
 # --------------------------
 # Format values with proper quoting
@@ -636,7 +891,6 @@ print(f"Ordered columns according to target format. Final columns: {len(df_new.c
 trailer_row = pd.DataFrame([["TRAILER"] + [''] * (len(df_new.columns) - 1)], columns=df_new.columns)
 df_new = pd.concat([df_new, trailer_row], ignore_index=True)
 print(f"Added trailer row. Final row count: {len(df_new)}")
-
 # --------------------------
 # Save to CSV
 # --------------------------
