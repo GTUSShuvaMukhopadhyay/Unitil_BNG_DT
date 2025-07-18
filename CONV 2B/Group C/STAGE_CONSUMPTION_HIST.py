@@ -1,4 +1,4 @@
-# CONV 2 B- STAGE_CONSUMPTION_HISTORY
+# CONV 2 B - STAGE_CONSUMPTION_HISTORY
 # STAGE_CONSUMPTION_HIST.py
 # updates were made to use mapping from STAGE_METERED_SVCS
 
@@ -33,7 +33,8 @@ file_paths = {
     "ZMECON1": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 010115 TO 123116.XLSX",
     "ZMECON2": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 01012017 TO 12312019.XLSX",
     "ZMECON3": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 01012020 TO 12312021.XLSX",
-    "ZMECON4": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 01012022 TO 12312024 (1).XLSX", # fix this data source
+    "ZMECON4": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 01012022 TO 12312024 v1.XLSX",
+    "ZMECON5": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ZMECON 010125 TO 07142025.XLSX",
     "EABL1": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\EABL 06012019 TO 12312022.XLSX",
     "EABL2": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\EABL 01012023 TO 06142025.XLSX",
     "TF": r"C:\Users\us85360\Desktop\CONV 2B - STAGE_CONSUMPTION_HIST\ThermFactor.xlsx",
@@ -60,8 +61,8 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
         name, df = future.result()
         data_sources[name] = df
 
-# Create composite dataset for ZMECON (now handling 4 files)
-zmecon_files = ["ZMECON1", "ZMECON2", "ZMECON3", "ZMECON4"]
+# Create composite dataset for ZMECON (now handling 5 files)
+zmecon_files = ["ZMECON1", "ZMECON2", "ZMECON3", "ZMECON4", "ZMECON5"]
 zmecon_dfs = [data_sources.get(name) for name in zmecon_files if data_sources.get(name) is not None]
 
 if len(zmecon_dfs) > 0:
@@ -84,6 +85,7 @@ else:
 df_new = pd.DataFrame()
 
 print("\nStarting field extraction and transformation...")
+
 
 # --------------------------
 # Extract CUSTOMERID from ZMECON (Column A = iloc[:, 0])
@@ -270,6 +272,7 @@ if "CURRREADING" in df_new.columns and "METERNUMBER" in df_new.columns and "CURR
     # remove decimal places from RAWUSAGE and BILLINGUSAGE
     df_new["RAWUSAGE"] = df_new["RAWUSAGE"].astype(int)
     df_new["BILLINGUSAGE"] = df_new["BILLINGUSAGE"].astype(int)
+    df_new["CURRREADING"] = df_new["CURRREADING"].astype(int)  
 
 
     # Restore original CURRREADDATE format
@@ -555,7 +558,6 @@ else:
     print("No values assigned for BILLINGRATE and SALESREVENUECLASS (data sources not available)")
 
 
-
 # --------------------------
 # Extract BILLINGBATCHNUMBER from ZMECON (Column D - Print Document No., index 3)
 # --------------------------
@@ -565,6 +567,8 @@ if data_sources.get("ZMECON") is not None:
 else:
     df_new["BILLINGBATCHNUMBER"] = ""
     print("Warning: ZMECON data not available for BILLINGBATCHNUMBER")
+
+
 
 
 # --------------------------
@@ -578,8 +582,6 @@ df_new["READINGCODE"] = "2"
 df_new["UNITOFMEASURE"] = "CF"
 df_new["READERID"] = " "
 df_new["BILLEDAMOUNT"] = " "
-
-
 df_new["HEATINGDEGREEDAYS"] = " "
 df_new["COOLINGDEGREEDAYS"] = " "
 df_new["UPDATEDATE"] = " "
@@ -638,7 +640,7 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # --------------------------
 # Save to CSV
 # --------------------------
-output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '71725_2B_STAGE_CONSUMPTION_HIST.csv')
+output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_CONSUMPTION_HIST.csv')
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
 
