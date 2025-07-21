@@ -4,44 +4,31 @@
 # This script processes customer notes data and creates the final STAGE_CUST_NOTES CSV
 
 import pandas as pd
+import numpy as np
 import os
 import csv
 from datetime import datetime
 import logging
 
-# Set up logging
-log_file_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\path\STAGE_CUST_NOTES_FINAL.log"
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(log_file_path)
-    ]
-)
-logger = logging.getLogger()
+ # Add the parent directory to sys.path
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+import Conversion_Utils as cu 
 
-print("=== STAGE_CUST_NOTES FINAL PROCESSOR ===")
-logger.info("Starting STAGE_CUST_NOTES processing...")
-
-# Load the data sources
-print("Loading data sources...")
+cu.print_checklist()
 
 # Load customer notes data from Final IR sheet
-cust_df = pd.read_excel(r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\Interaction Records - 0614.xlsx", 
-                        sheet_name="Final IR", engine='openpyxl')
+cust_df = cu.get_file("notes", sheet_name='Final IR')
 
 # Load premise details for location mapping
-zdm_df = pd.read_excel(r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZDM_PREMDETAILS.XLSX", 
-                       sheet_name="Sheet1", engine='openpyxl')
-
-logger.info(f"Loaded customer data: {len(cust_df)} rows")
-logger.info(f"Loaded premise data: {len(zdm_df)} rows")
+zdm_df = cu.get_file("prem")
 
 # Extract all fields from customer data (Final IR)
-print("Extracting customer data...")
+cu.log_debug("Extracting customer data...")
 customer_data = pd.DataFrame({
-    'CUSTOMERID': cust_df['Business Partner'].astype(str).str.strip(),
+    'CUSTOMERID': cust_df['Business Partner'].astype(pd.Int64Dtype()).replace(np.nan, None),  # Convert to Int64 and handle NaN
     'NOTEDATE_RAW': cust_df['Record Date'],
     'NOTEDATA': cust_df['Final IR'].fillna('').astype(str)
 })
@@ -55,81 +42,67 @@ customer_data['NOTEDATE'] = pd.to_datetime(
 # Handle any conversion errors by setting to empty string
 customer_data['NOTEDATE'] = customer_data['NOTEDATE'].fillna('')
 
-logger.info(f"Extracted customer data: {len(customer_data)} rows")
-logger.info("Sample NOTEDATE conversions:")
+cu.log_info(f"Extracted customer data: {len(customer_data)} rows")
+cu.log_info("Sample NOTEDATE conversions:")
 for i in range(min(3, len(customer_data))):
     raw_date = customer_data.iloc[i]['NOTEDATE_RAW']
     converted_date = customer_data.iloc[i]['NOTEDATE']
-    logger.info(f"  Row {i}: {raw_date} -> {converted_date}")
+    cu.log_info(f"  Row {i}: {raw_date} -> {converted_date}")
 
 # Extract location mapping data from ZDM_PREMDETAILS
-print("Extracting location mapping...")
+cu.log_debug("Extracting location mapping...")
 location_data = pd.DataFrame({
-    'Business_Partner_ZDM': zdm_df['Business Partener'].astype(str),  # Note the typo in column name
-    'LOCATIONID': zdm_df['Premise'].astype(str)
+    'Business_Partner_ZDM': zdm_df['Business Partener'].astype(pd.Int64Dtype()).replace(np.nan, None),  # Note the typo in column name
+    'LOCATIONID': zdm_df['Premise'].astype(int)
 })
 
-# Clean the ZDM Business Partner values to match customer data format
-location_data['Business_Partner_Clean'] = (location_data['Business_Partner_ZDM']
-                                         .str.replace('.0', '', regex=False)
-                                         .str.lstrip('0')
-                                         .replace('', '0'))  # Handle all-zero case
-
-logger.info(f"Extracted location data: {len(location_data)} rows")
-logger.info("Sample Business Partner cleaning:")
-for i in range(min(3, len(location_data))):
-    original = location_data.iloc[i]['Business_Partner_ZDM']
-    cleaned = location_data.iloc[i]['Business_Partner_Clean']
-    location = location_data.iloc[i]['LOCATIONID']
-    logger.info(f"  {original} -> {cleaned} (Location: {location})")
-
 # Perform the join to get LOCATIONID for each customer
-print("Joining customer data with location data...")
+cu.log_debug("Joining customer data with location data...")
 joined_data = customer_data.merge(
-    location_data[['Business_Partner_Clean', 'LOCATIONID']], 
+    location_data[['Business_Partner_ZDM', 'LOCATIONID']], 
     left_on='CUSTOMERID',
-    right_on='Business_Partner_Clean',
+    right_on='Business_Partner_ZDM',
     how='left'
 )
 
-logger.info(f"After join: {len(joined_data)} rows")
-print(f"DEBUG: After join: {len(joined_data)} rows")
+cu.log_info(f"After join: {len(joined_data)} rows")
+cu.log_debug(f"DEBUG: After join: {len(joined_data)} rows")
 
 # Remove duplicates - keep only the first LOCATIONID for each customer/note combination
 # (In case a customer has multiple premises, we'll take the first one)
-print("Handling duplicate locations...")
-print(f"DEBUG: Before deduplication: {len(joined_data)} rows")
-print(f"DEBUG: Unique combinations of CUSTOMERID+NOTEDATE+NOTEDATA: {joined_data[['CUSTOMERID', 'NOTEDATE', 'NOTEDATA']].drop_duplicates().shape[0]}")
+cu.log_debug("Handling duplicate locations...")
+cu.log_debug(f"DEBUG: Before deduplication: {len(joined_data)} rows")
+cu.log_debug(f"DEBUG: Unique combinations of CUSTOMERID+NOTEDATE+NOTEDATA: {joined_data[['CUSTOMERID', 'NOTEDATE', 'NOTEDATA']].drop_duplicates().shape[0]}")
 
 joined_data_dedupe = joined_data.drop_duplicates(
     subset=['CUSTOMERID', 'NOTEDATE', 'NOTEDATA'], 
     keep='first'
 )
 
-logger.info(f"After deduplication: {len(joined_data_dedupe)} rows")
-print(f"DEBUG: After deduplication: {len(joined_data_dedupe)} rows")
+cu.log_info(f"After deduplication: {len(joined_data_dedupe)} rows")
+cu.log_debug(f"DEBUG: After deduplication: {len(joined_data_dedupe)} rows")
 
 # Check for empty/null values that might be causing issues
-print(f"DEBUG: Records with empty CUSTOMERID: {sum(joined_data_dedupe['CUSTOMERID'].isna() | (joined_data_dedupe['CUSTOMERID'] == ''))}")
-print(f"DEBUG: Records with empty NOTEDATE: {sum(joined_data_dedupe['NOTEDATE'].isna() | (joined_data_dedupe['NOTEDATE'] == ''))}")
-print(f"DEBUG: Records with empty NOTEDATA: {sum(joined_data_dedupe['NOTEDATA'].isna() | (joined_data_dedupe['NOTEDATA'] == ''))}")
+cu.log_debug(f"DEBUG: Records with empty CUSTOMERID: {sum(joined_data_dedupe['CUSTOMERID'].isna() | (joined_data_dedupe['CUSTOMERID'] == ''))}")
+cu.log_debug(f"DEBUG: Records with empty NOTEDATE: {sum(joined_data_dedupe['NOTEDATE'].isna() | (joined_data_dedupe['NOTEDATE'] == ''))}")
+cu.log_debug(f"DEBUG: Records with empty NOTEDATA: {sum(joined_data_dedupe['NOTEDATA'].isna() | (joined_data_dedupe['NOTEDATA'] == ''))}")
 
 # Show sample of data at this point
-print("DEBUG: Sample of joined_data_dedupe:")
+cu.log_debug("DEBUG: Sample of joined_data_dedupe:")
 for i in range(min(5, len(joined_data_dedupe))):
     row = joined_data_dedupe.iloc[i]
-    print(f"  Row {i}: CUSTOMERID={row['CUSTOMERID']}, LOCATIONID={row['LOCATIONID']}, NOTEDATE={row['NOTEDATE']}")
+    cu.log_debug(f"  Row {i}: CUSTOMERID={row['CUSTOMERID']}, LOCATIONID={row['LOCATIONID']}, NOTEDATE={row['NOTEDATE']}")
 
 # Also check the original customer_data size
-print(f"DEBUG: Original customer_data size: {len(customer_data)}")
-print(f"DEBUG: Original location_data size: {len(location_data)}")
+cu.log_debug(f"DEBUG: Original customer_data size: {len(customer_data)}")
+cu.log_debug(f"DEBUG: Original location_data size: {len(location_data)}")
 
 # Check how many customers actually match
-matching_customers = set(customer_data['CUSTOMERID']) & set(location_data['Business_Partner_Clean'])
-print(f"DEBUG: Customers that should match: {len(matching_customers)}")
+matching_customers = set(customer_data['CUSTOMERID']) & set(location_data['Business_Partner_ZDM'])
+cu.log_debug(f"DEBUG: Customers that should match: {len(matching_customers)}")
 
 # Create the final output with all required fields
-print("Creating final output structure...")
+cu.log_debug("Creating final output structure...")
 final_output = pd.DataFrame({
     'CUSTOMERID': joined_data_dedupe['CUSTOMERID'],
     'LOCATIONID': joined_data_dedupe['LOCATIONID'].fillna(''),  # Replace NaN with empty string
@@ -141,7 +114,7 @@ final_output = pd.DataFrame({
     'UPDATEDATE': ' '  # Hardcoded as blank
 })
 
-logger.info(f"Final output created: {len(final_output)} rows")
+cu.log_info(f"Final output created: {len(final_output)} rows")
 
 # Log statistics
 customerid_populated = sum(final_output['CUSTOMERID'] != '')
@@ -149,19 +122,19 @@ locationid_populated = sum(final_output['LOCATIONID'] != '')
 notedate_populated = sum(final_output['NOTEDATE'] != '')
 notedata_populated = sum(final_output['NOTEDATA'] != '')
 
-logger.info(f"Records with CUSTOMERID populated: {customerid_populated}")
-logger.info(f"Records with LOCATIONID populated: {locationid_populated}")
-logger.info(f"Records with NOTEDATE populated: {notedate_populated}")
-logger.info(f"Records with NOTEDATA populated: {notedata_populated}")
+cu.log_info(f"Records with CUSTOMERID populated: {customerid_populated}")
+cu.log_info(f"Records with LOCATIONID populated: {locationid_populated}")
+cu.log_info(f"Records with NOTEDATE populated: {notedate_populated}")
+cu.log_info(f"Records with NOTEDATA populated: {notedata_populated}")
 
 # Show sample final data
-logger.info("Sample final output:")
+cu.log_info("Sample final output:")
 for i in range(min(3, len(final_output))):
     sample_row = final_output.iloc[i].to_dict()
-    logger.info(f"  Row {i}: {sample_row}")
+    cu.log_info(f"  Row {i}: {sample_row}")
 
 # Apply proper formatting for CSV export
-print("Preparing data for CSV export...")
+cu.log_debug("Preparing data for CSV export...")
 
 # Create clean final output without manual quote formatting
 final_output_clean = pd.DataFrame({
@@ -183,57 +156,15 @@ column_order = [
 
 final_output_clean = final_output_clean[column_order]
 
-# Add trailer row
-print("Adding trailer row...")
-trailer_row = pd.DataFrame([["TRAILER"] + [''] * (len(final_output_clean.columns) - 1)], 
-                          columns=final_output_clean.columns)
-final_output_with_trailer = pd.concat([final_output_clean, trailer_row], ignore_index=True)
-
-# Save to CSV
-output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Group C\STAGE_CUST_NOTES.csv"
-
-print(f"Saving to CSV: {output_path}")
-try:
-    # Write CSV manually to ensure proper formatting
-    with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
-        # Write header
-        csvfile.write('CUSTOMERID,LOCATIONID,APPLICATION,NOTEDATE,NOTETYPE,WORKORDERNUMBER,NOTEDATA,UPDATEDATE\n')
-        
-        # Write data rows
-        for i, row in final_output_clean.iterrows():
-            csvfile.write(f"{row['CUSTOMERID']},{row['LOCATIONID']},{row['APPLICATION']},{row['NOTEDATE']},{row['NOTETYPE']},{row['WORKORDERNUMBER']},{row['NOTEDATA']},{row['UPDATEDATE']}\n")
-        
-        # Write trailer
-        csvfile.write('TRAILER,,,,,,,\n')
-    
-    logger.info(f"CSV file successfully saved at: {output_path}")
-    logger.info(f"Total records exported: {len(final_output_clean)} (plus trailer)")
-    print(f"✅ SUCCESS: CSV file saved at {output_path}")
-    
-except Exception as e:
-    logger.error(f"Error saving CSV file: {e}")
-    print(f"❌ ERROR saving CSV: {e}")
-    
-    # Fallback: try using pandas with different settings
-    try:
-        final_output_with_trailer.to_csv(
-            output_path, 
-            index=False, 
-            header=True, 
-            quoting=csv.QUOTE_NONE,
-            escapechar=None,
-            encoding='utf-8'
-        )
-        print("✅ Fallback save successful")
-    except Exception as e2:
-        print(f"❌ Fallback save also failed: {e2}")
+# Write the DataFrame to a CSV file
+cu.write_csv(final_output_clean, "Group C\STAGE_CUSTOMER_NOTES.csv" )
 
 # Final summary
-print(f"\n=== PROCESSING COMPLETE ===")
-print(f"Input records: {len(cust_df)}")
-print(f"Output records: {len(final_output)} (plus trailer)")
-print(f"Records with LOCATIONID: {locationid_populated}")
-print(f"Success rate: {locationid_populated/len(final_output)*100:.1f}%")
+cu.log_debug(f"\n=== PROCESSING COMPLETE ===")
+cu.log_debug(f"Input records: {len(cust_df)}")
+cu.log_debug(f"Output records: {len(final_output)} (plus trailer)")
+cu.log_debug(f"Records with LOCATIONID: {locationid_populated}")
+cu.log_debug(f"Success rate: {locationid_populated/len(final_output)*100:.1f}%")
 
-logger.info("STAGE_CUST_NOTES processing completed successfully")
-print("Done!")
+cu.log_info("STAGE_CUST_NOTES processing completed successfully")
+cu.log_debug("Done!")
