@@ -28,9 +28,9 @@ with private_key.unlock("GT&Unitil2025"):
     # Create the new data frame
     df_new = excel_df[['Business Partner', 'IDType', 'Identification number']].copy()
 
-    #Rename the columns to CUSTOMERID, SSNTIMTYPE, SSNTIM
-    df_new.columns = ['CUSTOMERID', 'SSNTIMTYPENAME', 'SSNTIN']
-    df_new['SSNTIMTYPE'] = df_new['SSNTIMTYPENAME'].apply(lambda x: 1 if x == 'Social Security Number' else 2)
+    #Rename the columns to CUSTOMERID, SSNTINTYPE, SSNTIN
+    df_new.columns = ['CUSTOMERID', 'SSNTINTYPENAME', 'SSNTIN']
+    df_new['SSNTINTYPE'] = df_new['SSNTINTYPENAME'].apply(lambda x: 1 if x == 'Social Security Number' else 2)
     df_new['DRIVERSLICENSE'] = ''
     df_new['DLSTATE'] = ''
 
@@ -38,11 +38,11 @@ with private_key.unlock("GT&Unitil2025"):
     df_new['SSNTIN'] = df_new['SSNTIN'].astype(str).str.replace(r'\D', '', regex=True)
     #df_new['SSNTIN'] = df_new['SSNTIN'].str.replace('-', '', regex=False)
 
-    #Ensure the SSNTIM column is formatted as XXX-XX-XXXX for SSNTIMTYPE 1, or XX-XXXXXXX for SSNTIMTYPE 2
-    df_new['SSNTIN'] = df_new.apply(lambda x: f"{x['SSNTIN'][:3]}-{x['SSNTIN'][3:5]}-{x['SSNTIN'][5:]}" if x['SSNTIMTYPE'] == 1 else f"{x['SSNTIN'][:2]}-{x['SSNTIN'][2:]}", axis=1)
+    #Ensure the SSNTIN column is formatted as XXX-XX-XXXX for SSNTINTYPE 1, or XX-XXXXXXX for SSNTINTYPE 2
+    #df_new['SSNTIN'] = df_new.apply(lambda x: f"{x['SSNTIN'][:3]}-{x['SSNTIN'][3:5]}-{x['SSNTIN'][5:]}" if x['SSNTINTYPE'] == 1 else f"{x['SSNTIN'][:2]}-{x['SSNTIN'][2:]}", axis=1)
 
     #Reorderfs
-    df_new = df_new[['CUSTOMERID','SSNTIMTYPE', 'SSNTIN', 'DRIVERSLICENSE', 'DLSTATE']]
+    df_new = df_new[['CUSTOMERID','SSNTINTYPE', 'SSNTIN', 'DRIVERSLICENSE', 'DLSTATE']]
 
     # --------------------------
     # Add trailer row
