@@ -185,7 +185,6 @@ print(f"READINGTYPE value distribution: {df_new['READINGTYPE'].value_counts().to
 # Extract BILLINGUSAGE and BILLEDDATE from ZMECON (indexes 21 and 23)
 # --------------------------
 if data_sources.get("ZMECON") is not None:
-    df_new["BILLINGUSAGE"] = pd.to_numeric(data_sources["ZMECON"].iloc[:, 21], errors='coerce').fillna(0)
     df_new["BILLEDDATE"] = pd.to_datetime(data_sources["ZMECON"].iloc[:, 23], errors='coerce').dt.strftime('%Y-%m-%d')
     print(f"Extracted BILLINGUSAGE and BILLEDDATE values")
 
@@ -372,8 +371,6 @@ else:
     df_new["CURRREADING"] = 0
     df_new["RAWUSAGE"] = 0
 
-
-
 # Calculate PREVREADING based on sorted meter readings
 if "CURRREADING" in df_new.columns and "METERNUMBER" in df_new.columns and "CURRREADDATE" in df_new.columns:
     print("Calculating PREVREADING and PREVREADDATE with proper logic...")
@@ -396,33 +393,114 @@ if "CURRREADING" in df_new.columns and "METERNUMBER" in df_new.columns and "CURR
     # Convert to proper data types
     df_new["PREVREADING"] = df_new["PREVREADING"].astype(int)
     
-    # Calculate RAWUSAGE as CURRREADING - PREVREADING
-    df_new["RAWUSAGE"] = df_new["CURRREADING"] - df_new["PREVREADING"]
-    
-    # Handle negative usage (meter rollover) - keep as-is or set to 0 based on business rules
-    # For now, we'll keep negative values as they might be legitimate corrections
-    # df_new.loc[df_new["RAWUSAGE"] < 0, "RAWUSAGE"] = 0  # Uncomment if you want to zero out negative usage
-    
-    # Convert to integers
-    df_new["RAWUSAGE"] = df_new["RAWUSAGE"].astype(int)
-    df_new["BILLINGUSAGE"] = df_new["BILLINGUSAGE"].astype(int)
-    df_new["CURRREADING"] = df_new["CURRREADING"].astype(int)
-    
     # Drop the temporary date column
     df_new = df_new.drop("temp_currreaddate", axis=1)
     
-    print(f"Calculated PREVREADING and updated RAWUSAGE for {len(df_new)} rows")
+    print(f"Calculated PREVREADING and PREVREADDATE for {len(df_new)} rows")
     
     # Validation summary
     non_zero_prev = (df_new["PREVREADING"] > 0).sum()
-    negative_usage = (df_new["RAWUSAGE"] < 0).sum()
     print(f"Validation: {non_zero_prev:,} rows with non-zero PREVREADING")
-    print(f"Validation: {negative_usage:,} rows with negative RAWUSAGE (may indicate meter corrections)")
     
 else:
     df_new["PREVREADING"] = 0
     df_new["PREVREADDATE"] = ""
     print("Warning: Missing required columns for PREVREADING calculation")
+
+# --------------------------
+# Calculate RAWUSAGE with DTH Logic
+# If EABL UMR = "DTH", then RAWUSAGE = CURRREADING
+# Otherwise, RAWUSAGE = CURRREADING - PREVREADING
+# --------------------------
+
+# First, create a mapping from meter/installation to UMR values
+print("Creating UMR mapping from EABL data...")
+
+if data_sources.get("EABL") is not None:
+    # Create UMR mapping from EABL
+    eabl_umr_df = data_sources["EABL"].copy()
+    eabl_umr_df["Device"] = eabl_umr_df.iloc[:, 6].astype(str).str.strip()      # Column G - Device
+    eabl_umr_df["Installation"] = eabl_umr_df.iloc[:, 3].astype(str).str.strip() # Column D - Installation  
+    eabl_umr_df["UMR"] = eabl_umr_df.iloc[:, 9].astype(str).str.strip()        # Column J - UMR
+    
+    # Create mapping dictionaries (Device and Installation to UMR)
+    device_to_umr = {}
+    installation_to_umr = {}
+    
+    # Build Device to UMR mapping
+    for idx, row in eabl_umr_df.iterrows():
+        device = row["Device"]
+        installation = row["Installation"]
+        umr = row["UMR"]
+        
+        if device and device not in ["", "nan", "NaN"]:
+            device_to_umr[device] = umr
+        if installation and installation not in ["", "nan", "NaN"]:
+            installation_to_umr[installation] = umr
+    
+    print(f"Created UMR mappings: {len(device_to_umr):,} devices, {len(installation_to_umr):,} installations")
+    
+    # Count DTH occurrences
+    dth_devices = sum(1 for umr in device_to_umr.values() if umr == "DTH")
+    dth_installations = sum(1 for umr in installation_to_umr.values() if umr == "DTH")
+    print(f"Found DTH values: {dth_devices:,} devices, {dth_installations:,} installations")
+    
+    # Add UMR column to df_new based on meter number and location ID
+    df_new["UMR_TYPE"] = ""
+    
+    for idx, row in df_new.iterrows():
+        meter = str(row["METERNUMBER"]).strip()
+        location = str(row["LOCATIONID"]).strip()
+        
+        # Try to find UMR by meter number first, then by location ID
+        umr_value = device_to_umr.get(meter, installation_to_umr.get(location, ""))
+        df_new.loc[idx, "UMR_TYPE"] = umr_value
+    
+    # Calculate RAWUSAGE based on UMR_TYPE
+    print("Calculating RAWUSAGE with DTH logic...")
+    
+    # Initialize RAWUSAGE
+    df_new["RAWUSAGE"] = 0
+    
+    # For DTH meters: RAWUSAGE = CURRREADING
+    dth_mask = df_new["UMR_TYPE"] == "DTH"
+    df_new.loc[dth_mask, "RAWUSAGE"] = df_new.loc[dth_mask, "CURRREADING"]
+    
+    # For non-DTH meters: RAWUSAGE = CURRREADING - PREVREADING
+    non_dth_mask = df_new["UMR_TYPE"] != "DTH"
+    df_new.loc[non_dth_mask, "RAWUSAGE"] = (
+        df_new.loc[non_dth_mask, "CURRREADING"] - df_new.loc[non_dth_mask, "PREVREADING"]
+    )
+    
+    # Convert to integers
+    df_new["RAWUSAGE"] = df_new["RAWUSAGE"].astype(int)
+    
+    # Validation summary
+    dth_rows = dth_mask.sum()
+    non_dth_rows = non_dth_mask.sum()
+    
+    print(f"RAWUSAGE calculation summary:")
+    print(f"  DTH meters (RAWUSAGE = CURRREADING): {dth_rows:,} rows")
+    print(f"  Non-DTH meters (RAWUSAGE = CURR - PREV): {non_dth_rows:,} rows")
+    print(f"  RAWUSAGE range: {df_new['RAWUSAGE'].min():,} to {df_new['RAWUSAGE'].max():,}")
+    
+    # Show sample DTH calculations
+    if dth_rows > 0:
+        sample_dth = df_new[dth_mask].head(3)
+        print(f"\nSample DTH calculations:")
+        for idx, row in sample_dth.iterrows():
+            print(f"  Row {idx}: UMR={row['UMR_TYPE']}, CURR={row['CURRREADING']}, RAWUSAGE={row['RAWUSAGE']}")
+    
+    # Check for negative usage
+    negative_usage = (df_new["RAWUSAGE"] < 0).sum()
+    print(f"Validation: {negative_usage:,} rows with negative RAWUSAGE (may indicate meter corrections)")
+    
+else:
+    print("Warning: EABL data not available for UMR mapping")
+    # Fallback to standard calculation
+    df_new["RAWUSAGE"] = df_new["CURRREADING"] - df_new["PREVREADING"]
+    df_new["RAWUSAGE"] = df_new["RAWUSAGE"].astype(int)
+
 
 # --------------------------
 # Assign THERMFACTOR from ThermFactor.xlsx
@@ -455,6 +533,67 @@ else:
     df_new["THERMFACTOR"] = 1.0
     print("Warning: ThermFactor file not loaded. Using default value of 1.0.")
 
+
+# --------------------------
+# Calculate BILLINGUSAGE using client's specific formula (without negative multiplier)
+# Modified client formula: round((Round(([PRESENTREADING]-[PREVIOUSREADING])*[MULTIPLIER],0)*[THERMFACTOR]),3)
+# --------------------------
+print("\nCalculating BILLINGUSAGE using client's specific rounding formula (without negative)...")
+
+# Ensure all components are numeric
+df_new["CURRREADING"] = pd.to_numeric(df_new["CURRREADING"], errors='coerce').fillna(0)
+df_new["PREVREADING"] = pd.to_numeric(df_new["PREVREADING"], errors='coerce').fillna(0)
+df_new["METERMULTIPLIER"] = pd.to_numeric(df_new["METERMULTIPLIER"], errors='coerce').fillna(1.0)
+df_new["THERMFACTOR"] = pd.to_numeric(df_new["THERMFACTOR"], errors='coerce').fillna(1.0)
+
+# Apply the client's formula step by step using the CORRECT RAWUSAGE (which includes DTH logic)
+# For DTH meters: RAWUSAGE = CURRREADING, so BILLINGUSAGE uses CURRREADING directly
+# For non-DTH meters: RAWUSAGE = CURRREADING - PREVREADING
+
+# Step 1: Use the already-calculated RAWUSAGE (which has DTH logic applied)
+raw_usage_for_billing = pd.to_numeric(df_new["RAWUSAGE"], errors='coerce').fillna(0)
+
+# Step 2: Apply multiplier and round to whole number
+usage_with_multiplier = raw_usage_for_billing * df_new["METERMULTIPLIER"]
+usage_rounded = usage_with_multiplier.round(0)
+
+# Step 3: Apply thermal factor
+usage_with_thermal = usage_rounded * df_new["THERMFACTOR"]
+
+# Step 4: Final rounding to 3 decimal places (REMOVED *-1 since BILLINGUSAGE should be positive)
+df_new["BILLINGUSAGE"] = usage_with_thermal.round(3)
+
+# DO NOT OVERWRITE RAWUSAGE - it already has the correct DTH logic applied
+
+# Validation and sample calculation
+non_zero_billing = (df_new["BILLINGUSAGE"] != 0).sum()
+positive_billing = (df_new["BILLINGUSAGE"] > 0).sum()
+
+print(f"Calculated BILLINGUSAGE for {len(df_new)} rows using client formula (without negative)")
+print(f"Non-zero BILLINGUSAGE values: {non_zero_billing:,}")
+print(f"Positive BILLINGUSAGE values: {positive_billing:,} ({positive_billing/len(df_new)*100:.1f}%)")
+print(f"BILLINGUSAGE range: {df_new['BILLINGUSAGE'].min():.3f} to {df_new['BILLINGUSAGE'].max():.3f}")
+
+# Show detailed sample calculation for verification
+if len(df_new) > 0:
+    # Show both DTH and non-DTH examples
+    dth_sample = df_new[df_new["UMR_TYPE"] == "DTH"].head(1)
+    non_dth_sample = df_new[df_new["UMR_TYPE"] != "DTH"].head(1)
+    
+    if len(dth_sample) > 0:
+        idx = dth_sample.index[0]
+        print(f"\nSample DTH calculation:")
+        print(f"  UMR=DTH: RAWUSAGE={df_new.loc[idx, 'RAWUSAGE']} = CURRREADING={df_new.loc[idx, 'CURRREADING']}")
+        print(f"  BILLINGUSAGE = {df_new.loc[idx, 'RAWUSAGE']} * {df_new.loc[idx, 'METERMULTIPLIER']} * {df_new.loc[idx, 'THERMFACTOR']} = {df_new.loc[idx, 'BILLINGUSAGE']}")
+    
+    if len(non_dth_sample) > 0:
+        idx = non_dth_sample.index[0]
+        print(f"\nSample Non-DTH calculation:")
+        print(f"  UMR≠DTH: RAWUSAGE={df_new.loc[idx, 'RAWUSAGE']} = CURR-PREV = {df_new.loc[idx, 'CURRREADING']}-{df_new.loc[idx, 'PREVREADING']}")
+        print(f"  BILLINGUSAGE = {df_new.loc[idx, 'RAWUSAGE']} * {df_new.loc[idx, 'METERMULTIPLIER']} * {df_new.loc[idx, 'THERMFACTOR']} = {df_new.loc[idx, 'BILLINGUSAGE']}")
+
+# Set BILLEDDATE to match CURRREADDATE since we're calculating billing usage
+df_new["BILLEDDATE"] = df_new["CURRREADDATE"]
 # --------------------------
 # Assign BILLINGRATE and SALESREVENUECLASS with improved mapping logic
 # --------------------------
@@ -703,8 +842,15 @@ else:
 # Extract BILLINGBATCHNUMBER from ZMECON (Column D - Print Document No., index 3)
 # --------------------------
 if data_sources.get("ZMECON") is not None:
-    df_new["BILLINGBATCHNUMBER"] = data_sources["ZMECON"].iloc[:, 3].fillna('').astype(str).str.strip()
-    print(f"Extracted BILLINGBATCHNUMBER values from ZMECON column D")
+    df_new["BILLINGBATCHNUMBER"] = data_sources["ZMECON"].iloc[:, 3].apply(
+        lambda x: str(int(x))[2:10] if pd.notna(x) and isinstance(x, (int, float)) else ""
+    )
+    print(f"Extracted and truncated BILLINGBATCHNUMBER values from ZMECON column D")
+    
+    # Validation: Check the length of the truncated values
+    max_length = df_new["BILLINGBATCHNUMBER"].str.len().max()
+    print(f"Maximum BILLINGBATCHNUMBER length after truncation: {max_length} characters")
+    
 else:
     df_new["BILLINGBATCHNUMBER"] = ""
     print("Warning: ZMECON data not available for BILLINGBATCHNUMBER")
@@ -894,7 +1040,9 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # --------------------------
 # Save to CSV
 # --------------------------
+# this passed on 722 - output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '722_test_STAGE_CONSUMPTION_HIST.csv')
 output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_CONSUMPTION_HIST.csv')
+
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
 
