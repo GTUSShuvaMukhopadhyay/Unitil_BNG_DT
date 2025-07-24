@@ -90,6 +90,13 @@ logger = logging.getLogger(__name__)
 start_time = time.time()
 last_time = time.time()
 
+##########
+# File reading and caching functions
+##########
+
+def get_cachefile_path(file_name):
+    return cache_directory + file_name + ".parquet"
+
 def read_filepath( file_name, file_path, sheet_name, columns):
     ### Set the schema to read the file
     # Set all columns to string by default
@@ -159,7 +166,7 @@ def read_cache( file_name ):
     :param file_name: Name of the file to read from cache (without extension)
     :return: DataFrame containing the cached data
     """
-    cache_file = cache_directory + file_name + ".parquet"
+    cache_file = get_cachefile_path(file_name)
     if file_name in file_paths and pd.io.common.file_exists(cache_file) :
         df = pd.read_parquet(cache_file)    
         log_info(f"Loaded {file_name} from cache. Records: " + str(len(df)))
@@ -193,6 +200,31 @@ def get_file( file_name, sheet_name=None, columns=None, skip_cache=False ):
     # Ensure the file mapping information is available
     if file_name not in file_paths:
         raise ValueError(f"File '{file_name}' not found in file paths.")
+
+    # Invalidate the cache if the source is newer than the cache file
+    cache_update_date = None
+    cache_file = get_cachefile_path(file_name)
+    source_file = file_paths[file_name]
+
+    # Get date of the cache file
+    if os.path.exists(cache_file):
+        cache_update_date = pd.to_datetime(os.path.getmtime(cache_file))
+
+    # Get date of the source file
+    if os.path.isdir(source_file):
+        # If the source is a directory, check the latest modified file
+        source_update_date = max(pd.to_datetime(os.path.getmtime(os.path.join(source_file, f))) for f in os.listdir(source_file) if os.path.isfile(os.path.join(source_file, f)))   
+    else:
+        # If the source is a file, get its modified date
+        source_update_date = pd.to_datetime(os.path.getmtime(source_file)) if os.path.exists(source_file) else None
+    
+    # Check if the cache is outdated or does not exist
+    if cache_update_date and source_update_date and source_update_date > cache_update_date:
+        log_info(f"Cache for {file_name} is outdated. Reading from source file.")
+        skip_cache = True
+    elif not os.path.exists(cache_file):
+        log_info(f"Cache for {file_name} does not exist. Reading from source file.")
+        skip_cache = True
 
     # Read cache file
     df = read_cache(file_name) if not skip_cache else None
