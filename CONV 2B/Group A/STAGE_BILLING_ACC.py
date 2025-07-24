@@ -75,7 +75,7 @@ try:
     cu.log_debug(f"ZMECON_LOCATIONID non-empty values: {(df_ZMECON_full['ZMECON_LOCATIONID'] != '').sum()}")
    
     # Sort by date to ensure the latest data is used
-    df_ZMECON_full = df_ZMECON_full.sort_values(by=["Partner", "Date from "], ascending=False)
+    df_ZMECON_full = df_ZMECON_full.sort_values(by=["Business Partner", "Date from #1"], ascending=False)
 
     # Create a combined ZMECON dataset with all needed columns
     df_ZMECON = df_ZMECON_full[["ACCOUNTNUMBER", "ZMECON_CUSTOMERID", "ZMECON_LOCATIONID"]].copy()
@@ -233,6 +233,9 @@ df_new["OPENDATE"] = df_new["open_date"].apply(format_date)
 df_new["TERMINATEDDATE"] = df_new["term_date"].apply(format_date)
 df_new["DUEDATE"] = df_new["due_date_raw"].apply(format_date)
 
+# Set empty OPENDATE values to 1950-01-01
+df_new["OPENDATE"] = df_new["OPENDATE"].fillna("1950-01-01")
+
 # Add final CUSTOMERID and LOCATIONID using priority order
 # 1. First try PREM data
 # 2. If not available, use ZMECON data
@@ -386,7 +389,8 @@ df_new = pd.concat([df_new, pd.DataFrame([["TRAILER"] + [""] * (len(df_new.colum
 cu.log_debug("Trailer row added")
 
 # Output CSV
-output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Group A\STAGE_BILLING_ACCT.csv"
+# output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Group A\STAGE_BILLING_ACCT.csv"
+output_path = cu.get_output_path("STAGE_BILLING_ACCT.csv")
 
 # Ensure numeric columns are properly formatted
 numeric_columns = ['ACTIVECODE', 'STATUSCODE', 'ADDRESSSEQ', 'PENALTYCODE', 'TAXCODE', 'TAXTYPE',
