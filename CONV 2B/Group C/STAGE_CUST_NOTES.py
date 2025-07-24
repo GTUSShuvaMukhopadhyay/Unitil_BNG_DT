@@ -9,6 +9,7 @@ import os
 import csv
 from datetime import datetime
 import logging
+import re
 
  # Add the parent directory to sys.path
 import sys
@@ -105,7 +106,7 @@ cu.log_debug(f"DEBUG: Customers that should match: {len(matching_customers)}")
 cu.log_debug("Creating final output structure...")
 final_output = pd.DataFrame({
     'CUSTOMERID': joined_data_dedupe['CUSTOMERID'],
-    'LOCATIONID': joined_data_dedupe['LOCATIONID'].fillna(''),  # Replace NaN with empty string
+    'LOCATIONID': joined_data_dedupe['LOCATIONID'].fillna('').apply(lambda x: str(int(x)) if str(x).strip() != '' else ''),  # Replace NaN with empty string
     'APPLICATION': '5',  # Hardcoded
     'NOTEDATE': joined_data_dedupe['NOTEDATE'],
     'NOTETYPE': '9990',  # Hardcoded
@@ -136,15 +137,25 @@ for i in range(min(3, len(final_output))):
 # Apply proper formatting for CSV export
 cu.log_debug("Preparing data for CSV export...")
 
+# Bad Characters remove
+def clean_text(text):
+    if pd.isna(text):
+        return ''
+    text = str(text)
+    # Replace known problematic characters
+    text = text.replace('Æ', "'").replace('û', '-')
+    # Remove non-ASCII characters (or replace as needed)
+    return re.sub(r'[^\x00-\x7F]', '', str(text))
+
 # Create clean final output without manual quote formatting
 final_output_clean = pd.DataFrame({
     'CUSTOMERID': joined_data_dedupe['CUSTOMERID'],
-    'LOCATIONID': joined_data_dedupe['LOCATIONID'].fillna(''),
+    'LOCATIONID': joined_data_dedupe['LOCATIONID'].fillna('').apply(lambda x: str(int(x)) if str(x).strip() != '' else ''),
     'APPLICATION': '5',
     'NOTEDATE': joined_data_dedupe['NOTEDATE'],
     'NOTETYPE': '9990',
     'WORKORDERNUMBER': ' ',
-    'NOTEDATA': joined_data_dedupe['NOTEDATA'],
+    'NOTEDATA': joined_data_dedupe['NOTEDATA'].apply(clean_text),
     'UPDATEDATE': ' '
 })
 
