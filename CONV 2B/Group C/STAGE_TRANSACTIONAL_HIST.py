@@ -29,23 +29,23 @@ print_checklist()
 
 # Define file paths - include all DFKKOP files
 file_paths = {
-    # DFKKOP files by year
+    # DFKKOP files by year - UPDATED PATHS (removed 'v1' from filenames)
     "DFKKOP1": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012015 to 12312015.XLSX",
-    "DFKKOP2": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012016 to 12312016 v1.XLSX",
+    "DFKKOP2": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012016 to 12312016.XLSX",
     "DFKKOP3": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012017 to 12312017.XLSX",
     "DFKKOP4": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012018 to 12312018.XLSX",
     "DFKKOP5": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012019 to 12312019.XLSX",
     "DFKKOP6": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012020 to 12312020.XLSX",
     "DFKKOP7": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012021 to 12312021.XLSX",
     "DFKKOP8": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012022 to 12312022.XLSX",
-    "DFKKOP9": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012023 to 12312023 (3).XLSX",
+    "DFKKOP9": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012023 to 12312023.XLSX",
     "DFKKOP10": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012024 to 12312024.XLSX",
-    "DFKKOP11": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012025 to 07152025 v1.XLSX",
+    "DFKKOP11": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012025 to 07152025.XLSX",
     # Other sources
     "EVER": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\EVER-0614.XLSX",
     "ZDM_PREMDETAILS": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\ZDM_PREMDETAILS.XLSX",
 }
- 
+
 # Initialize data_sources dictionary to hold our data
 data_sources = {}
  
@@ -118,7 +118,6 @@ for mtrans, strans in test_combinations:
 print("\nFiltering DFKKOP for valid MTrans/STrans combinations...")
 
 
-# ADD THIS DIAGNOSTIC CODE HERE (line 114):
 # DIAGNOSTIC: Check year distribution BEFORE filtering
 print("\n*** DIAGNOSTIC: Year distribution in DFKKOP BEFORE filtering ***")
 year_dist_before_filter = pd.to_datetime(data_sources["DFKKOP"]["Doc. Date"], errors='coerce').dt.year.value_counts().sort_index()
@@ -439,7 +438,7 @@ print(f"Extracted date fields: TRANSACTIONDATE, BILLINGDATE, DUEDATE (aligned)")
 # Extract BILLORINVOICENUMBER - now aligned
 # --------------------------
 # Bill/Invoice Number (Doc. No.)
-df_new["BILLORINVOICENUMBER"] = df_new["Doc. No."].apply(
+df_new["BILLORINVOICENUMBER"] = df_new["Reference"].apply(
     lambda x: str(int(x))[2:10] if pd.notna(x) and isinstance(x, (int, float)) else ""
 )
 print(f"Extracted BILLORINVOICENUMBER (aligned)")
@@ -753,7 +752,7 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # Save to CSV
 # --------------------------
 # WHAT FILE WE USED THAT GARY SAID WORKED output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_TRANSACTIONAL_HIST_05282025_1634PM.csv')
-output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '071725_STAGE_TRANSACTIONAL_HIST.csv')
+output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '072425_STAGE_TRANSACTIONAL_HIST.csv')
 
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
