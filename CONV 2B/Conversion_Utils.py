@@ -18,6 +18,7 @@ import time
 import re
 import Source_Schemas
 import csv
+import os
 
 # Constants
 source_directory = r"C:\DV\Unitil\Conversion 2b\\"
@@ -26,29 +27,53 @@ output_directory = r"C:\DV\Unitil\Conversion 2b\output\\"
 
 file_paths = {
     "active": source_directory + r"ZNC_ACTIVE_CUS.XLSX",
+    "dfkkcoh": source_directory + r"DFKKCOH.XLSX",
+    "dfkkzp": source_directory + r"DFKKZP.XLSX",
+    "eabp": source_directory + r"EABP.XLSX",
+    "el31": source_directory + r"EL31.XLSX",
     "erdk": source_directory + r"ERDK.XLSX",
+    "etdz": source_directory + r"ETDZ.XLSX",
+    "fpd2": source_directory + r"FPD2.XLSX",
     "ever": source_directory + r"EVER.XLSX",
     "mail": source_directory + r"MAILING_ADDR1.XLSX",
+    "meter": source_directory + r"METER DETAILS.XLSX",
     "notes": source_directory + r"Interaction Records.XLSX",
     "prem": source_directory + r"ZDM_PREMDETAILS.XLSX",
-    #"writeoff": source_directory + r"Write off customer history.XLSX",
+    "te107": source_directory + r"TE107.XLSX",
+    "te420": source_directory + r"TE420.XLSX",
+    "te422": source_directory + r"TE422.XLSX",
     "writeoff": source_directory + r"ZWRITEOFF_ME1.XLSX",
-    #"zmecon1": source_directory + r"ZMECON 01012021 to 02132025.xlsx",
-    "zmecon": "Multiple Files",
-    "zmecon1": source_directory + r"ZMECON 010121 to 061425.xlsx",
-    "zmecon2": source_directory + r"ZMECON 010115 to 12312020.xlsx",
-    "dfkkop": "Multiple Files",
-    "dfkkop1": source_directory + r"DFKKOP 01012015 to 12312015.XLSX",
-    "dfkkop2": source_directory + r"DFKKOP 01012016 to 12312016.XLSX",
-    "dfkkop3": source_directory + r"DFKKOP 01012017 to 12312017.XLSX",
-    "dfkkop4": source_directory + r"DFKKOP 01012018 to 12312018.XLSX",
-    "dfkkop5": source_directory + r"DFKKOP 01012019 to 12312019.XLSX",
-    "dfkkop6": source_directory + r"DFKKOP 01012020 to 12312020.XLSX",
-    "dfkkop7": source_directory + r"DFKKOP 01012021 to 12312021.XLSX",
-    "dfkkop8": source_directory + r"DFKKOP 01012022 to 12312022.XLSX",
-    "dfkkop9": source_directory + r"DFKKOP 01012023 to 12312023.XLSX",
-    "dfkkop10": source_directory + r"DFKKOP 01012024 TO 03272025.XLSX",
-    "stage_transactional_history": output_directory + r"STAGE_TRANSACTIONAL_HIST.csv",
+    "zcampaign": source_directory + r"ZCAMPAIGN.XLSX",
+    "zins": source_directory + r"ZINS.XLSX",
+    "zmecon": source_directory + r"ZMECON",
+    "dfkkop": source_directory + r"DFKKOP",
+    "eabl": source_directory + r"EABL",
+    "gldata": source_directory + r"GL Data",
+    "zdmseq": source_directory + r"ZDMSEQ",
+    "zmecon": source_directory + r"ZMECON",
+    "stage_billing_acct": output_directory + r"Group A\STAGE_BILLING_ACCT.csv",
+    "stage_premise": output_directory + r"Group A\STAGE_PREMISE.csv",
+    "stage_device": output_directory + r"Group A\STAGE_DEVICE.csv",
+    "stage_mail_addr": output_directory + r"Group A\STAGE_MAIL_ADDR.csv",
+    "stage_cust_info": output_directory + r"Group A\STAGE_CUSTOMER_INFO.csv",
+    "stage_streets": output_directory + r"Group A\STAGE_STREETS.csv",
+    "stage_cycle": output_directory + r"Group A\STAGE_CYCLE.csv",
+    "stage_route": output_directory + r"Group A\STAGE_ROUTE.csv",
+    "stage_report_codes": output_directory + r"Group A\STAGE_REPORT_CODES.csv",
+    "stage_email": output_directory + r"Group A\STAGE_EMAIL.csv",
+    "stage_phone": output_directory + r"Group A\STAGE_PHONE.csv",
+    "stage_towns": output_directory + r"Group A\STAGE_TOWNS.csv",
+    "stage_ar_balances": output_directory + r"Group B\STAGE_AR_BALANCES.csv",
+    "stage_deposits": output_directory + r"Group B\STAGE_DEPOSITS.csv",
+    "stage_flat_svcs": output_directory + r"Group B\STAGE_FLAT_SVCS.csv",
+    "stage_metered_svcs": output_directory + r"Group B\STAGE_METERED_SVCS.csv",
+    "stage_unbilled": output_directory + r"Group B\STAGE_UNBILLED.csv",
+    "stage_write_off_balances": output_directory + r"Group B\STAGE_WRITE_OFF_BALANCES.csv",
+    "stage_consumption_hist": output_directory + r"Group C\STAGE_CONSUMPTION_HIST.csv",
+    "stage_cust_notes": output_directory + r"Group C\STAGE_CUST_NOTES.csv",
+    "stage_transactional_history": output_directory + r"Group C\STAGE_TRANSACTIONAL_HIST.csv",
+    "stage_taxexempt": output_directory + r"Group D\STAGE_TAXEXEMPT.csv",
+    "stage_meter_inventory": output_directory + r"Group M\STAGE_METER_INVENTORY.csv"
     }
 
 logging.basicConfig(
@@ -65,11 +90,11 @@ logger = logging.getLogger(__name__)
 start_time = time.time()
 last_time = time.time()
 
-def read_file( file_name, sheet_name="Sheet 1", columns=None, skip_cache=False ):
-    file_df = pd.DataFrame()
-
+def read_filepath( file_name, file_path, sheet_name, columns):
     ### Set the schema to read the file
     # Set all columns to string by default
+    schema = None
+    file_df = pd.DataFrame()
     file_schema = {col: str for col in columns} if columns else {}
 
     # If a specific schema is defined in Source_Schemas, use it
@@ -79,26 +104,16 @@ def read_file( file_name, sheet_name="Sheet 1", columns=None, skip_cache=False )
             if col in schema:
                 file_schema[col] = schema[col]
 
-    # Concatenate ZMECON files if necessary
-    if file_name == "zmecon":
-        file_df = pd.concat([get_file("zmecon1", columns, skip_cache), get_file("zmecon2", columns, skip_cache)], ignore_index=True)
-    elif file_name == "dfkkop":
-        # Concatenate DFKKOP files if necessary
-        file_df = pd.concat([get_file("dfkkop1", columns, skip_cache), get_file("dfkkop2", columns, skip_cache), get_file("dfkkop3", columns, skip_cache),
-                             get_file("dfkkop4", columns, skip_cache), get_file("dfkkop5", columns, skip_cache), get_file("dfkkop6", columns, skip_cache),
-                             get_file("dfkkop7", columns, skip_cache), get_file("dfkkop8", columns, skip_cache), get_file("dfkkop9", columns, skip_cache),
-                             get_file("dfkkop10", columns, skip_cache)], ignore_index=True)
-    elif file_paths[file_name].upper().endswith(".XLSX"):
-       file_df = pd.read_excel(file_paths[ file_name ], usecols=columns, dtype=file_schema )
-    elif file_paths[file_name].upper().endswith(".CSV"):
-       file_df = pd.read_csv(file_paths[ file_name ], sheet_name=sheet_name, usecols=columns, encoding='utf-8', dtype=file_schema)
-       log_info(f"Loaded {file_name} file. Records: " + str(len(file_df)))
+    # Read the file based on its extension
+    if file_path.upper().endswith(".XLSX"):
+       file_df = pd.read_excel(file_path, usecols=columns, dtype=file_schema )
+    elif file_path.upper().endswith(".CSV"):
+       file_df = pd.read_csv(file_path, sheet_name=sheet_name, usecols=columns, encoding='utf-8', dtype=file_schema)
     else:
         log_error(f"Unsupported file format for {file_name}. Supported formats are .xlsx and .csv.")
 
-    # Set the column schema if available
-    if hasattr(Source_Schemas, file_name + "_schema"):
-        schema = getattr(Source_Schemas, file_name + "_schema")
+    # Enforce the schema if available
+    if schema:
         for col, dtype in schema.items():
             if col in file_df.columns:
                 if dtype == pd.Timestamp:
@@ -111,7 +126,58 @@ def read_file( file_name, sheet_name="Sheet 1", columns=None, skip_cache=False )
                     # For other types, just convert directly
                     file_df[col] = file_df[col].astype(dtype)
 
+    log_info(f"Loaded {file_path} file. Records: " + str(len(file_df)))
+    
     return file_df
+
+# Read the source file and return the DataFrame
+def read_file( file_name, sheet_name="Sheet 1", columns=None, skip_cache=False ):
+    file_df = pd.DataFrame()
+
+    # Determine the source file path
+    file_path = file_paths.get(file_name)
+    if not file_path:
+        raise ValueError(f"File '{file_name}' not found in file paths.")
+    
+    # Concatenate files in directories
+    if os.path.isdir(file_path):
+        df_part = []
+        # Concatenate all files in the directory
+        for sourcefile in os.listdir(file_path):
+            sourcefile_path = os.path.join(file_path, sourcefile)
+            df_part.append( read_filepath(file_name, sourcefile_path, sheet_name, columns) )
+        file_df = pd.concat(df_part, ignore_index=True)
+    else:
+        file_df = read_filepath(file_name, file_path, sheet_name, columns)
+
+    return file_df
+
+def read_cache( file_name ):
+    """
+    Reads a cached DataFrame from a parquet file.
+    
+    :param file_name: Name of the file to read from cache (without extension)
+    :return: DataFrame containing the cached data
+    """
+    cache_file = cache_directory + file_name + ".parquet"
+    if file_name in file_paths and pd.io.common.file_exists(cache_file) :
+        df = pd.read_parquet(cache_file)    
+        log_info(f"Loaded {file_name} from cache. Records: " + str(len(df)))
+        return df
+    else:
+        return None
+    
+def write_cache( df, file_name ):
+    """
+    Writes a DataFrame to a parquet file in the cache directory.
+    
+    :param df: DataFrame to write to cache
+    :param file_name: Name of the file to save in cache (without extension)
+    """
+    cache_file = cache_directory + file_name + ".parquet"
+    df = prepare_dataframe_to_parquet(df) 
+    df.to_parquet(cache_file, index=False)
+    log_info(f"Saved {file_name} to cache as parquet. Records: " + str(len(df)))
 
 def get_file( file_name, sheet_name=None, columns=None, skip_cache=False ):
     """
@@ -124,37 +190,25 @@ def get_file( file_name, sheet_name=None, columns=None, skip_cache=False ):
     :param skip_cache: If True, skips the cache and reads directly from the source file (default is False)
     :return: DataFrame containing the data from the specified file
     """
-    # Check if the file exists in the file cache directory
-    cache_file = cache_directory + file_name + ".parquet"
-    if file_name in file_paths and pd.io.common.file_exists(cache_file) and not skip_cache:
-        df = pd.read_parquet(cache_file)    
-        log_info(f"Loaded {file_name} from cache. Records: " + str(len(df)))
+    # Ensure the file mapping information is available
+    if file_name not in file_paths:
+        raise ValueError(f"File '{file_name}' not found in file paths.")
+
+    # Read cache file
+    df = read_cache(file_name) if not skip_cache else None
+    
+    # If not in cache, read from the source file
+    if df is None:
+        df = read_file(file_name, sheet_name, columns, skip_cache)
+        write_cache(df, file_name)  # Write to cache after reading from source
+
+    # If specific columns are requested, filter the DataFrame
         if columns:
             if set(columns).issubset(df.columns):
                 df = df[columns]
                 return df
             else:
                 log_info(f"Columns {columns} not found in {file_name} cache.")
-        else:
-            return df
-    
-    # If not in cache, read from the source file
-    log_info(f"Loading {file_name} from source file.")
-    
-    if file_name not in file_paths:
-        raise ValueError(f"File '{file_name}' not found in file paths.")
-    
-    df = read_file(file_name, sheet_name, columns, skip_cache)
-
-    log_info(f"Loaded {file_name} file. Records: " + str(len(df)))
-    # Save to cache directory as a parquet file
-    df = prepare_dataframe_to_parquet(df) 
-    df.to_parquet(cache_file, index=False)
-    log_info(f"Saved {file_name} to cache as parquet. Records: " + str(len(df)))
-
-    # If specific columns are requested, filter the DataFrame
-    if columns:
-        df = df[columns]
     
     return df
 
@@ -228,6 +282,15 @@ def print_checklist():
     print("CSV Staging File Validation Checklist:")
     for item in CHECKLIST:
         print(item)
+
+def get_output_path(file_name):
+    """
+    Returns the full output path for a given file name.
+    
+    :param file_name: Name of the file to be saved in the output directory
+    :return: Full path to the output file
+    """
+    return output_directory + file_name
 
 def write_csv(df, file_name):
     """
