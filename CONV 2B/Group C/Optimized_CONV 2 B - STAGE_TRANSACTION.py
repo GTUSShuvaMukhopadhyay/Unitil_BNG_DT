@@ -1,5 +1,4 @@
 # Optimized_CONV 2 B - STAGE_TRANSACTIONAL_HIST.py
-# Performance improvements without changing field logic
 
 import pandas as pd
 import os
@@ -200,20 +199,101 @@ print(f"Created df_new with {len(df_new)} rows from filtered DFKKOP")
 # OPTIMIZATION 7: Extract all basic fields at once using vectorized operations
 print("Extracting basic fields (vectorized)...")
 
-# Extract CUSTOMERID
-df_new["CUSTOMERID"] = df_new["BPartner"].apply(
-    lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
-).str.slice(0, 15)
+# FIXED: Define the robust customer ID cleaning function (was missing in original)
+def clean_customerid(value):
+    """Robust customer ID cleaning"""
+    if pd.isna(value):
+        return ""
+    
+    str_value = str(value).strip().strip('"\'')
+    
+    if not str_value or str_value.lower() in ['nan', 'none', 'null']:
+        return ""
+    
+    # Handle numeric values safely
+    if str_value.replace('.', '').replace('-', '').isdigit():
+        try:
+            if '.' in str_value:
+                float_val = float(str_value)
+                if float_val.is_integer():
+                    str_value = str(int(float_val))
+            else:
+                str_value = str(int(str_value))
+        except (ValueError, OverflowError):
+            pass
+    
+    # Remove leading zeros unless it's all zeros
+    if str_value.isdigit() and len(str_value) > 1:
+        str_value = str_value.lstrip('0') or '0'
+    
+    return str_value[:15]
+
+# Apply the robust cleaning to BPartner field
+print("Extracting CUSTOMERID from BPartner with error handling...")
+raw_bpartner = df_new["BPartner"]
+print(f"Raw BPartner: {len(raw_bpartner)} records, type: {raw_bpartner.dtype}")
+print(f"Sample values: {raw_bpartner.head(10).tolist()}")
+
+df_new["CUSTOMERID"] = raw_bpartner.apply(clean_customerid)
+
+# Validate results
+valid_count = (df_new["CUSTOMERID"] != "").sum()
+print(f"Valid CUSTOMERID extracted: {valid_count}/{len(df_new)} ({valid_count/len(df_new)*100:.1f}%)")
+
+# Diagnostic check for CUSTOMERID issues
+print("\nCUSTOMERID DIAGNOSTIC CHECK:")
+print(f"Empty CUSTOMERID count: {(df_new['CUSTOMERID'] == '').sum()}")
+print(f"Unique customers: {df_new['CUSTOMERID'].nunique()}")
+print(f"Length distribution: {df_new['CUSTOMERID'].str.len().value_counts().sort_index().to_dict()}")
+
+# Check for potential issues
+non_numeric = df_new['CUSTOMERID'][~df_new['CUSTOMERID'].str.isdigit() & (df_new['CUSTOMERID'] != '')]
+if len(non_numeric) > 0:
+    print(f"Non-numeric CUSTOMERID found: {len(non_numeric)}")
+    print(f"Samples: {non_numeric.head(10).tolist()}")
 
 # Extract date fields using vectorized operations
 df_new["TRANSACTIONDATE"] = pd.to_datetime(df_new["Doc. Date"], errors='coerce').dt.strftime('%Y-%m-%d')
 df_new["BILLINGDATE"] = pd.to_datetime(df_new["Pstng Date"], errors='coerce').dt.strftime('%Y-%m-%d')
 df_new["DUEDATE"] = pd.to_datetime(df_new["Due"], errors='coerce').dt.strftime('%Y-%m-%d')
 
-# Extract BILLORINVOICENUMBER
-df_new["BILLORINVOICENUMBER"] = df_new["Reference"].apply(
-    lambda x: str(int(x))[2:10] if pd.notna(x) and isinstance(x, (int, float)) else ""
-)
+# FIXED: Define robust function for BILLORINVOICENUMBER extraction
+def clean_billorinvoice(value):
+    """Robust bill/invoice number cleaning"""
+    if pd.isna(value):
+        return ""
+    
+    str_value = str(value).strip()
+    
+    if not str_value or str_value.lower() in ['nan', 'none', 'null']:
+        return ""
+    
+    # Handle numeric values safely
+    if str_value.replace('.', '').replace('-', '').isdigit():
+        try:
+            if '.' in str_value:
+                float_val = float(str_value)
+                if float_val.is_integer():
+                    int_val = int(float_val)
+                else:
+                    return ""  # Don't process non-integer floats
+            else:
+                int_val = int(str_value)
+            
+            # Apply the [2:10] slicing logic (remove first 2 chars, take next 8)
+            str_result = str(int_val)
+            if len(str_result) > 2:
+                return str_result[2:10]
+            else:
+                return ""  # Too short to slice
+                
+        except (ValueError, OverflowError):
+            return ""
+    
+    return ""  # Non-numeric values return empty
+
+# Extract BILLORINVOICENUMBER with robust error handling
+df_new["BILLORINVOICENUMBER"] = df_new["Reference"].apply(clean_billorinvoice)
 
 print(f"Extracted basic fields for {len(df_new)} records")
 
@@ -223,19 +303,40 @@ if data_sources.get("ZDM_PREMDETAILS") is not None:
     
     zdm_df = data_sources["ZDM_PREMDETAILS"].copy()
     
-    # Pre-process ZDM data once
-    zdm_ca_clean = zdm_df["Contract Account"].apply(
-        lambda x: str(int(float(x))) if pd.notna(x) and str(x).replace('.', '').replace('0', '').strip() else str(x)
-    )
+    # FIXED: Define robust contract account cleaning function
+    def clean_contract_account(value):
+        """Robust contract account cleaning"""
+        if pd.isna(value):
+            return ""
+        
+        str_value = str(value).strip()
+        
+        if not str_value or str_value.lower() in ['nan', 'none', 'null']:
+            return ""
+        
+        # Handle numeric values safely
+        if str_value.replace('.', '').replace('-', '').isdigit():
+            try:
+                if '.' in str_value:
+                    float_val = float(str_value)
+                    if float_val.is_integer():
+                        str_value = str(int(float_val))
+                else:
+                    str_value = str(int(str_value))
+            except (ValueError, OverflowError):
+                pass
+        
+        return str_value
+    
+    # Pre-process ZDM data once with robust cleaning
+    zdm_ca_clean = zdm_df["Contract Account"].apply(clean_contract_account)
     zdm_premise = zdm_df["Premise"].astype(str).str.strip()
     
     # Create lookup dictionary once
     ca_to_locationid = dict(zip(zdm_ca_clean, zdm_premise))
     
-    # Clean DFKKOP Contract Accounts
-    df_new_ca_clean = df_new["Cont.Account"].apply(
-        lambda x: str(int(float(x))) if pd.notna(x) and str(x).replace('.', '').replace('0', '').strip() else str(x)
-    )
+    # Clean DFKKOP Contract Accounts with robust cleaning
+    df_new_ca_clean = df_new["Cont.Account"].apply(clean_contract_account)
     
     # Apply vectorized mapping
     df_new["LOCATIONID"] = df_new_ca_clean.map(ca_to_locationid).fillna("")
@@ -248,10 +349,8 @@ if data_sources.get("ZDM_PREMDETAILS") is not None:
         print("Applying EVER fallback...")
         ever_df = data_sources["EVER"].copy()
         
-        # Create EVER mappings
-        ever_ca_clean = ever_df["Cont.Account"].apply(
-            lambda x: str(int(float(x))) if pd.notna(x) and str(x).replace('.', '').replace('0', '').strip() else str(x)
-        )
+        # Create EVER mappings with robust cleaning
+        ever_ca_clean = ever_df["Cont.Account"].apply(clean_contract_account)
         ever_install = ever_df["Installat."].astype(str).str.strip()
         ca_to_install = dict(zip(ever_ca_clean, ever_install))
         
@@ -485,8 +584,6 @@ trailer_row = pd.DataFrame([["TRAILER"] + [''] * (len(df_new.columns) - 1)], col
 df_new = pd.concat([df_new, trailer_row], ignore_index=True)
 
 # Save to CSV
-output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'OPTIMIZED_STAGE_TRANSACTIONAL_HIST.csv')
+output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '725_STAGE_TRANSACTIONAL_HIST.csv')
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
-
-print("\n🚀 OPTIMIZATION COMPLETE! The processing should now be significantly faster.")
