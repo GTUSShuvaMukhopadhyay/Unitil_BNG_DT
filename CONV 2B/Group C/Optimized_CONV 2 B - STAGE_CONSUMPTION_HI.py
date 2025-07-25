@@ -152,15 +152,67 @@ df_new = pd.DataFrame()
 
 print("\nStarting field extraction and transformation for 6-year filtered data...")
 
+# FIXED SECTION FOR STAGE_CONSUMPTION_HIST.py
+# Replace the problematic section (around line 150-180) with this corrected code:
+
 # OPTIMIZATION 5: Extract all basic fields at once using vectorized operations
 if data_sources.get("ZMECON") is not None:
     zmecon_df = data_sources["ZMECON"]
     
-    # Extract all basic fields at once
-    df_new["CUSTOMERID"] = zmecon_df.iloc[:, 0].apply(
-        lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
-    ).str.slice(0, 15)
+    # Define the robust customer ID cleaning function
+    def clean_customerid(value):
+        """Robust customer ID cleaning"""
+        if pd.isna(value):
+            return ""
+        
+        str_value = str(value).strip().strip('"\'')
+        
+        if not str_value or str_value.lower() in ['nan', 'none', 'null']:
+            return ""
+        
+        # Handle numeric values safely
+        if str_value.replace('.', '').replace('-', '').isdigit():
+            try:
+                if '.' in str_value:
+                    float_val = float(str_value)
+                    if float_val.is_integer():
+                        str_value = str(int(float_val))
+                else:
+                    str_value = str(int(str_value))
+            except (ValueError, OverflowError):
+                pass
+        
+        # Remove leading zeros unless it's all zeros
+        if str_value.isdigit() and len(str_value) > 1:
+            str_value = str_value.lstrip('0') or '0'
+        
+        return str_value[:15]
+
+    # Apply the robust cleaning
+    print("Extracting CUSTOMERID with error handling...")
+    raw_customerid = zmecon_df.iloc[:, 0]
+    print(f"Raw CUSTOMERID: {len(raw_customerid)} records, type: {raw_customerid.dtype}")
+    print(f"Sample values: {raw_customerid.head(10).tolist()}")
+
+    df_new["CUSTOMERID"] = raw_customerid.apply(clean_customerid)
+
+    # Validate results
+    valid_count = (df_new["CUSTOMERID"] != "").sum()
+    print(f"Valid CUSTOMERID extracted: {valid_count}/{len(df_new)} ({valid_count/len(df_new)*100:.1f}%)")
     
+    # Diagnostic check for CUSTOMERID issues
+    print("\nCUSTOMERID DIAGNOSTIC CHECK:")
+    print(f"Empty CUSTOMERID count: {(df_new['CUSTOMERID'] == '').sum()}")
+    print(f"Unique customers: {df_new['CUSTOMERID'].nunique()}")
+    print(f"Length distribution: {df_new['CUSTOMERID'].str.len().value_counts().sort_index().to_dict()}")
+
+    # Check for potential issues
+    non_numeric = df_new['CUSTOMERID'][~df_new['CUSTOMERID'].str.isdigit() & (df_new['CUSTOMERID'] != '')]
+    if len(non_numeric) > 0:
+        print(f"Non-numeric CUSTOMERID found: {len(non_numeric)}")
+        print(f"Samples: {non_numeric.head(10).tolist()}")
+    
+    # Continue with other field extractions
     df_new["LOCATIONID"] = zmecon_df.iloc[:, 25].apply(
         lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
     ).str.strip()
@@ -174,6 +226,7 @@ if data_sources.get("ZMECON") is not None:
     
     print(f"Extracted basic fields for {len(df_new)} records")
 
+# Continue with the rest of your script...
 # OPTIMIZATION 7: Vectorized reading type determination
 def determine_reading_type_vectorized(meter_series):
     """Vectorized version of reading type determination"""
@@ -721,19 +774,86 @@ else:
 # Extract BILLINGBATCHNUMBER from ZMECON (Column D - Print Document No., index 3)
 # --------------------------
 if data_sources.get("ZMECON") is not None:
-    df_new["BILLINGBATCHNUMBER"] = data_sources["ZMECON"].iloc[:, 3].apply(
-        lambda x: str(int(x))[2:10] if pd.notna(x) and isinstance(x, (int, float)) else ""
-    )
-    print(f"Extracted and truncated BILLINGBATCHNUMBER values from ZMECON column D")
     
-    # Validation: Check the length of the truncated values
-    max_length = df_new["BILLINGBATCHNUMBER"].str.len().max()
-    print(f"Maximum BILLINGBATCHNUMBER length after truncation: {max_length} characters")
+    # Define the 8-character billing batch function
+    def clean_billingbatch_8char(value):
+        """Extract 8-character billing batch number"""
+        if pd.isna(value):
+            return ""
+        
+        str_value = str(value).strip()
+        
+        if not str_value or str_value.lower() in ['nan', 'none', 'null']:
+            return ""
+        
+        # Handle numeric values safely
+        if str_value.replace('.', '').replace('-', '').isdigit():
+            try:
+                if '.' in str_value:
+                    float_val = float(str_value)
+                    if float_val.is_integer():
+                        int_val = int(float_val)
+                    else:
+                        return ""
+                else:
+                    int_val = int(str_value)
+                
+                str_result = str(int_val)
+                
+                # FIXED: Ensure consistent 8-character output
+                if len(str_result) >= 10:
+                    # For 10+ digit numbers: remove first 2, take next 8
+                    return str_result[2:10]
+                elif len(str_result) >= 9:
+                    # For 9-digit numbers: remove first 1, take next 8
+                    return str_result[1:9]
+                elif len(str_result) >= 8:
+                    # For 8-digit numbers: take all 8
+                    return str_result
+                elif len(str_result) >= 2:
+                    # For shorter numbers: pad to 8 with leading zeros
+                    extracted = str_result[2:] if len(str_result) > 2 else str_result
+                    return extracted.zfill(8)
+                else:
+                    return ""
+                    
+            except (ValueError, OverflowError):
+                return ""
+        
+        return ""
+    
+    # Apply the robust 8-character extraction
+    df_new["BILLINGBATCHNUMBER"] = data_sources["ZMECON"].iloc[:, 3].apply(clean_billingbatch_8char)
+    print(f"Extracted 8-character BILLINGBATCHNUMBER values from ZMECON column D")
+    
+    # Enhanced validation: Check the length consistency
+    non_empty_batch = df_new[df_new["BILLINGBATCHNUMBER"] != ""]["BILLINGBATCHNUMBER"]
+    if len(non_empty_batch) > 0:
+        length_counts = non_empty_batch.str.len().value_counts().sort_index()
+        print(f"BILLINGBATCHNUMBER length distribution: {length_counts.to_dict()}")
+        
+        # Check if all are 8 characters
+        correct_length = (non_empty_batch.str.len() == 8).sum()
+        total_non_empty = len(non_empty_batch)
+        print(f"8-character records: {correct_length}/{total_non_empty} ({correct_length/total_non_empty*100:.1f}%)")
+        
+        # Show samples
+        print(f"Sample BILLINGBATCHNUMBER values: {non_empty_batch.head(10).tolist()}")
+        
+        # Flag any that aren't 8 characters
+        wrong_length = non_empty_batch[non_empty_batch.str.len() != 8]
+        if len(wrong_length) > 0:
+            print(f"⚠️  {len(wrong_length)} records have incorrect length:")
+            print(f"   Samples: {wrong_length.head(5).tolist()}")
+        else:
+            print(f"✅ All {total_non_empty} records have correct 8-character length")
     
 else:
     df_new["BILLINGBATCHNUMBER"] = ""
     print("Warning: ZMECON data not available for BILLINGBATCHNUMBER")
 
+    
+"""
 # =============================================================================
 # DEBUG CODE - CONSUMPTION HIST - BILLINGBATCHNUMBER TRACKING
 # =============================================================================
@@ -829,6 +949,7 @@ else:
     print("\n⚠️  WARNING: ZMECON data not available - cannot generate debug tracking")
 
 print("="*80)
+"""
 # =============================================================================
 # END DEBUG CODE
 # =============================================================================
@@ -1018,7 +1139,7 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # --------------------------
 # Save to CSV
 # --------------------------
-output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_CONSUMPTION_HIST.csv')
+output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '725_STAGE_CONSUMPTION_HIST.csv')
 
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
@@ -1034,4 +1155,3 @@ print("Non-empty values per column:")
 for col, count in non_empty_cols.items():
     print(f"  {col}: {count} rows with values")
 
-print("\n🚀 OPTIMIZATION COMPLETE! The processing should now be significantly faster.")
