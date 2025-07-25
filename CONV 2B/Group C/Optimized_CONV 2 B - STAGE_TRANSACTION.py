@@ -9,8 +9,8 @@ import pickle
 import numpy as np
 
 # Define the 6-year cutoff date (same as consumption script for consistency)
-CUTOFF_DATE = datetime.now() - timedelta(days=6*365)
-print(f"Applying 6-year cutoff filter: {CUTOFF_DATE.strftime('%Y-%m-%d')}")
+# CUTOFF_DATE = datetime.now() - timedelta(days=6*365)
+# print(f"Applying 6-year cutoff filter: {CUTOFF_DATE.strftime('%Y-%m-%d')}")
 
 # CSV Staging File Checklist
 CHECKLIST = [
@@ -86,15 +86,10 @@ def read_excel_file_with_filter(name, path):
             print(f"Loading and caching {name}...")
             df = pd.read_excel(path, sheet_name="Sheet1", engine="openpyxl")
             
-            # Apply date filtering for DFKKOP files (same as consumption script)
+            # Date filtering disabled - processing all records
             if name.startswith("DFKKOP"):
-                # Filter by Doc. Date (same logic as ZMECON filtering)
-                if "Doc. Date" in df.columns:
-                    date_series = pd.to_datetime(df["Doc. Date"], errors='coerce')
-                    original_count = len(df)
-                    mask = date_series >= CUTOFF_DATE
-                    df = df[mask]
-                    print(f"Date filtered {name}: {original_count} → {len(df)} rows")
+                print(f"Loading all records for {name}: {len(df)} rows")
+                # No date filtering applied
             
             # Cache the filtered data
             df.to_parquet(get_cache_path(name), index=False)
@@ -587,3 +582,4 @@ df_new = pd.concat([df_new, trailer_row], ignore_index=True)
 output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), '725_STAGE_TRANSACTIONAL_HIST.csv')
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
+
