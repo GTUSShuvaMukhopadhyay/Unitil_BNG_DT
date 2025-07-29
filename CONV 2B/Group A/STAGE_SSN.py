@@ -1,8 +1,12 @@
 import pandas as pd
 import os
 import csv  # For CSV saving
-import pgpy 
+import pgpy
 from io import BytesIO, StringIO
+
+# fake imghdr requirement
+def get_image_type(filepath):
+    return None
 
 # Load Unitil private key
 with open("../../Downloads/0x27E36A82-sec.asc", "r") as key_file:
@@ -16,7 +20,7 @@ with open("../../Downloads/sns-public-key.asc", "r") as pub_key_file:
 with private_key.unlock("GT&Unitil2025"):
 
     # Load the encrypted message
-    with open("../../Downloads/5302 - Identification details.XLSX.gpg", "r") as enc_file:
+    with open("../DATA/5302 - Identification details.XLSX.gpg", "r") as enc_file:
         encrypted_message = pgpy.PGPMessage.from_file(enc_file.name)
 
     # Decrypt the message
@@ -44,6 +48,9 @@ with private_key.unlock("GT&Unitil2025"):
     #Reorderfs
     df_new = df_new[['CUSTOMERID','SSNTINTYPE', 'SSNTIN', 'DRIVERSLICENSE', 'DLSTATE']]
 
+    # Drop duplicate records
+    df_new = df_new.drop_duplicates()
+    
     # --------------------------
     # Add trailer row
     # --------------------------
