@@ -250,7 +250,7 @@ if data_sources.get("EABL") is not None and data_sources.get("ZMECON") is not No
     eabl_df["Device"] = eabl_df.iloc[:, 6].astype(str).str.strip()
     eabl_df["Installation"] = eabl_df.iloc[:, 3].astype(str).str.strip()
     eabl_df["Reading"] = pd.to_numeric(eabl_df.iloc[:, 8], errors='coerce').fillna(0)
-    df_new["READINGTYPE"] = eabl_df.iloc[:, 10].apply(lambda x: "Active" if x in [0, 1, 2] else ("Estimate" if x == 4 else ""))
+    df_new["READINGTYPE"] = eabl_df.iloc[:, 10]
     eabl_df["ReadDate"] = pd.to_datetime(eabl_df.iloc[:, 4], errors='coerce')
    
     # Remove invalid readings and sort properly
