@@ -737,7 +737,7 @@ if data_sources.get("ZMECON") is not None and data_sources.get("ZDM_PREMDETAILS"
     meter_lookup = dict(zip(zdm_df["CUSTOMERID"], zdm_df["METERNUMBER"]))
     category_lookup = dict(zip(zdm_df["CUSTOMERID"], zdm_df["RATE_CATEGORY"]))
 
-    df_new["METERNUMBER"] = df_new["CUSTOMERID"].map(meter_lookup)
+    #df_new["METERNUMBER"] = df_new["CUSTOMERID"].map(meter_lookup)
     df_new["RATE_CATEGORY"] = df_new["CUSTOMERID"].map(category_lookup)
 
     # Fallback to ZMECON if RATE_CATEGORY is still missing
@@ -784,11 +784,12 @@ else:
 # --------------------------
 print("\nAssigning hardcoded values for fixed fields...")
 
+'''
 if data_sources.get("ZMECON") is not None:
     df_new["METERNUMBER"] = data_sources["ZMECON"].iloc[:, 20].apply(
         lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
     ).str.slice(0, 15)
-    print(f"Extracted {len(df_new)} CUSTOMERID values")
+    print(f"Extracted {len(df_new)} CUSTOMERID values")'''
 
 df_new["APPLICATION"] = 5
 df_new["SERVICENUMBER"] = 1
