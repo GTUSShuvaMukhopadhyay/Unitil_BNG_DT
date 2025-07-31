@@ -43,7 +43,20 @@ data_sources = {}
 def read_excel_file_with_filter(name, path):
     try:
         df = pd.read_excel(path, sheet_name="Sheet1", engine="openpyxl")
-        print(f"Successfully loaded {name}: {df.shape[0]} rows, {df.shape[1]} columns")
+        # Only apply filter to ZMECON files
+        if "ZMECON" in name:
+            # Convert column 23 (index 23) to datetime safely
+            date_col = pd.to_datetime(df.iloc[:, 23], errors='coerce')
+            start_date = pd.to_datetime("2019-06-01")
+            end_date = pd.to_datetime("2025-06-14")
+            mask = (date_col >= start_date) & (date_col <= end_date)
+            original_rows = df.shape[0]
+            df = df[mask]
+            print(f"Filtered {name}: {original_rows} → {df.shape[0]} rows in date range {start_date.date()} to {end_date.date()}")
+
+        else:
+            print(f"Loaded {name}: {df.shape[0]} rows (no date filter)")
+
         return name, df
     except Exception as e:
         print(f"Error loading {name}: {e}")
@@ -51,6 +64,7 @@ def read_excel_file_with_filter(name, path):
  
 # Load files in parallel
 print("Loading and filtering data sources...")
+data_sources = {}
 with concurrent.futures.ThreadPoolExecutor() as executor:
     futures = {executor.submit(read_excel_file_with_filter, name, path): name for name, path in file_paths.items()}
     for future in concurrent.futures.as_completed(futures):
@@ -115,6 +129,46 @@ if data_sources.get("ZMECON") is not None:
         pd.to_datetime(data_sources["ZMECON"].iloc[:, 22], errors='coerce') - pd.Timedelta(days=1)
         ).dt.strftime('%Y-%m-%d')
     print(f"Extracted CURRREADDATE and PREVREADDATE values")
+
+df_new["Installation"] = data_sources["ZMECON"].iloc[:, 26].astype(str).str.strip()
+df_new["Device"] = data_sources["ZMECON"].iloc[:, 20].astype(str).str.strip()
+
+
+# READINGTYPE
+# READINGTYPE Mapping — from EABL to df_new
+
+# Prepare EABL lookup keys
+eabl_df1 = data_sources["EABL"].copy()
+#eabl_df1["Device"] = eabl_df1.iloc[:, 6].astype(str).str.strip()
+eabl_df1["Installation"] = eabl_df1.iloc[:, 3].astype(str).str.strip()
+eabl_df1["ReadDate"] = pd.to_datetime(eabl_df1.iloc[:, 4], errors='coerce')
+eabl_df1["ReadingType"] = eabl_df1.iloc[:, 10].astype(str).str.strip()
+'''
+# Create composite key in EABL
+eabl_df1["match_key"] = (
+    eabl_df1["Installation"] + "|" +
+    eabl_df1["Device"] + "|" +
+    eabl_df1["ReadDate"].dt.strftime("%Y-%m-%d")
+)'''
+
+# Create composite key in EABL
+eabl_df1["match_key"] = (
+    eabl_df1["Installation"] + "|" +
+    eabl_df1["ReadDate"].dt.strftime("%Y-%m-%d")
+)
+
+# Create lookup dictionary from EABL
+readingtype_lookup = dict(zip(eabl_df1["match_key"], eabl_df1["ReadingType"]))
+
+# Prepare composite key for df_new using ZMECON fields and CURRREADDATE
+install_vals = data_sources["ZMECON"].iloc[:, 26].astype(str).str.strip()
+#device_vals = data_sources["ZMECON"].iloc[:, 20].astype(str).str.strip()
+curread_vals = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce').dt.strftime("%Y-%m-%d")
+#match_keys = install_vals + "|" + device_vals + "|" + curread_vals
+match_keys = install_vals + "|" + curread_vals
+
+# Map ReadingType from EABL into df_new using composite keys
+df_new["READINGTYPE"] = match_keys.map(readingtype_lookup).fillna("")
 
 # --------------------------
 # Extract BILLINGBATCHNUMBER from ZMECON (Column D - Print Document No., index 3)
@@ -250,7 +304,7 @@ if data_sources.get("EABL") is not None and data_sources.get("ZMECON") is not No
     eabl_df["Device"] = eabl_df.iloc[:, 6].astype(str).str.strip()
     eabl_df["Installation"] = eabl_df.iloc[:, 3].astype(str).str.strip()
     eabl_df["Reading"] = pd.to_numeric(eabl_df.iloc[:, 8], errors='coerce').fillna(0)
-    df_new["READINGTYPE"] = eabl_df.iloc[:, 10]
+    #eabl_df["ReadingType"] = eabl_df.iloc[:, 10]
     eabl_df["ReadDate"] = pd.to_datetime(eabl_df.iloc[:, 4], errors='coerce')
    
     # Remove invalid readings and sort properly
@@ -264,6 +318,7 @@ if data_sources.get("EABL") is not None and data_sources.get("ZMECON") is not No
     zmecon_df = data_sources["ZMECON"].copy()
     zmecon_df["Installation"] = zmecon_df.iloc[:, 26].astype(str).str.strip()
     zmecon_df["Meter"] = zmecon_df.iloc[:, 20].astype(str).str.strip()
+    #zmecon_df["ReadDate"] = pd.to_datetime(zmecon_df.iloc[:, 23], errors = 'coerce')
     zmecon_df["CustomerID"] = zmecon_df.iloc[:, 0].apply(
         lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
     )
