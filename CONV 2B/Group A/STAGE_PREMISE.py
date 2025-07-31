@@ -134,7 +134,8 @@ billing_and_reading_map = {
     "MEBGRP05": 810, "MEBGRP06": 811, "MEBGRP07": 812,
     "MEBGRP08": 813, "MEBGRP09": 814, "MEBRWP01": 815,
     "MEBRWP02": 816, "MEBRWP03": 817, "MEBCKP01": 819,
-    "MELINC01": 820, "METRNP01": 822, "MEBR9999": 899
+    "MELINC01": 820, "METRNP01": 822, "MEBR9999": 899,
+    "MEBRWP04": 817
 }
 
 def map_billing_and_reading(mru):
