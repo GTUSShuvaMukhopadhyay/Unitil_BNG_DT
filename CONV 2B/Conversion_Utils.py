@@ -27,6 +27,7 @@ output_directory = r"C:\DV\Unitil\Conversion 2b\output\\"
 
 file_paths = {
     "active": source_directory + r"ZNC_ACTIVE_CUS.XLSX",
+    "config": source_directory + r"Configuration.xlsx",
     "dfkkcoh": source_directory + r"DFKKCOH.XLSX",
     "dfkkzp": source_directory + r"DFKKZP.XLSX",
     "eabp": source_directory + r"EABP.XLSX",
@@ -39,9 +40,11 @@ file_paths = {
     "meter": source_directory + r"METER DETAILS.XLSX",
     "notes": source_directory + r"Interaction Records.XLSX",
     "prem": source_directory + r"ZDM_PREMDETAILS.XLSX",
+    "prem_clean": source_directory + r"Premise_clean.xlsx",
     "te107": source_directory + r"TE107.XLSX",
     "te420": source_directory + r"TE420.XLSX",
     "te422": source_directory + r"TE422.XLSX",
+    "therm": source_directory + r"ThermFactor.xlsx",
     "writeoff": source_directory + r"ZWRITEOFF_ME1.XLSX",
     "zcampaign": source_directory + r"ZCAMPAIGN.XLSX",
     "zins": source_directory + r"ZINS.XLSX",
@@ -55,7 +58,7 @@ file_paths = {
     "stage_premise": output_directory + r"Group A\STAGE_PREMISE.csv",
     "stage_device": output_directory + r"Group A\STAGE_DEVICE.csv",
     "stage_mail_addr": output_directory + r"Group A\STAGE_MAIL_ADDR.csv",
-    "stage_cust_info": output_directory + r"Group A\STAGE_CUSTOMER_INFO.csv",
+    "stage_cust_info": output_directory + r"Group A\STAGE_CUST_INFO.csv",
     "stage_streets": output_directory + r"Group A\STAGE_STREETS.csv",
     "stage_cycle": output_directory + r"Group A\STAGE_CYCLE.csv",
     "stage_route": output_directory + r"Group A\STAGE_ROUTE.csv",
@@ -113,9 +116,15 @@ def read_filepath( file_name, file_path, sheet_name, columns):
 
     # Read the file based on its extension
     if file_path.upper().endswith(".XLSX"):
-       file_df = pd.read_excel(file_path, usecols=columns, dtype=file_schema )
+       file_df = pd.read_excel(file_path, sheet_name=sheet_name, usecols=columns, dtype=file_schema )
+       # If a dict structure is returned, select the first sheet
+       if isinstance(file_df, dict):
+         try:
+            file_df = file_df["Sheet1"]
+         except KeyError:
+            file_df = file_df[list(file_df.keys())[0]]
     elif file_path.upper().endswith(".CSV"):
-       file_df = pd.read_csv(file_path, sheet_name=sheet_name, usecols=columns, encoding='utf-8', dtype=file_schema)
+       file_df = pd.read_csv(file_path, usecols=columns, encoding='utf-8', dtype=file_schema)
     else:
         log_error(f"Unsupported file format for {file_name}. Supported formats are .xlsx and .csv.")
 
@@ -138,7 +147,7 @@ def read_filepath( file_name, file_path, sheet_name, columns):
     return file_df
 
 # Read the source file and return the DataFrame
-def read_file( file_name, sheet_name="Sheet 1", columns=None, skip_cache=False ):
+def read_file( file_name, sheet_name=None, columns=None, skip_cache=False ):
     file_df = pd.DataFrame()
 
     # Determine the source file path
@@ -152,7 +161,8 @@ def read_file( file_name, sheet_name="Sheet 1", columns=None, skip_cache=False )
         # Concatenate all files in the directory
         for sourcefile in os.listdir(file_path):
             sourcefile_path = os.path.join(file_path, sourcefile)
-            df_part.append( read_filepath(file_name, sourcefile_path, sheet_name, columns) )
+            df_file = read_filepath(file_name, sourcefile_path, sheet_name, columns)
+            df_part.append( df_file )
         file_df = pd.concat(df_part, ignore_index=True)
     else:
         file_df = read_filepath(file_name, file_path, sheet_name, columns)
@@ -186,7 +196,7 @@ def write_cache( df, file_name ):
     df.to_parquet(cache_file, index=False)
     log_info(f"Saved {file_name} to cache as parquet. Records: " + str(len(df)))
 
-def get_file( file_name, sheet_name=None, columns=None, skip_cache=False ):
+def get_file( file_name, sheet_name="Sheet1", columns=None, skip_cache=False ):
     """
     Retrieves a DataFrame for a specified file, optionally selecting specific columns.
     Checks if there is a parquet version of the file first, and if not, reads from the Excel file.
