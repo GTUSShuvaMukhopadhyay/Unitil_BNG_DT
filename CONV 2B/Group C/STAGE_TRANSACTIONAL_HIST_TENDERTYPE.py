@@ -2,7 +2,7 @@
 
 # 
 # conv 2 fileC passed - ONV 2 - TENDERTYPE_STAGE_TRANSACTIONAL_HIST_05282025_1314PM.py
-# 
+# 8/1/2025 - we need to apply the six year filter.  i deleted the records for the sake of time this morning
 # 
 # CONV2_TENDERTYPE_STAGE_TRANSACTIONAL_HIST_05232025_1327PM.py
 import pandas as pd
