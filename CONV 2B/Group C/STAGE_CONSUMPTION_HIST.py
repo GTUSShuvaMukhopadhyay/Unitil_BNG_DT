@@ -1,6 +1,7 @@
 # CONV 2 B - STAGE_CONSUMPTION_HISTORY
 # STAGE_CONSUMPTION_HIST.py
 # updates were made to use mapping from STAGE_METERED_SVCS
+# 8/1/2025 - Fixed RAWUSAGE Roll over issue.
 
 import pandas as pd
 import os
@@ -133,23 +134,13 @@ if data_sources.get("ZMECON") is not None:
 df_new["Installation"] = data_sources["ZMECON"].iloc[:, 26].astype(str).str.strip()
 df_new["Device"] = data_sources["ZMECON"].iloc[:, 20].astype(str).str.strip()
 
-
-# READINGTYPE
 # READINGTYPE Mapping — from EABL to df_new
 
 # Prepare EABL lookup keys
 eabl_df1 = data_sources["EABL"].copy()
-#eabl_df1["Device"] = eabl_df1.iloc[:, 6].astype(str).str.strip()
 eabl_df1["Installation"] = eabl_df1.iloc[:, 3].astype(str).str.strip()
 eabl_df1["ReadDate"] = pd.to_datetime(eabl_df1.iloc[:, 4], errors='coerce')
 eabl_df1["ReadingType"] = eabl_df1.iloc[:, 10].astype(str).str.strip()
-'''
-# Create composite key in EABL
-eabl_df1["match_key"] = (
-    eabl_df1["Installation"] + "|" +
-    eabl_df1["Device"] + "|" +
-    eabl_df1["ReadDate"].dt.strftime("%Y-%m-%d")
-)'''
 
 # Create composite key in EABL
 eabl_df1["match_key"] = (
@@ -162,9 +153,7 @@ readingtype_lookup = dict(zip(eabl_df1["match_key"], eabl_df1["ReadingType"]))
 
 # Prepare composite key for df_new using ZMECON fields and CURRREADDATE
 install_vals = data_sources["ZMECON"].iloc[:, 26].astype(str).str.strip()
-#device_vals = data_sources["ZMECON"].iloc[:, 20].astype(str).str.strip()
 curread_vals = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce').dt.strftime("%Y-%m-%d")
-#match_keys = install_vals + "|" + device_vals + "|" + curread_vals
 match_keys = install_vals + "|" + curread_vals
 
 # Map ReadingType from EABL into df_new using composite keys
@@ -304,7 +293,6 @@ if data_sources.get("EABL") is not None and data_sources.get("ZMECON") is not No
     eabl_df["Device"] = eabl_df.iloc[:, 6].astype(str).str.strip()
     eabl_df["Installation"] = eabl_df.iloc[:, 3].astype(str).str.strip()
     eabl_df["Reading"] = pd.to_numeric(eabl_df.iloc[:, 8], errors='coerce').fillna(0)
-    #eabl_df["ReadingType"] = eabl_df.iloc[:, 10]
     eabl_df["ReadDate"] = pd.to_datetime(eabl_df.iloc[:, 4], errors='coerce')
    
     # Remove invalid readings and sort properly
@@ -318,7 +306,6 @@ if data_sources.get("EABL") is not None and data_sources.get("ZMECON") is not No
     zmecon_df = data_sources["ZMECON"].copy()
     zmecon_df["Installation"] = zmecon_df.iloc[:, 26].astype(str).str.strip()
     zmecon_df["Meter"] = zmecon_df.iloc[:, 20].astype(str).str.strip()
-    #zmecon_df["ReadDate"] = pd.to_datetime(zmecon_df.iloc[:, 23], errors = 'coerce')
     zmecon_df["CustomerID"] = zmecon_df.iloc[:, 0].apply(
         lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) else str(x)
     )
@@ -549,12 +536,34 @@ if data_sources.get("EABL") is not None:
    
     # For non-DTH meters: RAWUSAGE = CURRREADING - PREVREADING
     non_dth_mask = df_new["UMR_TYPE"] != "DTH"
-    df_new.loc[non_dth_mask, "RAWUSAGE"] = (
-        df_new.loc[non_dth_mask, "CURRREADING"] - df_new.loc[non_dth_mask, "PREVREADING"]
+    rollover_mask = (non_dth_mask) & (df_new["CURRREADING"] < df_new["PREVREADING"])
+    normal_usage_mask = non_dth_mask & ~rollover_mask
+    df_new.loc[normal_usage_mask, "RAWUSAGE"] = (
+        df_new.loc[normal_usage_mask, "CURRREADING"] - df_new.loc[normal_usage_mask, "PREVREADING"]
     )
+
+    def calculate_rollover_usage(row):
+        curr = row["CURRREADING"]
+        prev = row["PREVREADING"]
+
+        # Infer max_reading from typical rollover thresholds
+        if prev > 900000:                   # assume 1000000-reset meter
+            max_reading = 1000000
+        elif prev > 90000:               # assume 100000-reset meter
+            max_reading = 100000
+        elif prev > 9000:              # assume 10000-reset meter
+            max_reading = 10000
+        else:
+            return None  # Unknown or invalid rollover scenario
+
+        return (max_reading - prev) + curr
+
+    # Apply only to rollover rows
+    df_new.loc[rollover_mask, "RAWUSAGE"] = df_new.loc[rollover_mask].apply(calculate_rollover_usage, axis=1)
+
    
     # Convert to integers
-    df_new["RAWUSAGE"] = df_new["RAWUSAGE"].astype(int)
+    df_new["RAWUSAGE"] = df_new["RAWUSAGE"].fillna(0).astype(int)
    
     # Validation summary
     dth_rows = dth_mask.sum()
