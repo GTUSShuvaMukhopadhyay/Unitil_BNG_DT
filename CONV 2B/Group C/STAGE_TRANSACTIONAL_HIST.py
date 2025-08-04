@@ -1,8 +1,8 @@
-# Optimized_CONV 2 B - STAGE_TRANSACTIONAL_HIST.py
+# CONV 2 B - STAGE_TRANSACTIONAL_HIST.py
 # Performance improvements without changing field logic
 
 
-# exclude all reocrds with mtrans 0100 and strans of 0002
+# excluded all reocrds with mtrans 0100 and strans of 0002
 # cutoff at 6 years
 
 
@@ -14,9 +14,10 @@ from datetime import datetime, timedelta
 import pickle
 import numpy as np
 
-# Define the 6-year cutoff date (same as consumption script for consistency)
-CUTOFF_DATE = datetime.now() - timedelta(days=6 * 365)
-print(f"Applying 6-year cutoff filter: {CUTOFF_DATE.strftime('%Y-%m-%d')}")
+# Define specific date range for filtering (replaces the 6-year cutoff)
+START_DATE = pd.to_datetime("2019-06-01")
+END_DATE = pd.to_datetime("2025-06-14")
+print(f"Applying date range filter: {START_DATE.date()} to {END_DATE.date()}")
 
 # CSV Staging File Checklist
 CHECKLIST = [
@@ -42,16 +43,16 @@ print_checklist()
 # Define file paths - include all DFKKOP files
 file_paths = {
     # DFKKOP files by year
-    "DFKKOP5": r"C:\Users\US171177\Projects\Unitil\Files\DFKKOP 01012019 to 12312019.XLSX",
-    "DFKKOP6": r"C:\Users\US171177\Projects\Unitil\Files\DFKKOP 01012020 to 12312020.XLSX",
-    "DFKKOP7": r"C:\Users\US171177\Projects\Unitil\Files\DFKKOP 01012021 to 12312021.XLSX",
-    "DFKKOP8": r"C:\Users\US171177\Projects\Unitil\Files\DFKKOP 01012022 to 12312022.XLSX",
-    "DFKKOP9": r"C:\Users\US171177\Projects\Unitil\Files\DFKKOP 01012023 to 12312023.XLSX",
-    "DFKKOP10": r"C:\Users\US171177\Projects\Unitil\Files\DFKKOP 01012024 to 12312024.XLSX",
-    "DFKKOP11": r"C:\Users\US171177\Projects\Unitil\Files\DFKKOP 01012025 to 07152025.XLSX",
+    "DFKKOP5": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012019 to 12312019.XLSX",
+    "DFKKOP6": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012020 to 12312020.XLSX",
+    "DFKKOP7": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012021 to 12312021.XLSX",
+    "DFKKOP8": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012022 to 12312022.XLSX",
+    "DFKKOP9": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012023 to 12312023.XLSX",
+    "DFKKOP10": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012024 to 12312024.XLSX",
+    "DFKKOP11": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\DFKKOP 01012025 to 07152025.XLSX",
     # Other sources
-    "EVER": r"C:\Users\US171177\Projects\Unitil\Files\EVER-0614.XLSX",
-    "ZDM_PREMDETAILS": r"C:\Users\US171177\Projects\Unitil\Files\ZDM_PREMDETAILS.XLSX",
+    "EVER": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\EVER-0614.XLSX",
+    "ZDM_PREMDETAILS": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST\ZDM_PREMDETAILS.XLSX",
 }
 
 # OPTIMIZATION 1: Check for cached parquet files and use them if available
@@ -100,7 +101,9 @@ def read_excel_file_with_filter(name, path):
                 if "Doc. Date" in df.columns:
                     date_series = pd.to_datetime(df["Doc. Date"], errors='coerce')
                     original_count = len(df)
-                    mask = date_series >= CUTOFF_DATE
+                    start_date = pd.to_datetime("2019-06-01")
+                    end_date = pd.to_datetime("2025-06-14")
+                    mask = (date_series >= start_date) & (date_series <= end_date)
                     df = df[mask]
                     print(f"Date filtered {name}: {original_count} → {len(df)} rows")
 
@@ -420,7 +423,7 @@ transaction_mappings = {
     ("0070", "0010"): {"TRANSACTIONTYPE": "5", "TRANSACTIONDESCRIPTION": "Return charges", "BILLTYPE": "0"},
     # MTrans 0080 combinations
     ("0080", "0005"): {"TRANSACTIONTYPE": "4", "TRANSACTIONDESCRIPTION": "Wkly Installment Rec", "BILLTYPE": "0"},
-    ("0080", "0010"): {"TRANSACTIONTYPE": "4", "TRANSACTIONDESCRIPTION": "Mthly Installment Rec", "BILLTYPE": "0"},
+    ("0080", "0010"): {"TRANSACTIONTYPE": "4", "TRANSACTIONDESCRIPTION": "Mthy Installment Rec", "BILLTYPE": "0"},
     # MTrans 0100 combinations
     ("0100", "0002"): {"TRANSACTIONTYPE": "2", "TRANSACTIONDESCRIPTION": "Consumption Billing", "BILLTYPE": "0"},
     # MTrans 0200 combinations
