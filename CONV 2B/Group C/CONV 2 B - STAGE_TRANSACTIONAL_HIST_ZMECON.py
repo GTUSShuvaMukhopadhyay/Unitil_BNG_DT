@@ -1,10 +1,14 @@
 # CONV 2 B - STAGE_TRANSACTIONAL_HIST_ZMECON.py
 
-
 import pandas as pd
 import os
 import csv
 from datetime import datetime
+
+# Define specific date range for filtering
+START_DATE = pd.to_datetime("2019-06-01")
+END_DATE = pd.to_datetime("2025-06-14")
+print(f"Applying date range filter: {START_DATE.date()} to {END_DATE.date()}")
 
 # CSV Staging File Checklist
 CHECKLIST = [
@@ -31,21 +35,33 @@ file_paths = {
     "ZMECON2": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_ZMECON\ZMECON 01012022 TO 12312024 v1.XLSX",
     "ZMECON3": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_ZMECON\ZMECON 01012017 TO 12312019.XLSX",
     "ZMECON4": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_ZMECON\ZMECON 01012020 TO 12312021.XLSX",
-    "ZMECON5": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_ZMECON\ZMECON 010115 TO 123116.XLSX"
-,
-
+    "ZMECON5": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_ZMECON\ZMECON 010115 TO 123116.XLSX",
 }
  
 # Initialize data_sources dictionary to hold our data
 data_sources = {}
-# Function to read an Excel file
+
+# Function to read an Excel file with date filtering
 def read_excel_file(name, path):
     try:
         # For ZMECON files, try to read the first sheet regardless of name
         if name.startswith("ZMECON"):
             df = pd.read_excel(path, sheet_name=0, engine="openpyxl")  # 0 means first sheet
+            
+            # Apply specific date filtering to ZMECON files using column 23
+            if "ZMECON" in name:
+                # Convert column 23 (index 23) to datetime safely
+                date_col = pd.to_datetime(df.iloc[:, 23], errors='coerce')
+                start_date = pd.to_datetime("2019-06-01")
+                end_date = pd.to_datetime("2025-06-14")
+                mask = (date_col >= start_date) & (date_col <= end_date)
+                original_rows = df.shape[0]
+                df = df[mask]
+                print(f"Filtered {name}: {original_rows} → {df.shape[0]} rows in date range {start_date.date()} to {end_date.date()}")
+                
         else:
             df = pd.read_excel(path, sheet_name="Sheet1", engine="openpyxl")
+            
         print(f"Successfully loaded {name}: {df.shape[0]} rows, {df.shape[1]} columns")
         return df
     except Exception as e:
@@ -76,6 +92,7 @@ failed_sources = [name for name, df in data_sources.items() if df is None]
 if failed_sources:
     print(f"Error: Failed to load data sources: {', '.join(failed_sources)}")
     exit(1)
+
 
 # --------------------------
 # Start with ZMECON as base
