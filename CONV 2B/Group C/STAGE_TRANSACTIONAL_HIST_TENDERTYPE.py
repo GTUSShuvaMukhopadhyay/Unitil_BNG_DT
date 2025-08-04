@@ -1,14 +1,15 @@
+
 # CONV 2 B - STAGE_TRANSACTIONAL_HIST_TENDERTYPE.py
 
-# 
-# conv 2 fileC passed - ONV 2 - TENDERTYPE_STAGE_TRANSACTIONAL_HIST_05282025_1314PM.py
-# 8/1/2025 - we need to apply the six year filter.  i deleted the records for the sake of time this morning
-# 
-# CONV2_TENDERTYPE_STAGE_TRANSACTIONAL_HIST_05232025_1327PM.py
 import pandas as pd
 import os
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
+
+# Define specific date range for filtering (replaces the 6-year cutoff)
+START_DATE = pd.to_datetime("2019-06-01")
+END_DATE = pd.to_datetime("2025-06-14")
+print(f"Applying date range filter: {START_DATE.date()} to {END_DATE.date()}")
 
 # CSV Staging File Checklist
 CHECKLIST = [
@@ -32,23 +33,37 @@ print_checklist()
 # Define file paths
 file_paths = {
     "DFKKZP": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\DFKKZP.XLSX",   
-    "ZMECON1": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 010125 TO 07142025.XLSX",
-    "ZMECON2": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 01012022 TO 12312024 v1.XLSX",
-    "ZMECON3": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 01012017 TO 12312019.XLSX",
-    "ZMECON4": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 01012020 TO 12312021.XLSX",
-    "ZMECON5": r"C:\Users\us85360\Desktop\CONV 2 B - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 010115 TO 123116.XLSX"
+    "ZMECON1": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 010115 TO 123116.XLSX",
+    "ZMECON2": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 010125 TO 07142025.XLSX",
+    "ZMECON3": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 01012017 TO 12312019.XLSX",
+    "ZMECON4": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 01012020 TO 12312021.XLSX",
+    "ZMECON5": r"C:\Users\us85360\Desktop\CONV 2 B  - STAGE_TRANSACTIONAL_HIST_TENDERTYPE_ONLY\ZMECON 01012022 TO 12312024 v1.XLSX",
 }
  
 # Initialize data_sources dictionary to hold our data
 data_sources = {}
-# Function to read an Excel file
+
+# Function to read an Excel file with date filtering
 def read_excel_file(name, path):
     try:
         # For ZMECON files, try to read the first sheet regardless of name
         if name.startswith("ZMECON"):
             df = pd.read_excel(path, sheet_name=0, engine="openpyxl")  # 0 means first sheet
+            
+            # Apply specific date filtering to ZMECON files using column 23
+            if "ZMECON" in name:
+                # Convert column 23 (index 23) to datetime safely
+                date_col = pd.to_datetime(df.iloc[:, 23], errors='coerce')
+                start_date = pd.to_datetime("2019-06-01")
+                end_date = pd.to_datetime("2025-06-14")
+                mask = (date_col >= start_date) & (date_col <= end_date)
+                original_rows = df.shape[0]
+                df = df[mask]
+                print(f"Filtered {name}: {original_rows} → {df.shape[0]} rows in date range {start_date.date()} to {end_date.date()}")
+                
         else:
             df = pd.read_excel(path, sheet_name="Sheet1", engine="openpyxl")
+            
         print(f"Successfully loaded {name}: {df.shape[0]} rows, {df.shape[1]} columns")
         return df
     except Exception as e:
@@ -71,6 +86,36 @@ if zmecon_keys:
         print("Warning: No valid ZMECON dataframes found to combine")
 else:
     print("Warning: No ZMECON files found in data_sources")
+
+# Apply date filtering to DFKKZP if it has date columns
+if data_sources.get("DFKKZP") is not None:
+    dfkkzp_df = data_sources["DFKKZP"]
+    date_columns = ['Post. Date', 'Posting Date', 'Doc. Date', 'Document Date', 'Date']
+    date_column_found = None
+    
+    for col in date_columns:
+        if col in dfkkzp_df.columns:
+            date_column_found = col
+            break
+    
+    # If no standard date column found, check if there's any column with 'date' in the name
+    if not date_column_found:
+        for col in dfkkzp_df.columns:
+            if 'date' in col.lower():
+                date_column_found = col
+                break
+    
+    if date_column_found:
+        print(f"Applying date range filter to DFKKZP using column: {date_column_found}")
+        original_count = len(dfkkzp_df)
+        date_series = pd.to_datetime(dfkkzp_df[date_column_found], errors='coerce')
+        start_date = pd.to_datetime("2019-06-01")
+        end_date = pd.to_datetime("2025-06-14")
+        mask = (date_series >= start_date) & (date_series <= end_date)
+        data_sources["DFKKZP"] = dfkkzp_df[mask]
+        print(f"Filtered DFKKZP: {original_count} → {len(data_sources['DFKKZP'])} rows in date range {start_date.date()} to {end_date.date()}")
+    else:
+        print("Warning: No date column found in DFKKZP for date filtering")
 
 # Verify all data sources loaded successfully
 failed_sources = [name for name, df in data_sources.items() if df is None]
@@ -125,7 +170,7 @@ df_new["TENDERTYPE"] = df_new.apply(
 )
 
 df_new["TRANSACTIONDESCRIPTION"] = df_new.apply(
-    lambda row: "Customer Returned Payment" if row["R"] in [1, 2] else dt_to_description.get(row["DT"], ""),
+    lambda row: "Cst Ret Pmt" if row["R"] in [1, 2] else dt_to_description.get(row["DT"], ""),
     axis=1
 )
 
@@ -339,7 +384,7 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # Save to CSV
 # --------------------------
 output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 
-                          '717_STAGE_TRANSACTIONAL_HIST_TENDERTYPE.csv')
+                          '804_STAGE_TRANSACTIONAL_HIST_TENDERTYPE.csv')
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"\nCSV file saved at: {output_path}")
 
