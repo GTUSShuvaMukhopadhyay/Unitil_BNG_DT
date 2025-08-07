@@ -138,7 +138,11 @@ df_new["Device"] = data_sources["ZMECON"].iloc[:, 20].astype(str).str.strip()
 
 # Prepare EABL lookup keys
 eabl_df1 = data_sources["EABL"].copy()
-eabl_df1["Installation"] = eabl_df1.iloc[:, 3].astype(str).str.strip()
+eabl_df1["Installation"] = (
+    eabl_df1.iloc[:, 3]
+    .apply(lambda x: str(int(float(x))) if pd.notna(x) else "")
+    .str.strip()
+)
 eabl_df1["ReadDate"] = pd.to_datetime(eabl_df1.iloc[:, 4], errors='coerce')
 eabl_df1["ReadingType"] = eabl_df1.iloc[:, 10].astype(str).str.strip()
 
@@ -152,7 +156,7 @@ eabl_df1["match_key"] = (
 readingtype_lookup = dict(zip(eabl_df1["match_key"], eabl_df1["ReadingType"]))
 
 # Prepare composite key for df_new using ZMECON fields and CURRREADDATE
-install_vals = data_sources["ZMECON"].iloc[:, 26].astype(str).str.strip()
+install_vals = data_sources["ZMECON"].iloc[:, 26].apply(lambda x: str(int(float(x))) if pd.notna(x) else "").str.strip()
 curread_vals = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce').dt.strftime("%Y-%m-%d")
 match_keys = install_vals + "|" + curread_vals
 
@@ -210,17 +214,9 @@ if data_sources.get("ZMECON") is not None:
                 return ""
         
         return ""
-    
-    if data_sources.get("ZMECON") is not None:
-        print("✅ Sample data from ZMECON:")
-        print(data_sources["ZMECON"].head())  # prints first 5 rows
-    else:
-        print("❌ ZMECON data not found in data_sources.")
 
     # Apply the robust 8-character extraction
     df_new["BILLINGBATCHNUMBER"] = data_sources["ZMECON"].iloc[:, 3].apply(clean_billingbatch_8char)
-    print("Sample cleaned BILLINGBATCHNUMBER values:")
-    print(df_new["BILLINGBATCHNUMBER"].head(10))
     print(f"Extracted 8-character BILLINGBATCHNUMBER values from ZMECON column D")
     
     # Enhanced validation: Check the length consistency
@@ -233,9 +229,6 @@ if data_sources.get("ZMECON") is not None:
         correct_length = (non_empty_batch.str.len() == 8).sum()
         total_non_empty = len(non_empty_batch)
         print(f"8-character records: {correct_length}/{total_non_empty} ({correct_length/total_non_empty*100:.1f}%)")
-        
-        # Show samples
-        print(f"Sample BILLINGBATCHNUMBER values: {non_empty_batch.head(10).tolist()}")
         
         # Flag any that aren't 8 characters
         wrong_length = non_empty_batch[non_empty_batch.str.len() != 8]
@@ -284,7 +277,45 @@ else:
 # Assign CURRREADING (Fixed for Proper Chronological Progression)
 # --------------------------
 print("\nAssigning CURRREADING with proper chronological progression...")
- 
+
+# Prepare EABL lookup keys
+eabl_df2 = data_sources["EABL"].copy()
+eabl_df2["Installation"] = (
+    eabl_df2.iloc[:, 3]
+    .apply(lambda x: str(int(float(x))) if pd.notna(x) else "")
+    .str.strip()
+)
+eabl_df2["ReadDate"] = pd.to_datetime(eabl_df2.iloc[:, 4], errors='coerce')
+eabl_df2["predecimal"] = eabl_df2.iloc[:, 8]
+
+# Create composite key in EABL
+eabl_df2["match_key"] = (
+    eabl_df2["Installation"] + "|" +
+    eabl_df2["ReadDate"].dt.strftime("%Y-%m-%d")
+)
+
+print("EABL match_key examples:", eabl_df2["match_key"].dropna().unique()[:5])
+
+print("EABL predecimal types:", eabl_df2["predecimal"].apply(type).value_counts())
+print("Sample values:", eabl_df2["predecimal"].dropna().unique()[:5])
+
+
+# Create lookup dictionary from EABL
+curreading_lookup = dict(zip(eabl_df2["match_key"], eabl_df2["predecimal"]))
+
+# Prepare composite key for df_new using ZMECON fields and CURRREADDATE
+install_vals1 = data_sources["ZMECON"].iloc[:, 26].apply(lambda x: str(int(float(x))) if pd.notna(x) else "").str.strip()
+curread_vals1 = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce').dt.strftime("%Y-%m-%d")
+match_keys1 = install_vals1 + "|" + curread_vals1
+
+print("df_new match_keys1 examples:", match_keys1.dropna().unique()[:5])
+
+# Map Curreading from EABL into df_new using composite keys
+df_new["CURRREADING"] = match_keys1.map(curreading_lookup)
+print("CURREADING created:", "CURRREADING" in df_new.columns)
+print(df_new["CURRREADING"].head())
+
+'''
 if data_sources.get("EABL") is not None and data_sources.get("ZMECON") is not None:
     # Step 1: Prepare EABL data properly sorted by meter and date
     eabl_df = data_sources["EABL"].copy()
@@ -363,7 +394,7 @@ if data_sources.get("EABL") is not None and data_sources.get("ZMECON") is not No
             if len(meter_readings) == 0:
                 customer_id = meter_rows.iloc[0]["CUSTOMERID"]
                 meter_readings = matched_eabl[matched_eabl["CustomerID"] == customer_id]
-           
+            
             # Strategy 3: If still no match, try partial meter number match
             if len(meter_readings) == 0:
                 meter_short = str(meter_num)[:6]  # Use first 6 characters
@@ -438,7 +469,7 @@ else:
     print("Warning: EABL or ZMECON data missing, cannot assign CURRREADING")
     df_new["CURRREADING"] = 0
     df_new["RAWUSAGE"] = 0
- 
+'''
 # Calculate PREVREADING based on sorted meter readings
 if "CURRREADING" in df_new.columns and "METERNUMBER" in df_new.columns and "CURRREADDATE" in df_new.columns:
     print("Calculating PREVREADING and PREVREADDATE with proper logic...")
@@ -452,11 +483,9 @@ if "CURRREADING" in df_new.columns and "METERNUMBER" in df_new.columns and "CURR
    
     # Calculate PREVREADING and PREVREADDATE by shifting within each meter group
     df_new["PREVREADING"] = df_new.groupby("METERNUMBER")["CURRREADING"].shift(1)
-    #df_new["PREVREADDATE"] = df_new.groupby("METERNUMBER")["CURRREADDATE"].shift(1)
    
     # Fill missing values appropriately
     df_new["PREVREADING"] = pd.to_numeric(df_new["PREVREADING"], errors='coerce').fillna(0)
-    #df_new["PREVREADDATE"] = df_new["PREVREADDATE"].fillna("")
    
     # Convert to proper data types
     df_new["PREVREADING"] = df_new["PREVREADING"].astype(int)
@@ -472,7 +501,6 @@ if "CURRREADING" in df_new.columns and "METERNUMBER" in df_new.columns and "CURR
    
 else:
     df_new["PREVREADING"] = 0
-    #df_new["PREVREADDATE"] = ""
     print("Warning: Missing required columns for PREVREADING calculation")
  
 # --------------------------
@@ -944,6 +972,7 @@ def selective_custom_quote(val, column_name):
         return val
     return "" if val in [None, 'nan', 'NaN', 'NAN'] else custom_quote(val)
    
+df_new = df_new[df_new["CURRREADING"] != 0]
 df_new = df_new.fillna("")
 for col in df_new.columns:
     df_new[col] = df_new[col].apply(lambda x: selective_custom_quote(x, col))
@@ -980,7 +1009,7 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # --------------------------
 # Save to CSV
 # --------------------------
-output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_CONSUMPTION_HIST.csv')
+output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_CONSUMPTION_HIST_8_1_Checking CURREAD.csv')
  
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
