@@ -75,7 +75,7 @@ df_new['NAMESUFFIX'] = df_new['LASTNAME'].apply(lambda x: next((s for s in suffi
 df_new['DBA'] = " "
  
 # Column 6: MUST BE NUMERIC -  CUSTTYPE
-df_new['CUSTTYPE'] = df.iloc[:, 18].map({1: 0, 2: 1}).fillna(0).astype(int)
+df_new['CUSTTYPE'] = df.iloc[:, 17].map({1: 0, 2: 1}).fillna(0).astype(int)
  
 # Column 7: "TBD"
 df_new['ACTIVECODE'] = 0
