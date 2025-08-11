@@ -28,9 +28,16 @@ df_new['ADDRESSSEQ'] = "1"
 
 # Function to generate MAILINGNAME
 def generate_mailingname(row):
-    name_1 = str(row.iloc[2]).strip() if not pd.isna(row.iloc[2]) else ""
-    first_name = str(row.iloc[4]).strip() if not pd.isna(row.iloc[4]) else ""
-    last_name = str(row.iloc[5]).strip() if not pd.isna(row.iloc[5]) else ""
+    def safe_str(val):
+        if pd.isna(val):
+            return ""
+        val_str = str(val).strip()
+        return "" if val_str.lower() == "nan" else val_str
+
+    name_1 = safe_str(row.iloc[2])
+    first_name = safe_str(row.iloc[4])
+    last_name = safe_str(row.iloc[5])
+
     if name_1:
         return name_1
     return f"{first_name} {last_name}".strip()
