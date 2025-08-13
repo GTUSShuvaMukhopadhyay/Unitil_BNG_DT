@@ -1,11 +1,6 @@
 
-# STAGE_BILLING_ACCT202505190211V1.py
-# New logic added for inactive customers, Max due date, Changes for Penalty code and tax code based on ZMECON
-# Date:16May2025
-# Time:10:20 CST
-#2025-May-16 -conv2- remapped the iloc for Tax from 31 to 29
-#2025-May-18 -conv2- changed logic to sort df_Prem by rate_category before dropping duplicates
-#2025-May-19 - Conv2- changed iloc for zmecon for location ID to 25 from 26
+# STAGE_BILLING_ACCT
+# used Conversion_Utils1
 
 import pandas as pd
 import os
@@ -21,7 +16,7 @@ if conv3_path not in sys.path:
     sys.path.append(conv3_path)
 
 # Now you can import Conversion_Utils
-import Conversion_Utils as cu
+import Conversion_Utils1 as cu
 
 cu.print_checklist()
 
@@ -42,8 +37,8 @@ read_opts = {"engine": "openpyxl"}
 
 try:
     cu.log_info("Loading ZMECON data...")
-    df_ZMECON_full = cu.get_file("zmecon", sheet_name="ZMECON")
-
+    # df_ZMECON_full = cu.get_file("zmecon", sheet_name="ZMECON")
+    df_ZMECON_full = cu.get_file("zmecon")
     #SM put these lines right here to check the data structure, the ZMECON has two rows:
     print("First few rows of ZMECON:")
     print(df_ZMECON_full.head())
@@ -378,7 +373,8 @@ cu.log_debug("Trailer row added")
 # Output CSV
 # output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Group A\STAGE_BILLING_ACCT.csv"
 # output_path = cu.get_output_path("STAGE_BILLING_ACCT.csv")
-output_path = cu.get_output_path(r"Group A\STAGE_BILLING_ACCT.csv")
+# output_path = cu.get_output_path(r"Group A\CU_STAGE_BILLING_ACCT.csv")
+output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group A\STAGE_BILLING_ACCT.csv"
 
 
 # Ensure numeric columns are properly formatted
