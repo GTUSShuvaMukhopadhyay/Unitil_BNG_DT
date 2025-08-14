@@ -1,0 +1,16 @@
+# Ensure date columns are datetime
+therm_df["Valid from"] = pd.to_datetime(therm_df["Valid from"], errors="coerce")
+therm_df["Valid to"] = pd.to_datetime(therm_df["Valid to"], errors="coerce")
+
+def get_therm_factor(curr_date):
+    if pd.isna(curr_date):
+        return None
+    match = therm_df[
+        (therm_df["Valid from"] <= curr_date) &
+        (therm_df["Valid to"] >= curr_date)
+    ]
+    if not match.empty:
+        return match.iloc[0]["Avg. BTU"]
+    return None
+
+df_new["THERMFACTOR"] = df_new["CURRREADDATE"].apply(get_therm_factor)
