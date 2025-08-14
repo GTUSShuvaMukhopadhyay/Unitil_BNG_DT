@@ -166,6 +166,7 @@ def apply_meter_exceptions(df):
         "BGB01874": {"BILLINGRATE1": "8263", "SALESCLASS1": "8063", "BILLINGRATE2": "8302", "SALESCLASS2": "8040"},
         "BGB02739": {"BILLINGRATE1": "8263", "SALESCLASS1": "8063", "BILLINGRATE2": "8302", "SALESCLASS2": "8040"},
         "BGB00861": {"BILLINGRATE1": "8263", "SALESCLASS1": "8063", "BILLINGRATE2": "8302", "SALESCLASS2": "8040"},
+        "2513562": {"BILLINGRATE1": "8267", "SALESCLASS1": "8267", "BILLINGRATE2": "9800", "SALESCLASS2": "8267"},
     }
     
     # Count how many exceptions we actually applied
@@ -200,10 +201,10 @@ def apply_meter_exceptions(df):
  
 # Define file paths
 file_paths = {
-    "ZDM_PREMDETAILS":  r"C:\Users\us85360\Desktop\CONV3_Data_Sources\ZDM_PREMDETAILS.XLSX",
-    "ZNC_ACTIVE_CUS": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\ZNC_ACTIVE_CUS.XLSX",
-    "EABL1": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\EABL 08012019 TO 08012025.XLSX",
-    "EVER" : r"C:\Users\us85360\Desktop\CONV3_Data_Sources\EVER - 0802.XLSX"
+    "ZDM_PREMDETAILS":  r"c:\Users\GTUSER1\Documents\CONV 3\ZDM_PREMDETAILS.XLSX",
+    "ZNC_ACTIVE_CUS": r"c:\Users\GTUSER1\Documents\CONV 3\ZNC_ACTIVE_CUS.XLSX",
+    "EABL1": r"c:\Users\GTUSER1\Documents\CONV 3\EABL 08012019 TO 08012025.XLSX",
+    "EVER" : r"c:\Users\GTUSER1\Documents\CONV 3\EVER - 0802.XLSX"
 }
  
 # Load the data from each spreadsheet
@@ -772,7 +773,7 @@ df_new = pd.concat([df_new, trailer_row], ignore_index=True)
  
 # Define output path for the CSV file
 # output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_METERED_SVCS.csv')
-output_path = r"C:\Users\us85360\Desktop\STAGE_METERED_SVCS.csv"
+output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group B\STAGE_METERED_SVCS.csv"
 
 # Save to CSV with proper quoting and escape character
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
