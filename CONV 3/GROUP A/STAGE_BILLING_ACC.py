@@ -412,10 +412,6 @@ for col in desired_column_order:
 df_new = df_new[desired_column_order]
 cu.log_debug("Column order enforced")
 
-# === Trailer Row ===
-df_new = pd.concat([df_new, pd.DataFrame([["TRAILER"] + [""] * (len(df_new.columns) - 1)], columns=df_new.columns)], ignore_index=True)
-cu.log_debug("Trailer row added")
-
 # Output CSV
 output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Extracts\STAGE_BILLING_ACCT.csv"
 
@@ -435,6 +431,10 @@ for col in date_columns:
     df_new[col] = df_new[col].fillna("").astype(str)
 
 cu.log_debug("Date columns formatted")
+
+# === Trailer Row ===
+df_new = pd.concat([df_new, pd.DataFrame([["TRAILER"] + [""] * (len(df_new.columns) - 1)], columns=df_new.columns)], ignore_index=True)
+cu.log_debug("Trailer row added")
 
 # Use QUOTE_NONNUMERIC to ensure all non-numeric fields (including dates) get quotes
 df_new.to_csv(output_path, index=False, quoting=csv.QUOTE_NONNUMERIC)
