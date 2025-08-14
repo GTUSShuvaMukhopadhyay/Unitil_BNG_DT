@@ -1,16 +1,19 @@
-# Ensure date columns are datetime
-therm_df["Valid from"] = pd.to_datetime(therm_df["Valid from"], errors="coerce")
-therm_df["Valid to"] = pd.to_datetime(therm_df["Valid to"], errors="coerce")
+"dfkkop1": source_directory + r"DFKKOP 01012015 to 12312015.XLSX",
+    "dfkkop2": source_directory + r"DFKKOP 01012016 to 12312016.XLSX",
+    "dfkkop3": source_directory + r"DFKKOP 01012017 to 12312017.XLSX",
+    "dfkkop4": source_directory + r"DFKKOP 01012018 to 12312018.XLSX",
+    "dfkkop5": source_directory + r"DFKKOP 01012019 to 12312019.XLSX",
+    "dfkkop6": source_directory + r"DFKKOP 01012020 to 12312020.XLSX",
+    "dfkkop7": source_directory + r"DFKKOP 01012021 to 12312021.XLSX",
+    "dfkkop8": source_directory + r"DFKKOP 01012022 to 12312022.XLSX",
+    "dfkkop9": source_directory + r"DFKKOP 01012023 to 12312023.XLSX",
+    "dfkkop10": source_directory + r"DFKKOP 01012024 TO 03272025.XLSX",
 
-def get_therm_factor(curr_date):
-    if pd.isna(curr_date):
-        return None
-    match = therm_df[
-        (therm_df["Valid from"] <= curr_date) &
-        (therm_df["Valid to"] >= curr_date)
-    ]
-    if not match.empty:
-        return match.iloc[0]["Avg. BTU"]
-    return None
 
-df_new["THERMFACTOR"] = df_new["CURRREADDATE"].apply(get_therm_factor)
+elif file_name == "dfkkop":
+        # Concatenate DFKKOP files if necessary
+        file_df = pd.concat([get_file("dfkkop1", columns, skip_cache), get_file("dfkkop2", columns, skip_cache), get_file("dfkkop3", columns, skip_cache),
+                             get_file("dfkkop4", columns, skip_cache), get_file("dfkkop5", columns, skip_cache), get_file("dfkkop6", columns, skip_cache),
+                             get_file("dfkkop7", columns, skip_cache), get_file("dfkkop8", columns, skip_cache), get_file("dfkkop9", columns, skip_cache),
+                             get_file("dfkkop10", columns, skip_cache)], ignore_index=True)
+
