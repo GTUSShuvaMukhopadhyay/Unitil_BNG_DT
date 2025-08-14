@@ -1,11 +1,8 @@
 
-# STAGE_BILLING_ACCT202505190211V1.py
-# New logic added for inactive customers, Max due date, Changes for Penalty code and tax code based on ZMECON
-# Date:16May2025
-# Time:10:20 CST
-#2025-May-16 -conv2- remapped the iloc for Tax from 31 to 29
-#2025-May-18 -conv2- changed logic to sort df_Prem by rate_category before dropping duplicates
-#2025-May-19 - Conv2- changed iloc for zmecon for location ID to 25 from 26
+# STAGE_BILLING_ACCT
+# used Conversion_Utils2
+# Manually remove quotes in trailer row
+
 
 import pandas as pd
 import os
@@ -14,12 +11,12 @@ import csv
 import time
 from datetime import datetime
 
- # Add the parent directory to sys.path
-import sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
-import Conversion_Utils1 as cu 
+
+# Add the CONV 3 directory to Python path
+conv3_path = r"C:\Users\GTUSER1\Documents\CONV 3"
+if conv3_path not in sys.path:
+    sys.path.append(conv3_path)
+import Conversion_Utils2 as cu 
 
 cu.print_checklist()
 
@@ -155,7 +152,7 @@ except Exception as e:
 
 try:
     cu.log_info("Loading Config data...")
-    config_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\Configuration 13.xlsx"
+    config_path = r"c:\Users\GTUSER1\Documents\CONV 3\Configuration 13.xlsx"
     df_config = pd.read_excel(config_path, sheet_name='TAX Exemption', engine='openpyxl')
     map_config_taxcode = dict(zip(df_config.iloc[:, 0], df_config.iloc[:, 3]))
     map_config_taxtype = dict(zip(df_config.iloc[:, 0], df_config.iloc[:, 4]))
@@ -339,6 +336,10 @@ def get_tax_code_type(row):
 df_new["PENALTYCODE"] = df_new.apply(lambda row: get_penalty(row), axis=1)
 def resolve_tax_fields(row):
     acct = row["ACCOUNTNUMBER"]
+
+    if not str(acct).strip().isdigit():
+        return pd.Series([None, None])
+    
     taxcode = map_config_taxcode.get(int(acct))
     taxtype = map_config_taxtype.get(int(acct))
     if taxcode is not None and taxtype is not None:
@@ -413,7 +414,7 @@ df_new = df_new[desired_column_order]
 cu.log_debug("Column order enforced")
 
 # Output CSV
-output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Extracts\STAGE_BILLING_ACCT.csv"
+output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group A\STAGE_BILLING_ACCT.csv"
 
 # Ensure numeric columns are properly formatted
 numeric_columns = ['ACTIVECODE', 'STATUSCODE', 'ADDRESSSEQ', 'PENALTYCODE', 'TAXCODE', 'TAXTYPE',
@@ -432,8 +433,15 @@ for col in date_columns:
 
 cu.log_debug("Date columns formatted")
 
-# === Trailer Row ===
-df_new = pd.concat([df_new, pd.DataFrame([["TRAILER"] + [""] * (len(df_new.columns) - 1)], columns=df_new.columns)], ignore_index=True)
+# ✅ Remove rows where ACCOUNTNUMBER, CUSTOMERID, or LOCATIONID are blank/NaN
+df_new = df_new[
+    df_new["ACCOUNTNUMBER"].notna() & (df_new["ACCOUNTNUMBER"].astype(str).str.strip() != "") # &
+    # df_new["CUSTOMERID"].notna() & (df_new["CUSTOMERID"].astype(str).str.strip() != "") &
+    # df_new["LOCATIONID"].notna() & (df_new["LOCATIONID"].astype(str).str.strip() != "")
+]
+
+df_new["LOCATIONID"] = df_new["LOCATIONID"].replace(["nan", None, pd.NA], "").fillna("").astype(str).str.strip()# === Trailer Row ===
+df_new = pd.concat([df_new, pd.DataFrame([["TRAILER"] + [''] * (len(df_new.columns) - 1)], columns=df_new.columns)], ignore_index=True)
 cu.log_debug("Trailer row added")
 
 # Use QUOTE_NONNUMERIC to ensure all non-numeric fields (including dates) get quotes
