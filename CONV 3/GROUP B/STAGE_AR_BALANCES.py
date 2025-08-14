@@ -12,17 +12,24 @@ file_path1 = r"c:\Users\GTUSER1\Documents\CONV 3\ZDM_PREMDETAILS.XLSX"
 file_path2 = r"c:\Users\GTUSER1\Documents\CONV 3\Configuration 13.xlsx"
 
 # ZMECON file paths
-zmecon_file_path3 = r"c:\Users\GTUSER1\Documents\CONV 3\ZMECON 08012019 to 08012025.xlsx"
+# zmecon_file_path3 = r"c:\Users\GTUSER1\Documents\CONV 3\ZMECON 08012019 to 08012025.xlsx"
 
+
+# updated ZMECON file paths
+zmecon_file_path3 = r"c:\Users\GTUSER1\Documents\CONV 3\ZMECON\ZMECON 010115 TO 07312019.XLSX"
+zmecon_file_path4 = r"c:\Users\GTUSER1\Documents\CONV 3\ZMECON\ZMECON 08012019 to 08012025.xlsx"
 
 # DFKKOP file paths
-dfkkop_file_pathA = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012019 to 12312019.XLSX"
-dfkkop_file_pathB = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012020 to 12312020.XLSX"
-dfkkop_file_pathC = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012021 to 12312021.XLSX"
-dfkkop_file_pathD = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012022 to 12312022.XLSX"
-dfkkop_file_pathE = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012023 to 12312023.XLSX"
-dfkkop_file_pathF = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012024 to 12312024.XLSX"
-dfkkop_file_pathG = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012025 to 12312025.XLSX"
+dfkkop_file_pathA = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012015 to 12312016.XLSX"
+dfkkop_file_pathB = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012017 to 12312017.XLSX"
+dfkkop_file_pathC = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012018 to 12312018.XLSX"
+dfkkop_file_pathD = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012019 to 12312019.XLSX"
+dfkkop_file_pathE = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012020 to 12312020.XLSX"
+dfkkop_file_pathF = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012021 to 12312021.XLSX"
+dfkkop_file_pathG = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012022 to 12312022.XLSX"
+dfkkop_file_pathH = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012023 to 12312023.XLSX"
+dfkkop_file_pathI = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012024 to 12312024.XLSX"
+dfkkop_file_pathJ = r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012025 to 12312025.XLSX"
 
 
 # Load Excel files
@@ -34,6 +41,7 @@ print("Reading Configuration (RateCode)...")
 df_Config = pd.read_excel(file_path2, sheet_name='RateCode', engine='openpyxl')
 print(f"✅ Loaded Configuration RateCode with {len(df_Config)} rows")
 
+"""
 # Load all ZMECON files
 print("Reading all ZMECON data files...")
 zmecon_files = [zmecon_file_path3]
@@ -48,11 +56,28 @@ for i, fp in enumerate(zmecon_files):
 print("Combining all ZMECON datasets...")
 df_ZMECON = pd.concat(df_zmecon_list, ignore_index=True)
 print(f"✅ Combined ZMECON dataset created with {len(df_ZMECON)} total rows")
+"""
+
+# Load all ZMECON files
+print("Reading all ZMECON data files...")
+zmecon_files = [zmecon_file_path3, zmecon_file_path4]
+df_zmecon_list = []
+
+for i, fp in enumerate(zmecon_files):
+    df = pd.read_excel(fp, sheet_name='ZMECON', engine='openpyxl')
+    df_zmecon_list.append(df)
+    print(f"✅ Loaded ZMECON file {i+1} with {len(df)} rows from: {fp}")
+
+# Combine all ZMECON datasets
+print("Combining all ZMECON datasets...")
+df_ZMECON = pd.concat(df_zmecon_list, ignore_index=True)
+print(f"✅ Combined ZMECON dataset created with {len(df_ZMECON)} total rows")
+
 
 # Load all DFKKOP files
 print("Reading all DFKKOP data files...")
 dfkkop_files = [dfkkop_file_pathA, dfkkop_file_pathB, dfkkop_file_pathC, dfkkop_file_pathD, dfkkop_file_pathE, 
-                dfkkop_file_pathF, dfkkop_file_pathG]
+                dfkkop_file_pathF, dfkkop_file_pathG,dfkkop_file_pathH,dfkkop_file_pathI,dfkkop_file_pathJ]
 df_dfkkop_list = []
 
 for i, fp in enumerate(dfkkop_files):
