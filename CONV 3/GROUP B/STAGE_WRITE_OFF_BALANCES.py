@@ -1,13 +1,10 @@
 import pandas as pd
 import os
 import csv
-import sys
-
-# Add the CONV 3 directory to Python path
-sys.path.append(r"C:\Users\GTUSER1\Documents\CONV 3")
 import Conversion_Utils as cu
 
 # Setup logging
+import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
 # ✅ Print validation checklist
@@ -28,7 +25,7 @@ df_filtered = df_dfkkop[df_dfkkop.iloc[:, 10].isna()]
 print(f"✅ Filtered DFKKOP rows with blank status: {len(df_filtered)}")
 
 # ⚙️ Load Configuration file
-config_path = r"c:\Users\GTUSER1\Documents\CONV 3\Configuration 13.xlsx"
+config_path = r"C:\\Users\\US82783\\OneDrive - Grant Thornton Advisors LLC\\Desktop\\python\\CONV 2B _ 2nd run\\DATA SOURCES\\Configuration 13.xlsx"
 df_Config = pd.read_excel(config_path, sheet_name='RateCode', engine='openpyxl')
 print(f"✅ Loaded Configuration RateCode: {len(df_Config)} rows")
 
@@ -98,6 +95,7 @@ def get_iloc3_from_config(rate, mtrans, strans):
 # 🛠️ Build Output DataFrame
 df_new = pd.DataFrame()
 df_new['CUSTOMERID'] = df_writeoff.iloc[:, 0].apply(lambda x: str(int(float(x))) if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x)
+df_new['CONTRACTACCOUNT'] = df_writeoff.iloc[:, 1].apply(lambda x: str(int(float(x))) if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else str(x).strip())
 df_new['APPLICATION'] = 5
 df_new['CHARGEDATE'] = pd.to_datetime(df_writeoff.iloc[:, 2], errors='coerce').dt.strftime("%Y-%m-%d")
 df_new['WRITEOFFDATE'] = df_new['CHARGEDATE']
@@ -126,21 +124,37 @@ for cust_id in df_new['CUSTOMERID']:
 df_new['LOCATIONID'] = pd.Series(location_ids).apply(lambda x: str(int(float(x))) if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x)
 df_new['RECEIVABLECODE'] = codes
 
+# 📌 Prepare zmecon valid combination set
+zmecon_combo = set(
+    zip(
+        df_zmecon.iloc[:, 0].apply(clean_id),
+        df_zmecon.iloc[:, 2].apply(clean_id)
+    )
+)
+
+# 📌 Filter rows where (CUSTOMERID, CONTRACTACCOUNT) exists in df_zmecon
+df_new = df_new[
+    df_new.apply(
+        lambda row: (clean_id(row['CUSTOMERID']), clean_id(row['CONTRACTACCOUNT'])) in zmecon_combo,
+        axis=1
+    )
+]
+print(f"✅ Rows after CUSTOMERID + CONTRACTACCOUNT match filter: {len(df_new)}")
+
 # ❌ Remove rows where CUSTOMERID or LOCATIONID is blank or NaN
 df_new = df_new[~(df_new['CUSTOMERID'].isna() | df_new['CUSTOMERID'].eq('') | df_new['LOCATIONID'].isna() | df_new['LOCATIONID'].eq(''))]
 
-# ✅ Reorder columns before export
+# ✅ Reorder columns before export (exclude CONTRACTACCOUNT)
 df_new = df_new[['CUSTOMERID','LOCATIONID','APPLICATION','CHARGEDATE','WRITEOFFDATE','WRITEOFFAMOUNT','AMOUNTREMAINING','RECEIVABLECODE','UPDATEDATE']]
 
 # ➕ Add trailer row
 df_new = pd.concat(
-    [df_new, pd.DataFrame([["TRAILER"] + [""] * (len(df_new.columns) - 1)], columns=df_new.columns)],
+    [df_new, pd.DataFrame([["TRAILER"] + [''] * (len(df_new.columns) - 1)], columns=df_new.columns)],
     ignore_index=True
 )
 cu.log_debug("✅ Trailer row added")
 
 # 📤 Export to CSV
-output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group B\STAGE_WRITE_OFF_BALANCES.csv"
-
+output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Extracts\STAGE_WRITE_OFF_BALANCES_730.csv"
 df_new.to_csv(output_path, index=False, quoting=csv.QUOTE_NONNUMERIC)
 cu.log_info(f"✅ CSV file saved successfully at: {output_path}")
