@@ -1,6 +1,11 @@
 
-# STAGE_BILLING_ACCT
-# used Conversion_Utils1
+# STAGE_BILLING_ACCT202505190211V1.py
+# New logic added for inactive customers, Max due date, Changes for Penalty code and tax code based on ZMECON
+# Date:16May2025
+# Time:10:20 CST
+#2025-May-16 -conv2- remapped the iloc for Tax from 31 to 29
+#2025-May-18 -conv2- changed logic to sort df_Prem by rate_category before dropping duplicates
+#2025-May-19 - Conv2- changed iloc for zmecon for location ID to 25 from 26
 
 import pandas as pd
 import os
@@ -9,14 +14,12 @@ import csv
 import time
 from datetime import datetime
 
-
-# Add the CONV 3 directory to Python path
-conv3_path = r"C:\Users\GTUSER1\Documents\CONV 3"
-if conv3_path not in sys.path:
-    sys.path.append(conv3_path)
-
-# Now you can import Conversion_Utils
-import Conversion_Utils1 as cu
+ # Add the parent directory to sys.path
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+import Conversion_Utils1 as cu 
 
 cu.print_checklist()
 
@@ -37,27 +40,32 @@ read_opts = {"engine": "openpyxl"}
 
 try:
     cu.log_info("Loading ZMECON data...")
-    # df_ZMECON_full = cu.get_file("zmecon", sheet_name="ZMECON")
+    # Combine ZMECON files
+    # df_ZMECON_full = pd.concat([df_zmecon1, df_zmecon2], ignore_index=True)
     df_ZMECON_full = cu.get_file("zmecon")
-    #SM put these lines right here to check the data structure, the ZMECON has two rows:
-    print("First few rows of ZMECON:")
-    print(df_ZMECON_full.head())
-    print(f"Columns: {df_ZMECON_full.columns.tolist()}")
-    print(f"Shape: {df_ZMECON_full.shape}")
-
+   
     # Extract ACCOUNTNUMBER, CUSTOMERID, and LOCATIONID from ZMECON files
     df_ZMECON_full["ACCOUNTNUMBER"] = df_ZMECON_full.iloc[:, 2].apply(normalize_acct).str.slice(0, 15)
    
     # Use the correct column indices
     df_ZMECON_full["ZMECON_CUSTOMERID"] = df_ZMECON_full.iloc[:, 0].apply(lambda x: str(x) if pd.notna(x) else "")
     df_ZMECON_full["ZMECON_LOCATIONID"] = df_ZMECON_full.iloc[:, 25].apply(lambda x: str(x) if pd.notna(x) else "")
-   
+    df_ZMECON_full["ZMECON_DATEFROM"] = df_ZMECON_full.iloc[:,22]
     # For debugging - check if columns have data
     cu.log_debug(f"\nZMECON_CUSTOMERID non-empty values: {(df_ZMECON_full['ZMECON_CUSTOMERID'] != '').sum()}")
     cu.log_debug(f"ZMECON_LOCATIONID non-empty values: {(df_ZMECON_full['ZMECON_LOCATIONID'] != '').sum()}")
    
-    # Sort by date to ensure the latest data is used
-    df_ZMECON_full = df_ZMECON_full.sort_values(by=["Business Partner", "Date from #1"], ascending=False)
+    # Sort Partner ascending, Date descending
+    df_ZMECON_full = df_ZMECON_full.sort_values(
+    by=["ZMECON_CUSTOMERID", "ZMECON_DATEFROM"],
+    ascending=[True, False]
+    )
+
+    print(df_ZMECON_full[["ACCOUNTNUMBER", "ZMECON_CUSTOMERID", "ZMECON_LOCATIONID", "ZMECON_DATEFROM"]].head(200))
+
+    df_ZMECON_full = df_ZMECON_full.drop_duplicates(subset="ACCOUNTNUMBER", keep='first')
+
+    print(df_ZMECON_full[["ACCOUNTNUMBER", "ZMECON_CUSTOMERID", "ZMECON_LOCATIONID", "ZMECON_DATEFROM"]].head(200))
 
     # Create a combined ZMECON dataset with all needed columns
     df_ZMECON = df_ZMECON_full[["ACCOUNTNUMBER", "ZMECON_CUSTOMERID", "ZMECON_LOCATIONID"]].copy()
@@ -66,7 +74,7 @@ try:
     df_ZMECON["penalty_val"] = df_ZMECON_full.iloc[:, 24].apply(lambda x: str(x).strip().upper() if pd.notna(x) else "")
    
     # Remove duplicates
-    df_ZMECON = df_ZMECON.drop_duplicates(subset="ACCOUNTNUMBER", keep='first')
+    #df_ZMECON = df_ZMECON.drop_duplicates(subset="ACCOUNTNUMBER", keep='first')
    
     cu.log_debug("ZMECON data loaded and processed")
 except Exception as e:
@@ -119,7 +127,11 @@ try:
     df_Prem["raw_cust"] = df_Prem.iloc[:, 7].apply(lambda x: str(int(x)) if pd.notna(x) else "")  # Business Partner
     df_Prem["rate_category"] = df_Prem.iloc[:, 4].apply(lambda x: str(x) if pd.notna(x) else "")
     df_Prem["ca_adid"] = df_Prem.iloc[:, 11].apply(normalize_acct)
-    df_Prem["tax_jurisdiction"] = df_Prem.iloc[:, 29].apply(lambda x: str(x) if pd.notna(x) else "")
+    df_Prem["tax_jurisdiction"] = df_Prem.iloc[:, 29].apply(lambda x: str(x).strip() if pd.notna(x) else "")
+
+    # Remove rows where rate_category starts with "G_"
+    df_Prem = df_Prem[~df_Prem["rate_category"].str.startswith("G_")]
+
     df_Prem = df_Prem.sort_values(by=["acct_key", "rate_category"], ascending=False)
    
     # Drop duplicates to avoid 1:many join problems
@@ -139,6 +151,17 @@ try:
     cu.log_debug("WriteOff data loaded and processed")
 except Exception as e:
     cu.log_error(f"Error processing WriteOff data: {e}")
+    sys.exit(1)
+
+try:
+    cu.log_info("Loading Config data...")
+    config_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\Configuration 13.xlsx"
+    df_config = pd.read_excel(config_path, sheet_name='TAX Exemption', engine='openpyxl')
+    map_config_taxcode = dict(zip(df_config.iloc[:, 0], df_config.iloc[:, 3]))
+    map_config_taxtype = dict(zip(df_config.iloc[:, 0], df_config.iloc[:, 4]))
+    cu.log_debug("Config data loaded and processed")
+except Exception as e:
+    cu.log_error(f"Error processing Config data: {e}")
     sys.exit(1)
 
 # Function to format dates
@@ -183,7 +206,14 @@ def calculate_active_code(row, writeoff_set):
 cu.log_info("Building output dataset...")
 
 # Create initial dataframe from ZMECON accounts without using any index
-df_new = df_ZMECON.copy()
+#df_new = df_ZMECON.copy()
+acct_keys_zmecon = set(df_ZMECON["ACCOUNTNUMBER"])
+acct_keys_ever = set(df_EVER["acct_key"])
+all_acct_keys = sorted(acct_keys_zmecon.union(acct_keys_ever))
+df_new = pd.DataFrame({"ACCOUNTNUMBER": list(all_acct_keys)})
+df_new = df_new.merge(df_ZMECON[["ACCOUNTNUMBER", "ZMECON_CUSTOMERID", "ZMECON_LOCATIONID", "penalty_val"]], 
+                      on="ACCOUNTNUMBER", how="left")
+
 print(f"Initial dataset: {len(df_new)} rows")
 
 # Create dictionaries for lookups - this avoids the duplication problem
@@ -215,9 +245,6 @@ df_new["OPENDATE"] = df_new["open_date"].apply(format_date)
 df_new["TERMINATEDDATE"] = df_new["term_date"].apply(format_date)
 df_new["DUEDATE"] = df_new["due_date_raw"].apply(format_date)
 
-# Set empty OPENDATE values to 1950-01-01
-df_new["OPENDATE"] = df_new["OPENDATE"].fillna("1950-01-01")
-
 # Add final CUSTOMERID and LOCATIONID using priority order
 # 1. First try PREM data
 # 2. If not available, use ZMECON data
@@ -226,7 +253,16 @@ df_new["LOCATIONID"] = df_new["raw_loc"].fillna(df_new["ZMECON_LOCATIONID"])
 
 # Clean up the IDs
 df_new["CUSTOMERID"] = df_new["CUSTOMERID"].apply(lambda x: cleanse_string(x, max_length=15))
-df_new["LOCATIONID"] = df_new["LOCATIONID"].apply(cleanse_string)
+def clean_location_id(val):
+    try:
+        val_str = str(val)
+        if val_str.endswith('.0'):
+            return val_str[:-2]  # Remove the trailing '.0'
+        return val_str.strip()
+    except:
+        return ""
+
+df_new["LOCATIONID"] = df_new["LOCATIONID"].apply(clean_location_id)
 df_new.loc[df_new["CUSTOMERID"] == "1005519", "LOCATIONID"] = "7000074010"
 
 # Check missing values after all filling methods
@@ -259,6 +295,7 @@ tax_data = {
     ("T_ME_SCISL", "2", "ME0000000"): (0, 1),
     ("T_ME_SCISL", "2", "EXME00000"): (0, 6),
     ("T_ME_SCISL", "3", "EXME00000"): (0, 6),
+    ("T_ME_SCISL", "3", "ME0000000"): (0, 1),
     ("T_ME_SCISL", "6", "ME0000000"): (0, 1),
     ("T_ME_SCISL", "7", "EXME00000"): (0, 6),
     ("T_ME_SCISL", "8", "EXME00000"): (0, 6),
@@ -300,7 +337,16 @@ def get_tax_code_type(row):
 
 
 df_new["PENALTYCODE"] = df_new.apply(lambda row: get_penalty(row), axis=1)
-df_new[["TAXCODE", "TAXTYPE"]] = df_new.apply(lambda row: pd.Series(get_tax_code_type(row)), axis=1)
+def resolve_tax_fields(row):
+    acct = row["ACCOUNTNUMBER"]
+    taxcode = map_config_taxcode.get(int(acct))
+    taxtype = map_config_taxtype.get(int(acct))
+    if taxcode is not None and taxtype is not None:
+        return pd.Series([taxcode, taxtype])
+    else:
+        return pd.Series(get_tax_code_type(row))
+
+df_new[["TAXCODE", "TAXTYPE"]] = df_new.apply(resolve_tax_fields, axis=1)
 
 # Clean up temp columns
 df_new = df_new.drop(columns=["acct_key", "open_date", "term_date", "due_date_raw",
@@ -371,11 +417,7 @@ df_new = pd.concat([df_new, pd.DataFrame([["TRAILER"] + [""] * (len(df_new.colum
 cu.log_debug("Trailer row added")
 
 # Output CSV
-# output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Group A\STAGE_BILLING_ACCT.csv"
-# output_path = cu.get_output_path("STAGE_BILLING_ACCT.csv")
-# output_path = cu.get_output_path(r"Group A\CU_STAGE_BILLING_ACCT.csv")
-output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group A\STAGE_BILLING_ACCT.csv"
-
+output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Extracts\STAGE_BILLING_ACCT.csv"
 
 # Ensure numeric columns are properly formatted
 numeric_columns = ['ACTIVECODE', 'STATUSCODE', 'ADDRESSSEQ', 'PENALTYCODE', 'TAXCODE', 'TAXTYPE',
