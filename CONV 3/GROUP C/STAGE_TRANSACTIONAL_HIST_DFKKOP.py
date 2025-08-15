@@ -16,7 +16,7 @@ import numpy as np
 
 # Define specific date range for filtering (replaces the 6-year cutoff)
 START_DATE = pd.to_datetime("2019-06-01")
-END_DATE = pd.to_datetime("2025-06-14")
+END_DATE = pd.to_datetime("2025-09-15")
 print(f"Applying date range filter: {START_DATE.date()} to {END_DATE.date()}")
 
 # CSV Staging File Checklist
@@ -102,7 +102,7 @@ def read_excel_file_with_filter(name, path):
                     date_series = pd.to_datetime(df["Doc. Date"], errors='coerce')
                     original_count = len(df)
                     start_date = pd.to_datetime("2019-06-01")
-                    end_date = pd.to_datetime("2025-06-14")
+                    end_date = pd.to_datetime("2025-09-14")
                     mask = (date_series >= start_date) & (date_series <= end_date)
                     df = df[mask]
                     print(f"Date filtered {name}: {original_count} → {len(df)} rows")
@@ -612,7 +612,7 @@ df_new = pd.concat([df_new, trailer_row], ignore_index=True)
 
 # Save to CSV
 # output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'OPTIMIZED_STAGE_TRANSACTIONAL_HIST.csv')
-output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group C\STAGE_TRANSACTIONAL_HIST.csv"
+output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group C\STAGE_TRANSACTIONAL_HIST_DFKKOP.csv"
 
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
