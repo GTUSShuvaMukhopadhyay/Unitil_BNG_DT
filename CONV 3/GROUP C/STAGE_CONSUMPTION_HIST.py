@@ -1,6 +1,8 @@
 # STAGE_CONSUMPTION_HIST.py
 # updates were made to use mapping from STAGE_METERED_SVCS
 # 8/1/2025 - Fixed RAWUSAGE Roll over issue.
+# 815 - update the DTH Thermfactor
+
 
 import pandas as pd
 import os
@@ -689,6 +691,21 @@ if data_sources.get("TF") is not None:
         return None
 
     df_new["THERMFACTOR"] = df_new["CURRREADDATE"].apply(get_therm_factor)
+# added logic for Gary thing here for 8/15
+    dth_mask = df_new["UMR_TYPE"] == "DTH"
+    df_new.loc[dth_mask, "THERMFACTOR"] = 1.0
+    
+    dth_count = dth_mask.sum()
+    total_count = len(df_new)
+    print(f"Set THERMFACTOR to 1.0 for {dth_count:,} DTH meters out of {total_count:,} total rows")
+    
+    # Show summary of THERMFACTOR values
+    therm_summary = df_new["THERMFACTOR"].value_counts().sort_index()
+    print(f"THERMFACTOR distribution: {dict(therm_summary.head(10))}")
+
+
+
+
 else:
     df_new["THERMFACTOR"] = 1.0
     print("Warning: ThermFactor file not loaded. Using default value of 1.0.")
