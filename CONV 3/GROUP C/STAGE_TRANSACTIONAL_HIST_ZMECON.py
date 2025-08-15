@@ -7,7 +7,7 @@ from datetime import datetime
 
 # Define specific date range for filtering
 START_DATE = pd.to_datetime("2019-06-01")
-END_DATE = pd.to_datetime("2025-06-14")
+END_DATE = pd.to_datetime("2025-09-15")
 print(f"Applying date range filter: {START_DATE.date()} to {END_DATE.date()}")
 
 # CSV Staging File Checklist
@@ -49,7 +49,7 @@ def read_excel_file(name, path):
                 # Convert column 23 (index 23) to datetime safely
                 date_col = pd.to_datetime(df.iloc[:, 23], errors='coerce')
                 start_date = pd.to_datetime("2019-06-01")
-                end_date = pd.to_datetime("2025-06-14")
+                end_date = pd.to_datetime("2025-09-15")
                 mask = (date_col >= start_date) & (date_col <= end_date)
                 original_rows = df.shape[0]
                 df = df[mask]
