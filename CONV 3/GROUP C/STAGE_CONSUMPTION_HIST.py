@@ -1,7 +1,8 @@
-# CONV 2 B - STAGE_CONSUMPTION_HISTORY
 # STAGE_CONSUMPTION_HIST.py
 # updates were made to use mapping from STAGE_METERED_SVCS
 # 8/1/2025 - Fixed RAWUSAGE Roll over issue.
+# 815 - update the DTH Thermfactor
+
 
 import pandas as pd
 import os
@@ -29,12 +30,11 @@ print_checklist()
  
 # Define file paths
 file_paths = {
-    "ZDM_PREMDETAILS": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZDM_PREMDETAILS.XLSX",
-    "ZMECON1": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZMECON 010115 TO 12312021.xlsx",
-    "ZMECON2": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ZMECON 01012022 TO 07142025.xlsx",
-    "EABL1": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\EABL\EABL 06012019 TO 12312022.XLSX",
-    "EABL2": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\EABL\EABL 01012023 TO 06142025.XLSX",
-    "TF": r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\DATA SOURCES\ThermFactor.xlsx",
+    "ZDM_PREMDETAILS": r"c:\Users\GTUSER1\Documents\CONV 3\ZDM_PREMDETAILS.XLSX",
+    "ZMECON1": r"c:\Users\GTUSER1\Documents\CONV 3\ZMECON 08012019 to 08012025.xlsx",
+    
+    "EABL1": r"c:\Users\GTUSER1\Documents\CONV 3\EABL 08012019 TO 08012025.XLSX",
+    "TF": r"c:\Users\GTUSER1\Documents\CONV 3\ThermFactor.xlsx",
 }
  
 # Initialize data_sources dictionary
@@ -43,13 +43,17 @@ data_sources = {}
 # Function to read an Excel file with date filtering
 def read_excel_file_with_filter(name, path):
     try:
-        df = pd.read_excel(path, sheet_name="Sheet1", engine="openpyxl")
+        # Use correct sheet name based on file type
+        if "ZMECON" in name:
+            df = pd.read_excel(path, sheet_name="ZMECON", engine="openpyxl")
+        else:
+            df = pd.read_excel(path, sheet_name="Sheet1", engine="openpyxl")
         # Only apply filter to ZMECON files
         if "ZMECON" in name:
             # Convert column 23 (index 23) to datetime safely
             date_col = pd.to_datetime(df.iloc[:, 23], errors='coerce')
             start_date = pd.to_datetime("2019-06-01")
-            end_date = pd.to_datetime("2025-06-14")
+            end_date = pd.to_datetime("2025-09-14")
             mask = (date_col >= start_date) & (date_col <= end_date)
             original_rows = df.shape[0]
             df = df[mask]
@@ -73,7 +77,7 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
         data_sources[name] = df
  
 # Create composite dataset for ZMECON (including ZMECON2 with 2019 data)
-zmecon_files = ["ZMECON1", "ZMECON2"]
+zmecon_files = ["ZMECON1"]
 zmecon_dfs = [data_sources.get(name) for name in zmecon_files if data_sources.get(name) is not None]
  
 if len(zmecon_dfs) > 0:
@@ -82,7 +86,8 @@ if len(zmecon_dfs) > 0:
 else:
     data_sources["ZMECON"] = None
     print("Warning: No ZMECON files were loaded successfully")
- 
+# SM had to comment out and recode for issue with EABL1 and EABL2
+"""" 
 # Create composite dataset for EABL with additional filtering
 if data_sources.get("EABL1") is not None and data_sources.get("EABL2") is not None:
     data_sources["EABL"] = pd.concat([data_sources["EABL1"], data_sources["EABL2"]], ignore_index=True)
@@ -91,7 +96,23 @@ else:
     data_sources["EABL"] = data_sources.get("EABL1") or data_sources.get("EABL2")
     if data_sources["EABL"] is not None:
         print(f"Using single EABL dataset with {len(data_sources['EABL'])} rows")
- 
+"""
+# Create composite dataset for EABL with additional filtering
+if data_sources.get("EABL1") is not None and data_sources.get("EABL2") is not None:
+    data_sources["EABL"] = pd.concat([data_sources["EABL1"], data_sources["EABL2"]], ignore_index=True)
+    print(f"Created combined EABL dataset with {len(data_sources['EABL'])} rows")
+else:
+    eabl1 = data_sources.get("EABL1")
+    eabl2 = data_sources.get("EABL2")
+    if eabl1 is not None:
+        data_sources["EABL"] = eabl1
+    elif eabl2 is not None:
+        data_sources["EABL"] = eabl2
+    else:
+        data_sources["EABL"] = None
+    
+    if data_sources["EABL"] is not None:
+        print(f"Using single EABL dataset with {len(data_sources['EABL'])} rows")
 # Initialize output DataFrame
 df_new = pd.DataFrame()
  
@@ -144,7 +165,9 @@ eabl_df1["Installation"] = (
     .str.strip()
 )
 eabl_df1["ReadDate"] = pd.to_datetime(eabl_df1.iloc[:, 4], errors='coerce')
-eabl_df1["ReadingType"] = eabl_df1.iloc[:, 10].astype(str).str.strip()
+eabl_df1["ReadingType"] = eabl_df1.iloc[:, 10].apply(
+    lambda x: str(int(float(x))) if pd.notna(x) and str(x).strip() != "" else ""
+).str.strip()
 
 # Create composite key in EABL
 eabl_df1["match_key"] = (
@@ -156,7 +179,11 @@ eabl_df1["match_key"] = (
 readingtype_lookup = dict(zip(eabl_df1["match_key"], eabl_df1["ReadingType"]))
 
 # Prepare composite key for df_new using ZMECON fields and CURRREADDATE
-install_vals = data_sources["ZMECON"].iloc[:, 26].apply(lambda x: str(int(float(x))) if pd.notna(x) else "").str.strip()
+# i will update the below commented out line for 
+# install_vals = data_sources["ZMECON"].iloc[:, 26].apply(lambda x: str(int(float(x))) if pd.notna(x) else "").str.strip()
+install_vals = data_sources["ZMECON"].iloc[:, 26].apply(
+    lambda x: str(int(float(x))) if pd.notna(x) and str(x).strip() != "" and str(x).strip() != "nan" else ""
+).str.strip()
 curread_vals = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce').dt.strftime("%Y-%m-%d")
 match_keys = install_vals + "|" + curread_vals
 
@@ -304,7 +331,11 @@ print("Sample values:", eabl_df2["predecimal"].dropna().unique()[:5])
 curreading_lookup = dict(zip(eabl_df2["match_key"], eabl_df2["predecimal"]))
 
 # Prepare composite key for df_new using ZMECON fields and CURRREADDATE
-install_vals1 = data_sources["ZMECON"].iloc[:, 26].apply(lambda x: str(int(float(x))) if pd.notna(x) else "").str.strip()
+# encountered issue here with nan values in install_vals1
+# install_vals1 = data_sources["ZMECON"].iloc[:, 26].apply(lambda x: str(int(float(x))) if pd.notna(x) else "").str.strip()
+install_vals1 = data_sources["ZMECON"].iloc[:, 26].apply(
+    lambda x: str(int(float(x))) if pd.notna(x) and str(x).strip() != "" and str(x).strip() != "nan" else ""
+).str.strip()
 curread_vals1 = pd.to_datetime(df_new["CURRREADDATE"], errors='coerce').dt.strftime("%Y-%m-%d")
 match_keys1 = install_vals1 + "|" + curread_vals1
 
@@ -629,7 +660,7 @@ if data_sources.get("TF") is not None:
     therm_df.columns = therm_df.columns.str.strip()
     therm_df["Valid from"] = pd.to_datetime(therm_df["Valid from"], errors="coerce")
     therm_df["Valid to"] = pd.to_datetime(therm_df["Valid to"], errors="coerce")
-   
+    '''  
     # Use CURRREADDATE and PREVREADDATE from ZMECON for date range matching
     df_new["DATE_FROM"] = pd.to_datetime(data_sources["ZMECON"].iloc[:, 22], errors="coerce")
     df_new["DATE_TO"] = pd.to_datetime(data_sources["ZMECON"].iloc[:, 23], errors="coerce")
@@ -646,7 +677,35 @@ if data_sources.get("TF") is not None:
     df_new["THERMFACTOR"] = df_new.apply(lambda row: find_matching_btu(row["DATE_FROM"], row["DATE_TO"]), axis=1)
     df_new.drop(columns=["DATE_FROM", "DATE_TO"], inplace=True)
    
-    print(f"Assigned THERMFACTOR values to {(df_new['THERMFACTOR'] > 0).sum()} rows")
+    print(f"Assigned THERMFACTOR values to {(df_new['THERMFACTOR'] > 0).sum()} rows")'''
+    
+    def get_therm_factor(curr_date):
+        if pd.isna(curr_date):
+            return None
+        match = therm_df[
+            (therm_df["Valid from"] <= curr_date) &
+            (therm_df["Valid to"] >= curr_date)
+        ]
+        if not match.empty:
+            return match.iloc[0]["Avg. BTU"]
+        return None
+
+    df_new["THERMFACTOR"] = df_new["CURRREADDATE"].apply(get_therm_factor)
+# added logic for Gary thing here for 8/15
+    dth_mask = df_new["UMR_TYPE"] == "DTH"
+    df_new.loc[dth_mask, "THERMFACTOR"] = 1.0
+    
+    dth_count = dth_mask.sum()
+    total_count = len(df_new)
+    print(f"Set THERMFACTOR to 1.0 for {dth_count:,} DTH meters out of {total_count:,} total rows")
+    
+    # Show summary of THERMFACTOR values
+    therm_summary = df_new["THERMFACTOR"].value_counts().sort_index()
+    print(f"THERMFACTOR distribution: {dict(therm_summary.head(10))}")
+
+
+
+
 else:
     df_new["THERMFACTOR"] = 1.0
     print("Warning: ThermFactor file not loaded. Using default value of 1.0.")
@@ -1009,8 +1068,9 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # --------------------------
 # Save to CSV
 # --------------------------
-output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_CONSUMPTION_HIST_8_1_Checking CURREAD.csv')
- 
+# output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'STAGE_CONSUMPTION_HIST_8_1_Checking CURREAD.csv')
+output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group C\STAGE_CONSUMPTION_HIST.csv"
+
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")
  

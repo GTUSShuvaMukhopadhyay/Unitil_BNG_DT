@@ -1,0 +1,9 @@
+# STAGE_TRANSACTIONAL_HIST.py refers to the version which only has DFKKOP
+
+# Use the following files: 
+    # STAGE_TRANSACTIONAL_HIST_DFKKOP.py 
+    # STAGE_TRANSACTIONAL_HIST_TENDERTYPE
+    # STAGE_TRANSACTIONAL_HIST_ZMECON.py
+
+# Run each file, then copy the combine the outputs into a new CSV which is named:
+# STAGE_TRANSACTIONAL_HIST.csv
