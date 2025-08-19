@@ -20,7 +20,7 @@ with open("../../Downloads/sns-public-key.asc", "r") as pub_key_file:
 with private_key.unlock("GT&Unitil2025"):
 
     # Load the encrypted message
-    with open("../DATA/5302 - Identification details.XLSX.gpg", "r") as enc_file:
+    with open("../SAP Extract/5302 - Identification Details.XLSX.gpg", "r") as enc_file:
         encrypted_message = pgpy.PGPMessage.from_file(enc_file.name)
 
     # Decrypt the message
@@ -30,11 +30,11 @@ with private_key.unlock("GT&Unitil2025"):
     excel_df = pd.read_excel(BytesIO(decrypted_message.message))
 
     # Create the new data frame
-    df_new = excel_df[['Business Partner', 'IDType', 'Identification number']].copy()
+    df_new = excel_df[['Business Partner', 'IDType', 'Identification number', 'BPC', 'AD']].copy()
 
     #Rename the columns to CUSTOMERID, SSNTINTYPE, SSNTIN
-    df_new.columns = ['CUSTOMERID', 'SSNTINTYPENAME', 'SSNTIN']
-    df_new['SSNTINTYPE'] = df_new['SSNTINTYPENAME'].apply(lambda x: 1 if x == 'Social Security Number' else 2)
+    df_new.columns = ['CUSTOMERID', 'SSNTINTYPENAME', 'SSNTIN', 'BPC', 'AD']
+    df_new['SSNTINTYPE'] = df_new['AD'].apply(lambda x: 1 if x == 1 else 2)
     df_new['DRIVERSLICENSE'] = ''
     df_new['DLSTATE'] = ''
 
