@@ -691,7 +691,6 @@ if data_sources.get("TF") is not None:
         return None
 
     df_new["THERMFACTOR"] = df_new["CURRREADDATE"].apply(get_therm_factor)
-# added logic for Gary thing here for 8/15
     dth_mask = df_new["UMR_TYPE"] == "DTH"
     df_new.loc[dth_mask, "THERMFACTOR"] = 1.0
     
@@ -702,9 +701,6 @@ if data_sources.get("TF") is not None:
     # Show summary of THERMFACTOR values
     therm_summary = df_new["THERMFACTOR"].value_counts().sort_index()
     print(f"THERMFACTOR distribution: {dict(therm_summary.head(10))}")
-
-
-
 
 else:
     df_new["THERMFACTOR"] = 1.0

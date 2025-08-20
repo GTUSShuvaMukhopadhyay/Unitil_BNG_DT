@@ -16,7 +16,7 @@ import numpy as np
 
 # Define specific date range for filtering (replaces the 6-year cutoff)
 START_DATE = pd.to_datetime("2019-06-01")
-END_DATE = pd.to_datetime("2025-09-15")
+END_DATE = pd.to_datetime("2025-12-14")
 print(f"Applying date range filter: {START_DATE.date()} to {END_DATE.date()}")
 
 # CSV Staging File Checklist
@@ -43,16 +43,16 @@ print_checklist()
 # Define file paths - include all DFKKOP files
 file_paths = {
     # DFKKOP files by year
-    "DFKKOP5": r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012019 to 12312019.XLSX",
-    "DFKKOP6": r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012020 to 12312020.XLSX",
-    "DFKKOP7": r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012021 to 12312021.XLSX",
-    "DFKKOP8": r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012022 to 12312022.XLSX",
-    "DFKKOP9": r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012023 to 12312023.XLSX",
-    "DFKKOP10": r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012024 to 12312024.XLSX",
-    "DFKKOP11": r"c:\Users\GTUSER1\Documents\CONV 3\DFKKOP\DFKKOP 01012025 to 12312025.XLSX",
+    "DFKKOP5": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\DFKKOP\DFKKOP 01012019 to 12312019.XLSX",
+    "DFKKOP6": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\DFKKOP\DFKKOP 01012020 to 12312020.XLSX",
+    "DFKKOP7": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\DFKKOP\DFKKOP 01012021 to 12312021.XLSX",
+    "DFKKOP8": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\DFKKOP\DFKKOP 01012022 to 12312022.XLSX",
+    "DFKKOP9": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\DFKKOP\DFKKOP 01012023 to 12312023.XLSX",
+    "DFKKOP10": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\DFKKOP\DFKKOP 01012024 to 12312024.XLSX",
+    "DFKKOP11": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\DFKKOP\DFKKOP 01012025 to 12312025.XLSX",
     # Other sources
-    "EVER": r"c:\Users\GTUSER1\Documents\CONV 3\EVER - 0802.XLSX",
-    "ZDM_PREMDETAILS": r"c:\Users\GTUSER1\Documents\CONV 3\ZDM_PREMDETAILS.XLSX",
+    "EVER": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\EVER - 0802.XLSX",
+    "ZDM_PREMDETAILS": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\ZDM_PREMDETAILS.XLSX",
 }
 
 # OPTIMIZATION 1: Check for cached parquet files and use them if available
@@ -102,7 +102,7 @@ def read_excel_file_with_filter(name, path):
                     date_series = pd.to_datetime(df["Doc. Date"], errors='coerce')
                     original_count = len(df)
                     start_date = pd.to_datetime("2019-06-01")
-                    end_date = pd.to_datetime("2025-09-14")
+                    end_date = pd.to_datetime("2025-12-14")
                     mask = (date_series >= start_date) & (date_series <= end_date)
                     df = df[mask]
                     print(f"Date filtered {name}: {original_count} → {len(df)} rows")
@@ -612,7 +612,7 @@ df_new = pd.concat([df_new, trailer_row], ignore_index=True)
 
 # Save to CSV
 # output_path = os.path.join(os.path.dirname(list(file_paths.values())[0]), 'OPTIMIZED_STAGE_TRANSACTIONAL_HIST.csv')
-output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group C\STAGE_TRANSACTIONAL_HIST_DFKKOP.csv"
+output_path = r"C:\Users\us85360\Desktop\CONV3_Output\STAGE_TRANSACTIONAL_HIST_DFKKOP.csv"
 
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"CSV file saved at {output_path}")

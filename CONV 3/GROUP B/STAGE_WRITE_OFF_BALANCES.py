@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import csv
-import Conversion_Utils as cu
+import Conversion_Utils1 as cu
 
 # Setup logging
 import sys
@@ -13,7 +13,13 @@ cu.print_checklist()
 # 📂 Load source files
 print('Loading source files...')
 df_writeoff = cu.get_file("writeoff")
-df_zmecon = cu.get_file("zmecon")
+
+# 🔄 DIRECT LOAD: Load only ZMECON2 file directly
+zmecon2_path = r"C:\Users\us85360\Desktop\CONV3_Data_Sources\ZMECON\ZMECON 08012019 to 08012025.xlsx"
+df_zmecon = pd.read_excel(zmecon2_path, engine='openpyxl')
+cu.log_info(f"Loaded ZMECON2 ONLY file. Records: {len(df_zmecon)}")
+
+
 df_dfkkop = cu.get_file("dfkkop")
 
 print(f"✅ Loaded ZWRITEOFF: {len(df_writeoff)} rows")
@@ -25,7 +31,7 @@ df_filtered = df_dfkkop[df_dfkkop.iloc[:, 10].isna()]
 print(f"✅ Filtered DFKKOP rows with blank status: {len(df_filtered)}")
 
 # ⚙️ Load Configuration file
-config_path = r"C:\\Users\\US82783\\OneDrive - Grant Thornton Advisors LLC\\Desktop\\python\\CONV 2B _ 2nd run\\DATA SOURCES\\Configuration 13.xlsx"
+config_path = r"C:\Users\us85360\Desktop\CONV3_Data_Sources\Configuration 13.xlsx"
 df_Config = pd.read_excel(config_path, sheet_name='RateCode', engine='openpyxl')
 print(f"✅ Loaded Configuration RateCode: {len(df_Config)} rows")
 
@@ -124,22 +130,59 @@ for cust_id in df_new['CUSTOMERID']:
 df_new['LOCATIONID'] = pd.Series(location_ids).apply(lambda x: str(int(float(x))) if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x)
 df_new['RECEIVABLECODE'] = codes
 
-# 📌 Prepare zmecon valid combination set
+# 📌 Build exact customer+location+contract combination set from ZMECON
 zmecon_combo = set(
     zip(
-        df_zmecon.iloc[:, 0].apply(clean_id),
-        df_zmecon.iloc[:, 2].apply(clean_id)
+        df_zmecon.iloc[:, 0].apply(clean_id),   # Customer (Column A)
+        df_zmecon.iloc[:, 25].apply(clean_id),   # Location (Column B) ✅ VERIFIED- UPDATE: verify this column
+        df_zmecon.iloc[:, 2].apply(clean_id)    # Contract (Column C)
     )
 )
+print(f"✅ Total unique customer+location+contract combinations in ZMECON: {len(zmecon_combo)}")
 
-# 📌 Filter rows where (CUSTOMERID, CONTRACTACCOUNT) exists in df_zmecon
+# 🔍 DEBUG: Check problematic records with 3-way combination
+problematic_records = [('189295', '210792800'), ('191651', '210796000')]
+print("\n🔍 DEBUGGING - 3-way combination checks:")
+for customer, contract in problematic_records:
+    # First, find what location this customer has in df_new
+    customer_rows = df_new[df_new['CUSTOMERID'].apply(clean_id) == clean_id(customer)]
+    if not customer_rows.empty:
+        location = clean_id(customer_rows.iloc[0]['LOCATIONID'])
+        
+        combo_exists = (clean_id(customer), clean_id(location), clean_id(contract)) in zmecon_combo
+        print(f"Combination ({customer}, {location}, {contract}) exists in ZMECON: {combo_exists}")
+        
+        # Show what combinations DO exist for this customer
+        customer_combos = [combo for combo in zmecon_combo if combo[0] == clean_id(customer)]
+        print(f"  Valid combinations for customer {customer}: {customer_combos[:5]}...")  # Show first 5
+    else:
+        print(f"Customer {customer} not found in df_new")
+
+print(f"\n🔍 Rows before 3-way combination filtering: {len(df_new)}")
+
+# 📌 Filter: Keep only rows where exact customer+location+contract combination exists in ZMECON
 df_new = df_new[
     df_new.apply(
-        lambda row: (clean_id(row['CUSTOMERID']), clean_id(row['CONTRACTACCOUNT'])) in zmecon_combo,
+        lambda row: (
+            clean_id(row['CUSTOMERID']), 
+            clean_id(row['LOCATIONID']), 
+            clean_id(row['CONTRACTACCOUNT'])
+        ) in zmecon_combo,
         axis=1
     )
 ]
-print(f"✅ Rows after CUSTOMERID + CONTRACTACCOUNT match filter: {len(df_new)}")
+print(f"✅ Rows after customer+location+contract combination filtering: {len(df_new)}")
+
+# 🔍 Final debug check
+print("\n🔍 DEBUGGING - After 3-way combination filtering:")
+for customer, contract in problematic_records:
+    still_there = any(
+        (clean_id(row['CUSTOMERID']) == clean_id(customer)) and 
+        (clean_id(row['CONTRACTACCOUNT']) == clean_id(contract))
+        for _, row in df_new.iterrows()
+    )
+    print(f"❌ Problematic record {customer}/{contract} still in output: {still_there}")
+
 
 # ❌ Remove rows where CUSTOMERID or LOCATIONID is blank or NaN
 df_new = df_new[~(df_new['CUSTOMERID'].isna() | df_new['CUSTOMERID'].eq('') | df_new['LOCATIONID'].isna() | df_new['LOCATIONID'].eq(''))]
@@ -155,6 +198,8 @@ df_new = pd.concat(
 cu.log_debug("✅ Trailer row added")
 
 # 📤 Export to CSV
-output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Extracts\STAGE_WRITE_OFF_BALANCES_730.csv"
+# output_path = r"C:\Users\US82783\OneDrive - Grant Thornton Advisors LLC\Desktop\python\CONV 2B _ 2nd run\Extracts\STAGE_WRITE_OFF_BALANCES_730.csv"
+output_path = r"C:\Users\us85360\Desktop\CONV3_Output\STAGE_WRITE_OFF_BALANCES.csv"
+
 df_new.to_csv(output_path, index=False, quoting=csv.QUOTE_NONNUMERIC)
 cu.log_info(f"✅ CSV file saved successfully at: {output_path}")
