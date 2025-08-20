@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 # Define specific date range for filtering (replaces the 6-year cutoff)
 START_DATE = pd.to_datetime("2019-06-01")
-END_DATE = pd.to_datetime("2025-09-15")
+END_DATE = pd.to_datetime("2025-12-14")
 print(f"Applying date range filter: {START_DATE.date()} to {END_DATE.date()}")
 
 # CSV Staging File Checklist
@@ -32,8 +32,8 @@ print_checklist()
 
 # Define file paths
 file_paths = {
-    "DFKKZP": r"c:\Users\GTUSER1\Documents\CONV 3\DFKKZP 10012015 TO 08022025.XLSX",
-    "ZMECON1": r"c:\Users\GTUSER1\Documents\CONV 3\ZMECON 08012019 to 08012025.xlsx"
+    "DFKKZP": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\DFKKZP 10012015 TO 08022025.XLSX",
+    "ZMECON1": r"C:\Users\us85360\Desktop\CONV3_Data_Sources\ZMECON 08012019 to 08012025.xlsx"
 }
  
 # Initialize data_sources dictionary to hold our data
@@ -51,7 +51,7 @@ def read_excel_file(name, path):
                 # Convert column 23 (index 23) to datetime safely
                 date_col = pd.to_datetime(df.iloc[:, 23], errors='coerce')
                 start_date = pd.to_datetime("2019-06-01")
-                end_date = pd.to_datetime("2025-09-15")
+                end_date = pd.to_datetime("2025-12-14")
                 mask = (date_col >= start_date) & (date_col <= end_date)
                 original_rows = df.shape[0]
                 df = df[mask]
@@ -106,7 +106,7 @@ if data_sources.get("DFKKZP") is not None:
         original_count = len(dfkkzp_df)
         date_series = pd.to_datetime(dfkkzp_df[date_column_found], errors='coerce')
         start_date = pd.to_datetime("2019-06-01")
-        end_date = pd.to_datetime("2025-06-14")
+        end_date = pd.to_datetime("2025-12-14")
         mask = (date_series >= start_date) & (date_series <= end_date)
         data_sources["DFKKZP"] = dfkkzp_df[mask]
         print(f"Filtered DFKKZP: {original_count} → {len(data_sources['DFKKZP'])} rows in date range {start_date.date()} to {end_date.date()}")
@@ -379,7 +379,7 @@ print(f"Added trailer row. Final row count: {len(df_new)}")
 # --------------------------
 # Save to CSV
 # --------------------------
-output_path = r"C:\Users\GTUSER1\Documents\CONV 3\output\Group C\STAGE_TRANSACTIONAL_HIST_TENDERTYPE.csv"
+output_path = r"C:\Users\us85360\Desktop\CONV3_Output\STAGE_TRANSACTIONAL_HIST_TENDERTYPE.csv"
 
 df_new.to_csv(output_path, index=False, header=True, quoting=csv.QUOTE_NONE, escapechar='\\')
 print(f"\nCSV file saved at: {output_path}")
